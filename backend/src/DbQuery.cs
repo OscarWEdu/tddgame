@@ -43,24 +43,81 @@ public static class DbQuery
     private static void CreateTablesIfNotExist(MySqlConnection db)
     {
         var createTablesSql = @"
-            CREATE TABLE IF NOT EXISTS sessions (
-                id VARCHAR(255) PRIMARY KEY NOT NULL,
-                created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                modified DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                data JSON
-            );
+            CREATE TABLE IF NOT EXISTS GameSessions (
+            id VARCHAR(255) PRIMARY KEY NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            status ENUM('lobby', 'started', 'completed') NOT NULL DEFAULT 'lobby',
 
-            CREATE TABLE IF NOT EXISTS users (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                email VARCHAR(254) NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                firstName VARCHAR(255),
-                lastName VARCHAR(255),
-                role VARCHAR(50) NOT NULL DEFAULT 'user',
-                created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                lastVisited DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );
-        ";
+            CREATE TABLE IF NOT EXISTS Missions (
+            id INT PRIMARY KEY NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            description TEXT NOT NULL,
+            condition ENUM('available', 'occupied') NOT NULL DEFAULT 'available',
+
+            CREATE TABLE IF NOT EXISTS Players (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            name VARCHAR(255) NOT NULL,
+            colour ENUM('Black', 'Blue', 'Green', 'Pink', 'Red', 'Yellow') NOT NULL,
+            turnOrder INT NOT NULL,
+            numGold INT NOT NULL DEFAULT 0,
+            isDead BOOLEAN NOT NULL DEFAULT FALSE,
+            gameSessions_id VARCHAR NOT NULL,
+            missions_id INT NOT NULL,
+            FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id),
+            FOREIGN KEY (missions_id) REFERENCES Missions(id),
+
+            CREATE TABLE IF NOT EXISTS Continents (
+            id INT PRIMARY KEY NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            bonusConst INT NOT NULL DEFAULT 0,
+
+            CREATE TABLE IF NOT EXISTS Territories (
+            id INT PRIMARY KEY NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            NorthAdjacentId INT NOT NULL,
+            SouthAdjacentId INT NOT NULL,
+            EastAdjacentId INT NOT NULL,
+            WestAdjacentId INT NOT NULL,
+            continents_id INT NOT NULL,
+            FOREIGN KEY (continents_id) REFERENCES Continents(id),
+            
+            CREATE TABLE IF NOT EXISTS PlayerTerritories (
+            troopNum INT NOT NULL DEFAULT 0,
+            players_id INT NOT NULL,
+            territories_id INT NOT NULL,
+            FOREIGN KEY (players_id) REFERENCES Players(id),
+            FOREIGN KEY (territories_id) REFERENCES Territories(id),
+
+            CREATE TABLE IF NOT EXISTS Turns (
+            round INT NOT NULL DEFAULT 0,
+            phase ENUM('build', 'assigned', 'attack', 'renforce') NOT NULL DEFAULT build,
+            createAt DATE DEFAULT (CURDATE()) NOT NULL,
+            gameSessions_id INT NOT NULL,
+            players_id INT NOT NULL,
+            FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id),
+            FOREIGN KEY (players_id) REFERENCES Players(id),
+
+            CREATE TABLE IF NOT EXISTS Battles (
+            id INT PRIMARY KEY NOT NULL,
+            attackerTerritoryId INT NOT NULL,
+            defenderTerritoryId INT NOT NULL,
+            attackingTroops INT NOT NULL DEFAULT 0,
+
+            CREATE TABLE IF NOT EXISTS TypingChallenges (
+            id INT PRIMARY KEY NOT NULL,
+            speed INT PRIMARY KEY NOT NULL,
+            mistakes INT PRIMARY KEY NOT NULL,
+            promptText VARCHAR(255) NOT NULL,
+
+            CREATE TABLE IF NOT EXISTS Results (
+            id INT PRIMARY KEY NOT NULL,
+            attackerScore INT NOT NULL DEFAULT 0,
+            defenderScore INT NOT NULL DEFAULT 0,
+            battles_id INT NOT NULL,
+            FOREIGN KEY (battles_id) REFERENCES battles(id),
+        
+        )";
+
         // Execute each statement separately
         foreach (var sql in createTablesSql.Split(';'))
         {
