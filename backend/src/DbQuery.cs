@@ -107,7 +107,7 @@ public static class DbQuery
             id INT PRIMARY KEY NOT NULL,
             speed INT PRIMARY KEY NOT NULL,
             mistakes INT PRIMARY KEY NOT NULL,
-            promptText VARCHAR(255) NOT NULL,
+            promptText TEXT NOT NULL,
 
             CREATE TABLE IF NOT EXISTS Results (
             id INT PRIMARY KEY NOT NULL,
