@@ -44,3 +44,10 @@ Backend.Tests/obj/
 Backend.Tests/bin/
 Backend.Tests/obj/*
 Backend.Tests/bin/*
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
