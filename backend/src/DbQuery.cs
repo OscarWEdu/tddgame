@@ -52,7 +52,7 @@ public static class DbQuery
             id INT PRIMARY KEY NOT NULL,
             name VARCHAR(255) NOT NULL,
             description TEXT NOT NULL,
-            condition ENUM('available', 'occupied') NOT NULL DEFAULT 'available',
+            status ENUM('available', 'occupied') NOT NULL DEFAULT 'available',
 
             CREATE TABLE IF NOT EXISTS Players (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -61,7 +61,7 @@ public static class DbQuery
             turnOrder INT NOT NULL,
             numGold INT NOT NULL DEFAULT 0,
             isDead BOOLEAN NOT NULL DEFAULT FALSE,
-            gameSessions_id VARCHAR NOT NULL,
+            gameSessions_id VARCHAR (255) NOT NULL,
             missions_id INT NOT NULL,
             FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id),
             FOREIGN KEY (missions_id) REFERENCES Missions(id),
@@ -90,7 +90,7 @@ public static class DbQuery
 
             CREATE TABLE IF NOT EXISTS Turns (
             round INT NOT NULL DEFAULT 0,
-            phase ENUM('build', 'assigned', 'attack', 'renforce') NOT NULL DEFAULT build,
+            phase ENUM('build', 'assigned', 'attack', 'renforce') NOT NULL DEFAULT 'build',
             createAt DATE DEFAULT (CURDATE()) NOT NULL,
             gameSessions_id INT NOT NULL,
             players_id INT NOT NULL,
