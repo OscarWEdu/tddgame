@@ -42,6 +42,7 @@ public static class DbQuery
 
     private static void CreateTablesIfNotExist(MySqlConnection db)
     {
+        // Create tables in the database (MySQL)
         var createTablesSql = @"
             CREATE TABLE IF NOT EXITS GameSessions (
                 id VARCHAR(255) PRIMARY KEY NOT NULL,
