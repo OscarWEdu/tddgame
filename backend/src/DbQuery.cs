@@ -44,20 +44,20 @@ public static class DbQuery
     {
         // Create tables in the database (MySQL)
         var createTablesSql = @"
-            CREATE TABLE IF NOT EXITS GameSessions (
+            CREATE TABLE IF NOT EXISTS GameSessions (
                 id VARCHAR(255) PRIMARY KEY NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 status ENUM('lobby', 'started', 'completed') NOT NULL DEFAULT 'lobby'
             );
 
-            CREATE TABLE IF NOT EXITS Missions (
+            CREATE TABLE IF NOT EXISTS Missions (
                 id INT PRIMARY KEY NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 description TEXT NOT NULL,
                 status ENUM('available', 'occupied') NOT NULL DEFAULT 'available'
             );
 
-            CREATE TABLE IF NOT EXITS Players (
+            CREATE TABLE IF NOT EXISTS Players (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 colour ENUM('Black', 'Blue', 'Green', 'Pink', 'Red', 'Yellow') NOT NULL,
@@ -70,13 +70,13 @@ public static class DbQuery
                 FOREIGN KEY (missions_id) REFERENCES Missions(id)
             );
 
-            CREATE TABLE IF NOT EXITS Continents (
+            CREATE TABLE IF NOT EXISTS Continents (
                 id INT PRIMARY KEY NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 bonusConst INT NOT NULL DEFAULT 0
             );
 
-            CREATE TABLE IF NOT EXITS Territories (
+            CREATE TABLE IF NOT EXISTS Territories (
                 id INT PRIMARY KEY NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 NorthAdjacentId INT NOT NULL,
@@ -87,7 +87,7 @@ public static class DbQuery
                 FOREIGN KEY (continents_id) REFERENCES Continents(id)
             );
 
-            CREATE TABLE IF NOT EXITS PlayerTerritories (
+            CREATE TABLE IF NOT EXISTS PlayerTerritories (
                 troopNum INT NOT NULL DEFAULT 0,
                 players_id INT NOT NULL,
                 territories_id INT NOT NULL,
@@ -95,7 +95,7 @@ public static class DbQuery
                 FOREIGN KEY (territories_id) REFERENCES Territories(id)
             );
 
-            CREATE TABLE IF NOT EXITS Turns (
+            CREATE TABLE IF NOT EXISTS Turns (
                 round INT NOT NULL DEFAULT 0,
                 phase ENUM('build', 'assigned', 'attack', 'reinforce') NOT NULL DEFAULT 'build',
                 createAt DATE DEFAULT (CURDATE()) NOT NULL,
@@ -105,21 +105,21 @@ public static class DbQuery
                 FOREIGN KEY (players_id) REFERENCES Players(id)
             );
 
-            CREATE TABLE IF NOT EXITS Battles (
+            CREATE TABLE IF NOT EXISTS Battles (
                 id INT PRIMARY KEY NOT NULL,
                 attackerTerritoryId INT NOT NULL,
                 defenderTerritoryId INT NOT NULL,
                 attackingTroops INT NOT NULL DEFAULT 0
             );
 
-            CREATE TABLE IF NOT EXITS TypingChallenges (
+            CREATE TABLE IF NOT EXISTS TypingChallenges (
                 id INT PRIMARY KEY NOT NULL, -- FIXED: Removed PRIMARY KEY from next two lines
                 speed INT NOT NULL,
                 mistakes INT NOT NULL,
                 promptText TEXT NOT NULL
             );
 
-            CREATE TABLE IF NOT EXITS Results (
+            CREATE TABLE IF NOT EXISTS Results (
                 id INT PRIMARY KEY NOT NULL,
                 attackerScore INT NOT NULL DEFAULT 0,
                 defenderScore INT NOT NULL DEFAULT 0,
