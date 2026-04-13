@@ -42,25 +42,92 @@ public static class DbQuery
 
     private static void CreateTablesIfNotExist(MySqlConnection db)
     {
+        // Create tables in the database (MySQL)
         var createTablesSql = @"
-            CREATE TABLE IF NOT EXISTS sessions (
+            CREATE TABLE IF NOT EXITS GameSessions (
                 id VARCHAR(255) PRIMARY KEY NOT NULL,
-                created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                modified DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                data JSON
+                name VARCHAR(255) NOT NULL,
+                status ENUM('lobby', 'started', 'completed') NOT NULL DEFAULT 'lobby'
             );
 
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXITS Missions (
+                id INT PRIMARY KEY NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                description TEXT NOT NULL,
+                status ENUM('available', 'occupied') NOT NULL DEFAULT 'available'
+            );
+
+            CREATE TABLE IF NOT EXITS Players (
                 id INT PRIMARY KEY AUTO_INCREMENT,
-                email VARCHAR(254) NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                firstName VARCHAR(255),
-                lastName VARCHAR(255),
-                role VARCHAR(50) NOT NULL DEFAULT 'user',
-                created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                lastVisited DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                name VARCHAR(255) NOT NULL,
+                colour ENUM('Black', 'Blue', 'Green', 'Pink', 'Red', 'Yellow') NOT NULL,
+                turnOrder INT NOT NULL,
+                numGold INT NOT NULL DEFAULT 0,
+                isDead BOOLEAN NOT NULL DEFAULT FALSE,
+                gameSessions_id VARCHAR(255) NOT NULL,
+                missions_id INT NOT NULL,
+                FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id),
+                FOREIGN KEY (missions_id) REFERENCES Missions(id)
+            );
+
+            CREATE TABLE IF NOT EXITS Continents (
+                id INT PRIMARY KEY NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                bonusConst INT NOT NULL DEFAULT 0
+            );
+
+            CREATE TABLE IF NOT EXITS Territories (
+                id INT PRIMARY KEY NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                NorthAdjacentId INT NOT NULL,
+                SouthAdjacentId INT NOT NULL,
+                EastAdjacentId INT NOT NULL,
+                WestAdjacentId INT NOT NULL,
+                continents_id INT NOT NULL,
+                FOREIGN KEY (continents_id) REFERENCES Continents(id)
+            );
+
+            CREATE TABLE IF NOT EXITS PlayerTerritories (
+                troopNum INT NOT NULL DEFAULT 0,
+                players_id INT NOT NULL,
+                territories_id INT NOT NULL,
+                FOREIGN KEY (players_id) REFERENCES Players(id),
+                FOREIGN KEY (territories_id) REFERENCES Territories(id)
+            );
+
+            CREATE TABLE IF NOT EXITS Turns (
+                round INT NOT NULL DEFAULT 0,
+                phase ENUM('build', 'assigned', 'attack', 'reinforce') NOT NULL DEFAULT 'build',
+                createAt DATE DEFAULT (CURDATE()) NOT NULL,
+                gameSessions_id VARCHAR(255) NOT NULL, -- FIXED: Changed from INT to VARCHAR
+                players_id INT NOT NULL,
+                FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id),
+                FOREIGN KEY (players_id) REFERENCES Players(id)
+            );
+
+            CREATE TABLE IF NOT EXITS Battles (
+                id INT PRIMARY KEY NOT NULL,
+                attackerTerritoryId INT NOT NULL,
+                defenderTerritoryId INT NOT NULL,
+                attackingTroops INT NOT NULL DEFAULT 0
+            );
+
+            CREATE TABLE IF NOT EXITS TypingChallenges (
+                id INT PRIMARY KEY NOT NULL, -- FIXED: Removed PRIMARY KEY from next two lines
+                speed INT NOT NULL,
+                mistakes INT NOT NULL,
+                promptText TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXITS Results (
+                id INT PRIMARY KEY NOT NULL,
+                attackerScore INT NOT NULL DEFAULT 0,
+                defenderScore INT NOT NULL DEFAULT 0,
+                battles_id INT NOT NULL,
+                FOREIGN KEY (battles_id) REFERENCES Battles(id)
             );
         ";
+
         // Execute each statement separately
         foreach (var sql in createTablesSql.Split(';'))
         {
