@@ -54,7 +54,7 @@ public static class DbQuery
                 id INT PRIMARY KEY NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 description TEXT NOT NULL,
-                status ENUM('available', 'occupied') NOT NULL DEFAULT 'available'
+                winCondition ENUM('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13') NOT NULL
             );
 
             CREATE TABLE IF NOT EXISTS Players (
@@ -88,7 +88,9 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS PlayerTerritories (
+                id INT PRIMARY KEY NOT NULL,
                 troopNum INT NOT NULL DEFAULT 0,
+                hasCity BOOLEAN DEFAULT 'FALSE'
                 players_id INT NOT NULL,
                 territories_id INT NOT NULL,
                 FOREIGN KEY (players_id) REFERENCES Players(id),
@@ -96,10 +98,11 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS Turns (
+                id INT PRIMARY KEY NOT NULL,
                 round INT NOT NULL DEFAULT 0,
                 phase ENUM('build', 'assigned', 'attack', 'reinforce') NOT NULL DEFAULT 'build',
                 createAt DATE DEFAULT (CURDATE()) NOT NULL,
-                gameSessions_id VARCHAR(255) NOT NULL, -- FIXED: Changed from INT to VARCHAR
+                gameSessions_id VARCHAR(255) NOT NULL,
                 players_id INT NOT NULL,
                 FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id),
                 FOREIGN KEY (players_id) REFERENCES Players(id)
@@ -107,13 +110,15 @@ public static class DbQuery
 
             CREATE TABLE IF NOT EXISTS Battles (
                 id INT PRIMARY KEY NOT NULL,
+                attackingTroops INT NOT NULL DEFAULT 0
                 attackerTerritoryId INT NOT NULL,
                 defenderTerritoryId INT NOT NULL,
-                attackingTroops INT NOT NULL DEFAULT 0
+                FOREIGN KEY (attackerTerritoryId) REFERENCES PlayerTerritories(id),
+                FOREIGN KEY (defenderTerritoryId) REFERENCES PlayerTerritories(id)
             );
 
             CREATE TABLE IF NOT EXISTS TypingChallenges (
-                id INT PRIMARY KEY NOT NULL, -- FIXED: Removed PRIMARY KEY from next two lines
+                id INT PRIMARY KEY NOT NULL,
                 speed INT NOT NULL,
                 mistakes INT NOT NULL,
                 promptText TEXT NOT NULL
