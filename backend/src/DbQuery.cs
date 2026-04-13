@@ -90,7 +90,7 @@ public static class DbQuery
             CREATE TABLE IF NOT EXISTS PlayerTerritories (
                 id INT PRIMARY KEY NOT NULL,
                 troopNum INT NOT NULL DEFAULT 0,
-                hasCity BOOLEAN DEFAULT 'FALSE'
+                hasCity BOOLEAN DEFAULT FALSE,
                 players_id INT NOT NULL,
                 territories_id INT NOT NULL,
                 FOREIGN KEY (players_id) REFERENCES Players(id),
@@ -110,7 +110,7 @@ public static class DbQuery
 
             CREATE TABLE IF NOT EXISTS Battles (
                 id INT PRIMARY KEY NOT NULL,
-                attackingTroops INT NOT NULL DEFAULT 0
+                attackingTroops INT NOT NULL DEFAULT 0,
                 attackerTerritoryId INT NOT NULL,
                 defenderTerritoryId INT NOT NULL,
                 FOREIGN KEY (attackerTerritoryId) REFERENCES PlayerTerritories(id),
