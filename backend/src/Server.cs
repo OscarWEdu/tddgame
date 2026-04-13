@@ -1,10 +1,14 @@
 namespace WebApp;
 
+using TddGame;
 public static class Server
 {
     public static void Start()
     {
+
+
         var builder = WebApplication.CreateBuilder();
+        builder.Services.AddScoped<IGameSessionsRepository, GameSessionRepository>();
         App = builder.Build();
         Middleware();
         DebugLog.Start();
@@ -16,8 +20,10 @@ public static class Server
         SpecialRoutes.Start();
         RestApi.Start();
         Session.Start();
-        // Start the server on port 3001
+        // Start the server on port 5001
         var runUrl = "http://localhost:" + Globals.port;
+
+        App.MapGameSessionEndpoints();
         Log("Server running on:", runUrl);
         Log("With these settings:", Globals);
         App.Run(runUrl);
