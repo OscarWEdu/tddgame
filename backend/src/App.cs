@@ -1,14 +1,25 @@
-// Global settings
-Globals = Obj(new
+using MySqlConnector;
+using TddGame;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var connStr = builder.Configuration.GetConnectionString("Default")
+?? throw new InvalidOperationException("Connection string 'Default' is not found.");
+builder.Services.AddSingleton(new MySqlDataSource(connStr));
+
+builder.Services.AddScoped<IGameSessionsRepository, GameSessionRepository>();
+
+builder.Services.AddCors(options =>
 {
-    debugOn = true,
-    detailedAclDebug = false,
-    aclOn = false,
-    isSpa = true,
-    port = args[0],
-    serverName = "Minimal API Backend",
-    frontendPath = args[1],
-    sessionLifeTimeHours = 2
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
 });
 
-Server.Start();
+var app = builder.Build();
+
+app.UseCors();
+app.MapGameSessionEndpoints();
+
+app.Run();
