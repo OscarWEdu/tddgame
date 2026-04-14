@@ -168,23 +168,16 @@ public static class DbQuery
         // Check if tables are empty and seed if needed
         var command = db.CreateCommand();
 
-        // Seed ACL rules
-        command.CommandText = "SELECT COUNT(*) FROM acl";
+        // Seed GameSessions rules
+        command.CommandText = "SELECT COUNT(*) FROM GameSessions";
         if (Convert.ToInt32(command.ExecuteScalar()) == 0)
         {
-            var aclData = @"
-                INSERT INTO acl (userRoles, method, allow, route, `match`, comment) VALUES
-                ('visitor, user', 'GET', 'disallow', '/secret.html', 'true', 'No access to /secret.html for visitors and normal users'),
-                ('visitor,user, admin', 'GET', 'allow', '/api', 'false', 'Allow access to all routes not starting with /api'),
-                ('visitor', 'POST', 'allow', '/api/users', 'true', 'Allow registration as new user for visitors'),
-                ('visitor, user,admin', '*', 'allow', '/api/login', 'true', 'Allow access to all login routes'),
-                ('admin', '*', 'allow', '/api/users', 'true', 'Allow admins to see and edit users'),
-                ('admin', '*', 'allow', '/api/sessions', 'true', 'Allow admins to see and edit sessions'),
-                ('admin', '*', 'allow', '/api/acl', 'true', 'Allow admins to see and edit acl rules'),
-                ('visitor,user,admin', 'GET', 'allow', '/api/products', 'true', 'Allow all user roles to read products'),
-                ('visitor,user,admin', 'GET', 'allow', '/api/films', 'true', 'Allow all user roles to see films');
+            var GameSessionData = @"
+                INSERT INTO GameSessions (id, name, status) VALUES
+                ('jhvjhgv', 'new', 'lobby'),
+                ('hb23kb2i423', 'newTest', 'completed');
             ";
-            command.CommandText = aclData;
+            command.CommandText = GameSessionData;
             command.ExecuteNonQuery();
         }
 
