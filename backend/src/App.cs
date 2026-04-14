@@ -4,8 +4,11 @@ using WebApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connStr = builder.Configuration.GetConnectionString("Default")
-?? throw new InvalidOperationException("Connection string 'Default' is not found.");
+builder.Configuration.AddJsonFile("db-config.json", optional: false);
+
+var c = builder.Configuration;
+var connStr = $"Server={c["host"]};Port={c["port"]};Database={c["database"]};User={c["username"]};Password={c["password"]};";
+
 builder.Services.AddSingleton(new MySqlDataSource(connStr));
 
 builder.Services.AddScoped<IGameSessionsRepository, GameSessionRepository>();
