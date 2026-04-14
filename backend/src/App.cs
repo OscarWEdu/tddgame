@@ -1,14 +1,40 @@
-// Global settings
-Globals = Obj(new
+using MySqlConnector;
+using TddGame;
+using WebApp;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("db-config.json", optional: false);
+
+var c = builder.Configuration;
+var connStr = $"Server={c["host"]};Port={c["port"]};Database={c["database"]};User={c["username"]};Password={c["password"]};";
+
+builder.Services.AddSingleton(new MySqlDataSource(connStr));
+
+builder.Services.AddScoped<IGameSessionsRepository, GameSessionRepository>();
+
+builder.Services.AddCors(options =>
 {
-    debugOn = true,
-    detailedAclDebug = false,
-    aclOn = false,
-    isSpa = true,
-    port = args[0],
-    serverName = "Minimal API Backend",
-    frontendPath = args[1],
-    sessionLifeTimeHours = 2
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
 });
 
-Server.Start();
+var app = builder.Build();
+
+app.UseCors();
+app.MapGameSessionEndpoints();
+
+try
+{
+    DbQuery.Initialize();
+}
+catch (Exception ex)
+{
+    Console.WriteLine("DbQuery error: " + ex.Message);
+}
+
+app.Run();
+
+

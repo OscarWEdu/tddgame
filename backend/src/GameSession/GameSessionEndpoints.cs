@@ -12,8 +12,8 @@ public static class GameSessionsEndpoint
         var gameSessionEndpointsGroup = app.MapGroup("/api/game-session");
 
         gameSessionEndpointsGroup.MapGet(
-            "/", 
-            async Task<Ok<IEnumerable<GameSessionDto>>> (IGameSessionsRepository repo, CancellationToken ct) 
+            "/",
+            async Task<Ok<IEnumerable<GameSessionDto>>> (IGameSessionsRepository repo, CancellationToken ct)
             =>
             {
                 var gameSessions = await repo.GetGameSessionsAsync(ct);

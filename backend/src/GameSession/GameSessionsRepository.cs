@@ -1,6 +1,8 @@
 namespace TddGame;
 
-public class GameSessionRepository(MySqlDataSource db): IGameSessionsRepository
+using MySqlConnector;
+
+public class GameSessionRepository(MySqlDataSource db) : IGameSessionsRepository
 {
     public async Task<IEnumerable<GameSessionDto>> GetGameSessionsAsync(CancellationToken ct)
     {
@@ -13,7 +15,7 @@ public class GameSessionRepository(MySqlDataSource db): IGameSessionsRepository
 
         var gameSessions = new List<GameSessionDto>();
         await using var reader = await command.ExecuteReaderAsync();
-        while(await reader.ReadAsync(ct))
+        while (await reader.ReadAsync(ct))
         {
             gameSessions.Add(
                 new GameSessionDto(
