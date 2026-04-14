@@ -1,5 +1,6 @@
 using MySqlConnector;
 using TddGame;
+using WebApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,3 +24,13 @@ app.UseCors();
 app.MapGameSessionEndpoints();
 
 app.Run();
+
+try
+{
+    DbQuery.Initialize();
+}
+catch (Exception ex)
+{
+    Console.WriteLine("DbQuery error: " + ex.Message);
+}
+

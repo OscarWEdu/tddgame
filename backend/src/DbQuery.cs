@@ -187,6 +187,9 @@ public static class DbQuery
             command.CommandText = aclData;
             command.ExecuteNonQuery();
         }
+
+
+
         // Seed the rest of the tables/views here. 
 
         /* // Seed users
@@ -203,6 +206,12 @@ public static class DbQuery
             command.ExecuteNonQuery();
         } */
     }
+
+    public static void Initialize()
+    {
+    }
+
+
 
     // // Helper to create an object from the DataReader
     // private static dynamic ObjFromReader(MySqlDataReader reader)
