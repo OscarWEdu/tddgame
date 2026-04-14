@@ -26,8 +26,6 @@ var app = builder.Build();
 app.UseCors();
 app.MapGameSessionEndpoints();
 
-app.Run();
-
 try
 {
     DbQuery.Initialize();
@@ -36,4 +34,7 @@ catch (Exception ex)
 {
     Console.WriteLine("DbQuery error: " + ex.Message);
 }
+
+app.Run();
+
 
