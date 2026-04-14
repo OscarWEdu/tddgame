@@ -1,0 +1,2 @@
+// Contains data models related to players (PlayerDto, CreatePlayerDto, PlayerStateDto)
+// Represents player-specific data such as id, name, colour, turnOrder, numGold, isDead, missionId, and gameSession_id.
