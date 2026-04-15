@@ -5,3 +5,6 @@ public record GameSessionDto(
     string Name,
     string Status
 );
+
+public record CreateGameSessionRequest(string Name);
+public record UpdateGameSessionStatusRequest(string Status);
