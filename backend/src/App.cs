@@ -21,9 +21,14 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 app.UseCors();
+app.UseSwagger();
+app.UseSwaggerUI();
 app.MapGameSessionEndpoints();
 
 try
