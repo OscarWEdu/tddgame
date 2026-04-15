@@ -68,4 +68,33 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
             throw new Exception($"Player with id {playerId} not found.");
         }
     }
+
+    public async Task<PlayerDto> AddPlayerToGameAsync(int gameSessionId, CreatePlayerDto player, CancellationToken ct)
+    {
+        var sqlQuery = @"INSERT INTO Players (name, colour, turnOrder, numGold, isDead, gameSessions_id, missions_id)
+                         VALUES (@name, @colour, @turnOrder, @numGold, @isDead, @gameSessionId, @missionId);
+                         SELECT LAST_INSERT_ID();";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@name", player.Name);
+        command.Parameters.AddWithValue("@colour", player.Colour);
+        command.Parameters.AddWithValue("@turnOrder", player.TurnOrder);
+        command.Parameters.AddWithValue("@gameSessionId", gameSessionId);
+        command.Parameters.AddWithValue("@missionId", player.MissionId); 
+
+        var insertedId = Convert.ToInt32(await command.ExecuteScalarAsync(ct));
+        return new PlayerDto(
+            id: insertedId,
+            Name: player.Name,
+            Colour: player.Colour,
+            TurnOrder: player.TurnOrder,
+            NumGold: 0, // New players start with 0 gold
+            IsDead: false, // New players start alive
+            GameSessionId: gameSessionId,
+            MissionId: player.MissionId
+        );
+    }
 }
