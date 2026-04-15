@@ -17,3 +17,8 @@ public record CreatePlayerDto(
     string Name,
     string Colour
 );
+
+public record PlayerStateDto(
+    int NumGold,
+    bool IsDead
+);
