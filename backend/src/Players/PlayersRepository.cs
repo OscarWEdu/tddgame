@@ -38,4 +38,34 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         }
     return players;
     }
+
+    public async Task<PlayerDto> GetPlayerByIdAsync(int playerId, CancellationToken ct)
+    {
+        var sqlQuery = @"SELECT * FROM Players WHERE id = @playerId";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@playerId", playerId);
+
+        await using var reader = await command.ExecuteReaderAsync(ct);
+        if (await reader.ReadAsync(ct))
+        {
+            return new PlayerDto(
+                id: reader.GetInt32("id"),
+                Name: reader.GetString("name"),
+                Colour: reader.GetString("colour"),
+                TurnOrder: reader.GetInt32("turnOrder"),
+                NumGold: reader.GetInt32("numGold"),
+                IsDead: reader.GetBoolean("isDead"),
+                GameSessionId: reader.GetInt32("gameSessions_id"),
+                MissionId: reader.GetInt32("mission_id")
+            );
+        }
+        else
+        {
+            throw new Exception($"Player with id {playerId} not found.");
+        }
+    }
 }
