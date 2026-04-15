@@ -14,4 +14,5 @@ public interface IPlayersRepository
     Task<PlayerDto> GetPlayerByIdAsync(int playerId, CancellationToken ct);
     Task<PlayerDto> AddPlayerToGameAsync(int gameSessionId, CreatePlayerDto createPlayerDto, CancellationToken ct);
     Task<PlayerDto> UpdatePlayerAsync(int playerId, PlayerStateDto state, CancellationToken ct);
+    Task<PlayerDto> SetPlayerMissionAsync(int playerId, int missionId, CancellationToken ct);
 }
