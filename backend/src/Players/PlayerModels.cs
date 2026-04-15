@@ -15,7 +15,9 @@ public record PlayerDto(
 
 public record CreatePlayerDto(
     string Name,
-    string Colour
+    string Colour,
+    int TurnOrder,
+    int MissionId
 );
 
 public record PlayerStateDto(
