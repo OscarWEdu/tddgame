@@ -12,3 +12,8 @@ public record PlayerDto(
     int GameSessionId,
     int MissionId
 );
+
+public record CreatePlayerDto(
+    string Name,
+    string Colour
+);
