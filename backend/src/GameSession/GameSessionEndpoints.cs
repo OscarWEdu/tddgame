@@ -9,7 +9,7 @@ public static class GameSessionsEndpoint
     public static IEndpointRouteBuilder MapGameSessionEndpoints(this IEndpointRouteBuilder app)
     {
         // http://
-        var gameSessionEndpointsGroup = app.MapGroup("/api/game-session");
+        var gameSessionEndpointsGroup = app.MapGroup("/api/game-session").WithTags("GameSessions");
 
         gameSessionEndpointsGroup.MapGet(
             "/",
@@ -19,7 +19,7 @@ public static class GameSessionsEndpoint
                 var gameSessions = await repo.GetGameSessionsAsync(ct);
                 return TypedResults.Ok(gameSessions);
             }
-        );
+        ).WithSummary("Get all game sessions").WithDescription("Return all game sessions.");
 
         return app;
     }
