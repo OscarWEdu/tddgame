@@ -7,3 +7,8 @@
 // SetPlayerMissionAsync(...)
 // SetPlayerColourAsync(...)
 // Makes the player data access layer testable and replaceable.
+namespace TddGame;
+public interface IPlayersRepository
+{
+    Task<IEnumerable<PlayerDto>> GetPlayersByGameSessionAsync(int gameSessionId, CancellationToken ct);
+}
