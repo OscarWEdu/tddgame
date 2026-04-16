@@ -3,6 +3,8 @@
 // Maps database results to PlayerDto or related models.
 
 namespace TddGame;
+
+using Microsoft.AspNetCore.StaticFiles;
 using MySqlConnector;
 
 
@@ -97,4 +99,22 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
             MissionId: player.MissionId
         );
     }
+
+    public async Task<PlayerDto> UpdatePlayerAsync(int playerId, PlayerStateDto state, CancellationToken ct)
+    {
+        var sqlQuery = @"UPDATE Players SET numGold = @numGold, isDead = @isDead WHERE id = @playerId";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@numGold", state.NumGold);
+        command.Parameters.AddWithValue("@isDead", state.IsDead);
+        command.Parameters.AddWithValue("@playerId", playerId);
+
+        await command.ExecuteNonQueryAsync(ct);
+        return await GetPlayerByIdAsync(playerId, ct);
+    }
+
+    
 }
