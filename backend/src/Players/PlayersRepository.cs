@@ -116,6 +116,24 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         return await GetPlayerByIdAsync(playerId, ct);
     }
 
+    public async Task<bool> DeletePlayerAsync(int playerId, CancellationToken ct)
+    {
+        var sqlQuery = @"DELETE FROM Players WHERE id = @playerId";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@playerId", playerId);
+
+        var rowsAffected = await command.ExecuteNonQueryAsync(ct);
+        if(rowsAffected == 0)
+        {
+           return false;
+        }
+        return true;
+    }
+
     public async Task<PlayerDto> SetPlayerMissionAsync(int playerid, int missionid, CancellationToken ct)
     {
         var sqlQuery = @"UPDATE Players SET missions_id = @missionId WHERE id = @playerId";
