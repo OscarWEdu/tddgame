@@ -37,6 +37,17 @@ public static class PlayersEndPoints
                 return TypedResults.Created($"/api/players/{createdPlayer.id}", createdPlayer);
             }
             ).WithSummary("Add a player to a game session").WithDescription("Create a new player in a specific game session.");
+
+            //GET /api/players/{id}
+            playerGroup.MapGet(
+            "/{id:int}",
+            async Task<Results<Ok<PlayerDto>, NotFound>> (int id, IPlayersRepository repo, CancellationToken ct)
+            =>
+            {
+                var player = await repo.GetPlayerByIdAsync(id, ct);
+                return player is not null ? TypedResults.Ok(player) : TypedResults.NotFound();
+            }
+            ).WithSummary("Get player by id").WithDescription("Return a specific player by their id.");
     }
 }
 
