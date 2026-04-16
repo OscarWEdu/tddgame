@@ -41,7 +41,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
     return players;
     }
 
-    public async Task<PlayerDto> GetPlayerByIdAsync(int playerId, CancellationToken ct)
+    public async Task<PlayerDto?> GetPlayerByIdAsync(int playerId, CancellationToken ct)
     {
         var sqlQuery = @"SELECT * FROM Players WHERE id = @playerId";
 
@@ -115,7 +115,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         command.Parameters.AddWithValue("@playerId", playerId);
 
         await command.ExecuteNonQueryAsync(ct);
-        return await GetPlayerByIdAsync(playerId, ct);
+        return (await GetPlayerByIdAsync(playerId, ct))!;
     }
 
     public async Task<bool> DeletePlayerAsync(int playerId, CancellationToken ct)

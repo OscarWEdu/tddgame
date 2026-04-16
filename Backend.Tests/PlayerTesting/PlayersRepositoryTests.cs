@@ -59,7 +59,7 @@ public class PlayerRepositoryTests
     public async Task GetPlayerById_ReturnsNull()
     {
         _mockRepo.Setup(repo => repo.GetPlayerByIdAsync(99, It.IsAny<CancellationToken>()))
-                 .ReturnsAsync((PlayerDto)null);
+                 .ReturnsAsync((PlayerDto?)null);
 
         var result = await _mockRepo.Object.GetPlayerByIdAsync(99, CancellationToken.None);
         Assert.Null(result);
