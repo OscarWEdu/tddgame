@@ -11,7 +11,7 @@ using MySqlConnector;
 
 public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
 {
-    public async Task<IEnumerable<PlayerDto>> GetPlayersByGameSessionAsync(int gameSessionId, CancellationToken ct)
+    public async Task<IEnumerable<PlayerDto>> GetPlayersByGameSessionAsync(string gameSessionId, CancellationToken ct)
     {
         var sqlQuery = @"SELECT * FROM Players WHERE gameSessions_id = @gameSessionId";
 
@@ -33,7 +33,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
                     TurnOrder: reader.GetInt32("turnOrder"),
                     NumGold: reader.GetInt32("numGold"),
                     IsDead: reader.GetBoolean("isDead"),
-                    GameSessionId: reader.GetInt32("gameSessions_id"),
+                    GameSessionId: reader.GetString("gameSessions_id"),
                     MissionId: reader.GetInt32("mission_id")
                 )
             );
@@ -61,7 +61,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
                 TurnOrder: reader.GetInt32("turnOrder"),
                 NumGold: reader.GetInt32("numGold"),
                 IsDead: reader.GetBoolean("isDead"),
-                GameSessionId: reader.GetInt32("gameSessions_id"),
+                GameSessionId: reader.GetString("gameSessions_id"),
                 MissionId: reader.GetInt32("mission_id")
             );
         }
@@ -71,7 +71,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         }
     }
 
-    public async Task<PlayerDto> AddPlayerToGameAsync(int gameSessionId, CreatePlayerDto player, CancellationToken ct)
+    public async Task<PlayerDto> AddPlayerToGameAsync(string gameSessionId, CreatePlayerDto player, CancellationToken ct)
     {
         var sqlQuery = @"INSERT INTO Players (name, colour, turnOrder, numGold, isDead, gameSessions_id, missions_id)
                          VALUES (@name, @colour, @turnOrder, @numGold, @isDead, @gameSessionId, @missionId);
