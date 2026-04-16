@@ -11,7 +11,7 @@ namespace TddGame;
 
 public static class PlayersEndPoints
 {
-    public static void MapPlayersEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapPlayersEndpoints(this IEndpointRouteBuilder app)
     {
         var gameSessionPlayersGroup = app.MapGroup("/api/game-session/{gameSessionId}/players").WithTags("Players");
         var playerGroup = app.MapGroup("/api/players").WithTags("Players");
@@ -48,6 +48,8 @@ public static class PlayersEndPoints
                 return player is not null ? TypedResults.Ok(player) : TypedResults.NotFound();
             }
             ).WithSummary("Get player by id").WithDescription("Return a specific player by their id.");
+
+            return app;
     }
 }
 
