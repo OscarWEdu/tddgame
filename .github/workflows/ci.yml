@@ -20,7 +20,7 @@ jobs:
         working-directory: backend
         run: dotnet build --no-restore
       - name: Run unit tests
-        run: npm run test:xunit
+        run: npm run test:unit
 
   # playwright-tests:
   #   needs: unit-tests
