@@ -9,7 +9,7 @@ public record PlayerDto(
     int TurnOrder,
     int NumGold,
     bool IsDead,
-    int GameSessionId,
+    string GameSessionId,
     int MissionId
 );
 
