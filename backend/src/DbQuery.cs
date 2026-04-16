@@ -205,7 +205,6 @@ public static class DbQuery
     }
 
 
-
     // // Helper to create an object from the DataReader
     // private static dynamic ObjFromReader(MySqlDataReader reader)
     // {
