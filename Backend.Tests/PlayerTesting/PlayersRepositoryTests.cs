@@ -30,4 +30,14 @@ public class PlayerRepositoryTests
         Assert.Equal(2, result.Count());
 
     }
+
+    [Fact]
+    public async Task GetPlayer_ReturnsEmpty()
+    {
+        _mockRepo.Setup(repo => repo.GetPlayersByGameSessionAsync("99", It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new List<PlayerDto>());
+
+        var result = await _mockRepo.Object.GetPlayersByGameSessionAsync("99", CancellationToken.None);
+        Assert.Empty(result);
+    }   
 }
