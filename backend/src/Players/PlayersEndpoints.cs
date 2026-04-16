@@ -49,6 +49,17 @@ public static class PlayersEndPoints
             }
             ).WithSummary("Get player by id").WithDescription("Return a specific player by their id.");
 
+        //DELETE /api/players/{id}  
+        playerGroup.MapDelete(
+            "/{id:int}",
+            async Task<Results<NoContent, NotFound>> (int id, IPlayersRepository repo, CancellationToken ct)
+            =>
+            {
+                var deleted = await repo.DeletePlayerAsync(id, ct);
+                return deleted ? TypedResults.NoContent() : TypedResults.NotFound();
+            }
+            ).WithSummary("Delete player by id").WithDescription("Delete a specific player by their id.");
+
             return app;
     }
 }
