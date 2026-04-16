@@ -8,6 +8,7 @@ public static class ContinentEndpoints
     {
         var ContinentEndpointsGroup = app.MapGroup("/api/continents").WithTags("Continents");
 
+        //Get all Continents
         ContinentEndpointsGroup.MapGet(
             "/",
             async Task<Ok<IEnumerable<ContinentDto>>> (IContinentRepository repo, CancellationToken ct) =>
@@ -18,6 +19,22 @@ public static class ContinentEndpoints
 
         ).WithSummary("Get all continents").WithDescription("Return all continents.");
 
+        //Get Continent by id
+        ContinentEndpointsGroup.MapGet(
+            "/{id}",
+            async Task<Results<Ok<ContinentDto>, NotFound>> (IContinentRepository repo, int id, CancellationToken ct) =>
+            {
+                var continent = await repo.GetContinentByIdAsync(id, ct);
+                if (continent is null){
+                    return TypedResults.NotFound();
+                }
+
+                return TypedResults.Ok(continent);
+            }
+
+        ).WithSummary("Get continent by id").WithDescription("Return continent by id or not found.");
+
+        //Insert a new continent
         ContinentEndpointsGroup.MapPost(
             "/",
             async Task<Created<ContinentDto>> (IContinentRepository repo, CreateContinentRequest request, CancellationToken ct) =>

@@ -30,6 +30,32 @@ public class ContinentRepository(MySqlDataSource db) : IContinentRepository
         return Continents;
     }
 
+    //Get Continent by ID
+    public async Task<ContinentDto?> GetContinentByIdAsync(int id, CancellationToken ct)
+    {
+        var sqlQuery = @"SELECT * FROM Continents WHERE id = @id";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+
+        command.Parameters.AddWithValue("@id", id);
+
+        await using var reader = await command.ExecuteReaderAsync(ct);
+
+        if (!await reader.ReadAsync(ct))
+        {
+            return null;
+        }
+        return new ContinentDto(
+            Id: reader.GetInt32("id"),
+            name: reader.GetString("name"),
+            bonusConst: reader.GetInt32("bonusConst")
+        );
+
+    }
+
     //Insert new continent
     public async Task<ContinentDto> CreateContinentAsync(string continentName, int bonus, CancellationToken ct)
     {
