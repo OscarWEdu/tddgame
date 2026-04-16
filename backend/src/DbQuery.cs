@@ -184,6 +184,18 @@ public static class DbQuery
 
 
         // Seed the rest of the tables/views here. 
+command.CommandText = "SELECT COUNT(*) FROM Missions";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var missionData = @"
+                INSERT INTO Missions (id, name, description, winCondition) VALUES
+                (1, 'Erövra kontinenten', 'Ta kontroll över en hel kontinent.', '3'),
+                (2, 'Eliminera fienden', 'Eliminera en specifik spelare från spelet.', '5'),
+                (3, 'Samla guld', 'Samla minst 10 guld innan spelet tar slut.', '7');
+            ";
+            command.CommandText = missionData;
+            command.ExecuteNonQuery();
+        }
 
         /* // Seed users
         command.CommandText = "SELECT COUNT(*) FROM users";
