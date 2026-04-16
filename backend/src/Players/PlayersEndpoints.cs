@@ -19,7 +19,7 @@ public static class PlayersEndPoints
         //GET /api/game-session/{gameSession_id}/players
         gameSessionPlayersGroup.MapGet(
            "/",
-           async Task<Ok<IEnumerable<PlayerDto>>> (int gameSessionId, IPlayersRepository repo, CancellationToken ct)
+           async Task<Ok<IEnumerable<PlayerDto>>> (string gameSessionId, IPlayersRepository repo, CancellationToken ct)
               =>
            {
                var player = await repo.GetPlayersByGameSessionAsync(gameSessionId, ct);
@@ -30,7 +30,7 @@ public static class PlayersEndPoints
         //POST /api/game-session/{gameSession_id}/players
         gameSessionPlayersGroup.MapPost(
             "/",
-            async Task<Created<PlayerDto>> (int gameSessionId, CreatePlayerDto player, IPlayersRepository repo, CancellationToken ct)
+            async Task<Created<PlayerDto>> (string gameSessionId, CreatePlayerDto player, IPlayersRepository repo, CancellationToken ct)
             =>
             {
                 var createdPlayer = await repo.AddPlayerToGameAsync(gameSessionId, player, ct);
