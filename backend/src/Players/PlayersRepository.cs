@@ -23,7 +23,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
 
         var players = new List<PlayerDto>();
         await using var reader = await command.ExecuteReaderAsync(ct);
-        while (await reader.ReadAsync(ct));
+        while (await reader.ReadAsync(ct))
         {
             players.Add(
                 new PlayerDto(
