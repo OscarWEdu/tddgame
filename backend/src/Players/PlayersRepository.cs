@@ -84,6 +84,8 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         command.Parameters.AddWithValue("@name", player.Name);
         command.Parameters.AddWithValue("@colour", player.Colour);
         command.Parameters.AddWithValue("@turnOrder", player.TurnOrder);
+        command.Parameters.AddWithValue("@numGold", 0);
+        command.Parameters.AddWithValue("@isDead", false);
         command.Parameters.AddWithValue("@gameSessionId", gameSessionId);
         command.Parameters.AddWithValue("@missionId", player.MissionId); 
 
