@@ -10,9 +10,9 @@
 namespace TddGame;
 public interface IPlayersRepository
 {
-    Task<IEnumerable<PlayerDto>> GetPlayersByGameSessionAsync(int gameSessionId, CancellationToken ct);
+    Task<IEnumerable<PlayerDto>> GetPlayersByGameSessionAsync(string gameSessionId, CancellationToken ct);
     Task<PlayerDto> GetPlayerByIdAsync(int playerId, CancellationToken ct);
-    Task<PlayerDto> AddPlayerToGameAsync(int gameSessionId, CreatePlayerDto createPlayerDto, CancellationToken ct);
+    Task<PlayerDto> AddPlayerToGameAsync(string gameSessionId, CreatePlayerDto createPlayerDto, CancellationToken ct);
     Task<PlayerDto> UpdatePlayerAsync(int playerId, PlayerStateDto state, CancellationToken ct);
     Task<bool> DeletePlayerAsync(int playerId, CancellationToken ct);
     Task<PlayerDto> SetPlayerMissionAsync(int playerId, int missionId, CancellationToken ct);
