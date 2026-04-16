@@ -75,13 +75,13 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS Continents (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 bonusConst INT NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS Territories (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 NorthAdjacentId INT NOT NULL,
                 SouthAdjacentId INT NOT NULL,
