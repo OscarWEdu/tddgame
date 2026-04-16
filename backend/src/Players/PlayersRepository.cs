@@ -34,7 +34,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
                     NumGold: reader.GetInt32("numGold"),
                     IsDead: reader.GetBoolean("isDead"),
                     GameSessionId: reader.GetString("gameSessions_id"),
-                    MissionId: reader.GetInt32("mission_id")
+                    MissionId: reader.GetInt32("missions_id")
                 )
             );
         }
@@ -62,7 +62,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
                 NumGold: reader.GetInt32("numGold"),
                 IsDead: reader.GetBoolean("isDead"),
                 GameSessionId: reader.GetString("gameSessions_id"),
-                MissionId: reader.GetInt32("mission_id")
+                MissionId: reader.GetInt32("missions_id")
             );
         }
         else
