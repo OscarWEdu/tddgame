@@ -87,18 +87,18 @@ public static class DbQuery
                 SouthAdjacentId INT NOT NULL,
                 EastAdjacentId INT NOT NULL,
                 WestAdjacentId INT NOT NULL,
-                continents_id INT NOT NULL,
-                FOREIGN KEY (continents_id) REFERENCES Continents(id)
+                continentId INT NOT NULL,
+                FOREIGN KEY (continentId) REFERENCES Continents(id)
             );
 
             CREATE TABLE IF NOT EXISTS PlayerTerritories (
                 id INT PRIMARY KEY NOT NULL,
                 troopNum INT NOT NULL DEFAULT 0,
                 hasCity BOOLEAN DEFAULT FALSE,
-                players_id INT NOT NULL,
-                territories_id INT NOT NULL,
-                FOREIGN KEY (players_id) REFERENCES Players(id),
-                FOREIGN KEY (territories_id) REFERENCES Territories(id)
+                playerId INT NOT NULL,
+                territoryId INT NOT NULL,
+                FOREIGN KEY (playerId) REFERENCES Players(id),
+                FOREIGN KEY (territoryId) REFERENCES Territories(id)
             );
 
             CREATE TABLE IF NOT EXISTS Turns (
