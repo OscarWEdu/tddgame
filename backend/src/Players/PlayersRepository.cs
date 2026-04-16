@@ -148,7 +148,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         command.Parameters.AddWithValue("@playerId", playerid);
 
         await command.ExecuteNonQueryAsync(ct);
-        return await GetPlayerByIdAsync(playerid, ct);
+        return (await GetPlayerByIdAsync(playerid, ct))!;
     }
 
     public async Task<PlayerDto> SetPlayerColourAsync(int playerId, string colour, CancellationToken ct)
@@ -163,6 +163,6 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         command.Parameters.AddWithValue("@playerId", playerId);
 
         await command.ExecuteNonQueryAsync(ct);
-        return await GetPlayerByIdAsync(playerId, ct);
+        return (await GetPlayerByIdAsync(playerId, ct))!;
     }
 }
