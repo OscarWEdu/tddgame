@@ -6,7 +6,7 @@ public static class TerritoryEndpoints
 {
     public static IEndpointRouteBuilder MapTerritoryEndpoints(this IEndpointRouteBuilder app)
     {
-        var territoryEndpointsGroup = app.MapGroup("/api/territories").WithTags("Territory");
+        var territoryEndpointsGroup = app.MapGroup("/api/territories").WithTags("Territories");
 
         territoryEndpointsGroup.MapGet(
             "/",
@@ -16,7 +16,7 @@ public static class TerritoryEndpoints
                 var territories = await repo.GetTerritoriesAsync(ct);
                 return TypedResults.Ok(territories);
             }
-        ).WithSummary("Get all game territories").WithDescription("Return all territories.");
+        ).WithSummary("Get all territories").WithDescription("Return all territories.");
 
         return app;
     }

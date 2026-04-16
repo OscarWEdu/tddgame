@@ -2,7 +2,7 @@ namespace TddGame;
 
 public record TerritoryDto(
     int Id,
-    string Name,
+    string name,
     int NorthAdjacentId,
     int SouthAdjacentId,
     int WestAdjacentId,

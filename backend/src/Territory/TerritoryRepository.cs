@@ -6,7 +6,7 @@ public class TerritoryRepository(MySqlDataSource db) : ITerritoryRepository
 {
     public async Task<IEnumerable<TerritoryDto>> GetTerritoriesAsync(CancellationToken ct)
     {
-        var sqlQuery = @"SELECT * FROM Territories";
+        string sqlQuery = @"SELECT * FROM Territories";
 
         await using var connection = await db.OpenConnectionAsync(ct);
         await using var command = connection.CreateCommand();
@@ -21,7 +21,7 @@ public class TerritoryRepository(MySqlDataSource db) : ITerritoryRepository
             Territories.Add(
                 new TerritoryDto(
                     Id: reader.GetInt32("id"),
-                    Name: reader.GetString("name"),
+                    name: reader.GetString("name"),
                     NorthAdjacentId: reader.GetInt32("NorthAdjacentId"),
                     SouthAdjacentId: reader.GetInt32("SouthAdjacentId"),
                     WestAdjacentId: reader.GetInt32("WestAdjacentId"),
