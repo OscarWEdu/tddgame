@@ -64,4 +64,21 @@ public class PlayerRepositoryTests
         var result = await _mockRepo.Object.GetPlayerByIdAsync(99, CancellationToken.None);
         Assert.Null(result);
     }
+
+    [Fact]
+    public async Task AddPlayer_ReturnsCreatedPlayer()
+    {
+        var CreatePlayerDto = new CreatePlayerDto("Luigi", "Green", 2, 1);
+        var createdPlayer = new PlayerDto(2, "Luigi", "Green", 2, 0, false, "1", 1);
+        _mockRepo.Setup(repo => repo.AddPlayerToGameAsync("1", CreatePlayerDto, It.IsAny<CancellationToken>()))
+                 .ReturnsAsync(createdPlayer);
+
+        var result = await _mockRepo.Object.AddPlayerToGameAsync("1", CreatePlayerDto, CancellationToken.None);
+
+        Assert.NotNull(result);
+        Assert.Equal("Luigi", result.Name);
+        Assert.Equal("Green", result.Colour);
+        Assert.Equal(0, result.NumGold);
+        Assert.False(result.IsDead);
+    }
 }
