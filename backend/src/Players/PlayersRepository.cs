@@ -131,4 +131,18 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         return await GetPlayerByIdAsync(playerid, ct);
     }
 
+    public async Task<PlayerDto> SetPlayerColourAsync(int playerId, string colour, CancellationToken ct)
+    {
+        var sqlQuery =  @"UPDATE Players SET colour = @colour WHERE id = @playerId";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@colour", colour);
+        command.Parameters.AddWithValue("@playerId", playerId);
+
+        await command.ExecuteNonQueryAsync(ct);
+        return await GetPlayerByIdAsync(playerId, ct);
+    }
 }
