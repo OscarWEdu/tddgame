@@ -5,3 +5,8 @@ public record ContinentDto(
     string name,
     int bonusConst
 );
+
+public record CreateContinentRequest(
+    string name,
+    int bonusConst
+);

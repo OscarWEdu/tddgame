@@ -18,6 +18,16 @@ public static class ContinentEndpoints
 
         ).WithSummary("Get all continents").WithDescription("Return all continents.");
 
+        ContinentEndpointsGroup.MapPost(
+            "/",
+            async Task<Created<ContinentDto>> (IContinentRepository repo, CreateContinentRequest request, CancellationToken ct) =>
+            {
+                var continent = await repo.CreateContinentAsync(request.name, request.bonusConst, ct);
+
+                return TypedResults.Created($"/api/continents/{continent.Id}", continent);
+            }
+        ).WithSummary("Create new coninent").WithDescription("Returns newly added continent data.");
+
         return app;
     }
 }

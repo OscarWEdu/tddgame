@@ -55,7 +55,7 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS Missions (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 description TEXT NOT NULL,
                 winCondition ENUM('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13') NOT NULL
