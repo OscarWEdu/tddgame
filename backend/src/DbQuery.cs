@@ -55,7 +55,7 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS Missions (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 description TEXT NOT NULL,
                 winCondition ENUM('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13') NOT NULL
@@ -75,30 +75,30 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS Continents (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 bonusConst INT NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS Territories (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 NorthAdjacentId INT NOT NULL,
                 SouthAdjacentId INT NOT NULL,
                 EastAdjacentId INT NOT NULL,
                 WestAdjacentId INT NOT NULL,
-                continents_id INT NOT NULL,
-                FOREIGN KEY (continents_id) REFERENCES Continents(id)
+                continentId INT NOT NULL,
+                FOREIGN KEY (continentId) REFERENCES Continents(id)
             );
 
             CREATE TABLE IF NOT EXISTS PlayerTerritories (
                 id INT PRIMARY KEY NOT NULL,
                 troopNum INT NOT NULL DEFAULT 0,
                 hasCity BOOLEAN DEFAULT FALSE,
-                players_id INT NOT NULL,
-                territories_id INT NOT NULL,
-                FOREIGN KEY (players_id) REFERENCES Players(id),
-                FOREIGN KEY (territories_id) REFERENCES Territories(id)
+                playerId INT NOT NULL,
+                territoryId INT NOT NULL,
+                FOREIGN KEY (playerId) REFERENCES Players(id),
+                FOREIGN KEY (territoryId) REFERENCES Territories(id)
             );
 
             CREATE TABLE IF NOT EXISTS Turns (
@@ -181,23 +181,33 @@ public static class DbQuery
             command.ExecuteNonQuery();
         }
 
-
-
-        // Seed the rest of the tables/views here. 
-
-        /* // Seed users
-        command.CommandText = "SELECT COUNT(*) FROM users";
+        // Seed Continents
+        command.CommandText = "SELECT COUNT(*) FROM Continents";
         if (Convert.ToInt32(command.ExecuteScalar()) == 0)
         {
-            var usersData = @"
-                INSERT INTO users (created, email, firstName, lastName, role, password) VALUES
-                ('2024-04-02', 'thomas@nodehill.com', 'Thomas', 'Frank', 'admin', '$2a$13$IahRVtN2pxc1Ne1NzJUPpOQO5JCtDZvXpSF.IF8uW85S6VoZKCwZq'),
-                ('2024-04-02', 'olle@nodehill.com', 'Olle', 'Olofsson', 'user', '$2a$13$O2Gs3FME3oA1DAzwE0FkOuMAOOAgRyuvNQq937.cl7D.xq0IjgzN.'),
-                ('2024-04-02', 'maria@nodehill.com', 'Maria', 'Mårtensson', 'user', '$2a$13$p4sqCN3V3C1wQXspq4eN0eYwK51ypw7NPL6b6O4lMAOyATJtKqjHS');
+            var ContinentData = @"
+                INSERT INTO Continents (name, bonusConst) VALUES
+                ('Eurtarctica', 3),
+                ('Ameristralia', 2);
             ";
-            command.CommandText = usersData;
+            command.CommandText = ContinentData;
             command.ExecuteNonQuery();
-        } */
+        }
+
+        // Seed Territories
+        command.CommandText = "SELECT COUNT(*) FROM Territories";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var ContinentData = @"
+                INSERT INTO Territories (name, NorthAdjacentId, SouthAdjacentId, WestAdjacentId, EastAdjacentId, Continentid) VALUES
+                ('Halmstad', 2, -1, -1, -1, 1),
+                ('Stockstad', -1, 1, -1, -1, 1);
+            ";
+            command.CommandText = ContinentData;
+            command.ExecuteNonQuery();
+        }
+
+        // Seed the rest of the tables/views here. 
     }
 
     public static void Initialize()
