@@ -12,6 +12,7 @@ var connStr = $"Server={c["host"]};Port={c["port"]};Database={c["database"]};Use
 builder.Services.AddSingleton(new MySqlDataSource(connStr));
 
 builder.Services.AddScoped<IGameSessionsRepository, GameSessionRepository>();
+builder.Services.AddScoped<ITurnsRepository, TurnsRepository>();
 builder.Services.AddScoped<IContinentRepository, ContinentRepository>();
 builder.Services.AddScoped<ITerritoryRepository, TerritoryRepository>();
 
@@ -38,6 +39,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "TDD Game API v1");
 });
 app.MapGameSessionEndpoints();
+app.MapTurnsEndpoints();
 app.MapContinentEndpoints();
 app.MapTerritoryEndpoints();
 

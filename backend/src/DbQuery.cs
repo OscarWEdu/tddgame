@@ -181,6 +181,33 @@ public static class DbQuery
             command.ExecuteNonQuery();
         }
 
+        // Seed missions
+        command.CommandText = "SELECT COUNT(*) FROM Missions";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var MissionData = @"
+                INSERT INTO Missions (id, name, description, winCondition) VALUES
+                (1, 'Capture North America and Australia', 'Own North America and Australia continent at the end of your turn', '2'),
+                (2, 'Capture Asia and South America', 'Own Asia and South America continent at the end of your turn', '2'),
+                (3, 'Capture 24 territories', 'Own 24 territories at the end of your turn', '1'),
+                (4, 'Capture 18 territories with 2 troops', 'Own 18 territories and each must have at least 2 troops', '2');
+            ";
+            command.CommandText = MissionData;
+            command.ExecuteNonQuery();
+        }
+
+        // Seed players
+        command.CommandText = "SELECT COUNT(*) FROM Players";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var PlayerData = @"
+                INSERT INTO Players (id, name, colour, turnOrder, numGold, isDead, gameSessions_id, missions_id) VALUES
+                (1, 'Max', 'Blue', 1, 10, 0, '550e8400-e29b-41d4-a716-446655440000', 2),
+                (2, 'Linus', 'Red', 2, 5, 0, '550e8400-e29b-41d4-a716-446655440000', 1);
+            ";
+            command.CommandText = PlayerData;
+            command.ExecuteNonQuery();
+        }
         // Seed Continents
         command.CommandText = "SELECT COUNT(*) FROM Continents";
         if (Convert.ToInt32(command.ExecuteScalar()) == 0)
@@ -213,7 +240,6 @@ public static class DbQuery
     public static void Initialize()
     {
     }
-
 
 
     // // Helper to create an object from the DataReader
