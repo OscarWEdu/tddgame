@@ -18,6 +18,21 @@ public static class TerritoryEndpoints
             }
         ).WithSummary("Get all territories").WithDescription("Return all territories.");
 
+        //Get Continent by id
+        territoryEndpointsGroup.MapGet(
+            "/{id}",
+            async Task<Results<Ok<TerritoryDto>, NotFound>> (ITerritoryRepository repo, int id, CancellationToken ct) =>
+            {
+                var territory = await repo.GetTerritoryByIdAsync(id, ct);
+                if (territory is null){
+                    return TypedResults.NotFound();
+                }
+
+                return TypedResults.Ok(territory);
+            }
+
+        ).WithSummary("Get territory by id").WithDescription("Return territory by id, or not found.");
+
         territoryEndpointsGroup.MapPost(
             "/",
             async Task<Created<TerritoryDto>> (ITerritoryRepository repo, CreateTerritoryRequest request, CancellationToken ct) =>

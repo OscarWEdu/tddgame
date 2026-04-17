@@ -35,6 +35,36 @@ public class TerritoryRepository(MySqlDataSource db) : ITerritoryRepository
         return Territories;
     }
 
+    //Get Territory by Id
+    public async Task<TerritoryDto?> GetTerritoryByIdAsync(int id, CancellationToken ct)
+    {
+        var sqlQuery = @"SELECT * FROM Territories WHERE id = @id";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+
+        command.Parameters.AddWithValue("@id", id);
+
+        await using var reader = await command.ExecuteReaderAsync(ct);
+
+        if (!await reader.ReadAsync(ct))
+        {
+            return null;
+        }
+
+        return new TerritoryDto(
+            Id: reader.GetInt32("id"),
+            Name: reader.GetString("name"),
+            NorthAdjacentId: reader.GetInt32("NorthAdjacentId"),
+            SouthAdjacentId: reader.GetInt32("SouthAdjacentId"),
+            WestAdjacentId: reader.GetInt32("WestAdjacentId"),
+            EastAdjacentId: reader.GetInt32("EastAdjacentId"),
+            ContinentId: reader.GetInt32("continentId")
+        );
+    }
+
     //Insert new Territory
     public async Task<TerritoryDto> CreateTerritoryAsync(string name, int northAdjacentId, int southAdjacentId, int westAdjacentId, int eastAdjacentId, int continentId, CancellationToken ct)
     {

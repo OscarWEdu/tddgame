@@ -32,7 +32,7 @@ public static class ContinentEndpoints
                 return TypedResults.Ok(continent);
             }
 
-        ).WithSummary("Get continent by id").WithDescription("Return continent by id or not found.");
+        ).WithSummary("Get continent by id").WithDescription("Return continent by id, or not found.");
 
         //Insert a new continent
         ContinentEndpointsGroup.MapPost(
