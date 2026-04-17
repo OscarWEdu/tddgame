@@ -1,6 +1,5 @@
 namespace Backend.Tests;
 
-using System.Globalization;
 using Moq;
 using TddGame;
 
@@ -18,7 +17,7 @@ public class GameSessionRepositoryTests
     {
         var sessions = new List<GameSessionDto>
         {
-            new("550e8400-e29b-41d4-a716-446655440000", "Session One", "lobby")
+            new("550e8400-e29b-41d4-a716-446655440000", "Session One", GameSessionStatus.lobby)
         };
         _mockRepo.Setup(repo => repo.GetGameSessionsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(sessions);
 
@@ -33,7 +32,7 @@ public class GameSessionRepositoryTests
     public async Task GetGameSessionByIdAsync_ReturnSession_WhenFound()
     {
         var id = Guid.NewGuid();
-        var dto = new GameSessionDto(id.ToString(), "Test", "lobby");
+        var dto = new GameSessionDto(id.ToString(), "Test", GameSessionStatus.lobby);
         _mockRepo.Setup(repo => repo.GetGameSessionByIdAsync(id, It.IsAny<CancellationToken>())).ReturnsAsync((dto));
 
         var result = await _mockRepo.Object.GetGameSessionByIdAsync(id, CancellationToken.None);
@@ -55,7 +54,7 @@ public class GameSessionRepositoryTests
     [Fact]
     public async Task CreateGameSessionAsync_ReturnNewSession()
     {
-        var dto = new GameSessionDto(Guid.NewGuid().ToString(), "New Test Game", "lobby");
+        var dto = new GameSessionDto(Guid.NewGuid().ToString(), "New Test Game", GameSessionStatus.lobby);
         _mockRepo.Setup(repo => repo.CreateGameSessionAsync("New Test Game", It.IsAny<CancellationToken>())).ReturnsAsync(dto);
 
         var result = await _mockRepo.Object.CreateGameSessionAsync("New Test Game", CancellationToken.None);
@@ -63,7 +62,7 @@ public class GameSessionRepositoryTests
         Assert.NotNull(result);
         Assert.Equal("New Test Game", result.Name);
         Assert.NotEmpty(result.Id);
-        Assert.Equal("lobby", result.Status);
+        Assert.Equal("lobby", result.Status.ToString());
     }
 
     [Fact]
