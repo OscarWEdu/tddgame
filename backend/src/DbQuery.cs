@@ -181,23 +181,33 @@ public static class DbQuery
             command.ExecuteNonQuery();
         }
 
-
-
-        // Seed the rest of the tables/views here. 
-
-        /* // Seed users
-        command.CommandText = "SELECT COUNT(*) FROM users";
+        // Seed Continents
+        command.CommandText = "SELECT COUNT(*) FROM Continents";
         if (Convert.ToInt32(command.ExecuteScalar()) == 0)
         {
-            var usersData = @"
-                INSERT INTO users (created, email, firstName, lastName, role, password) VALUES
-                ('2024-04-02', 'thomas@nodehill.com', 'Thomas', 'Frank', 'admin', '$2a$13$IahRVtN2pxc1Ne1NzJUPpOQO5JCtDZvXpSF.IF8uW85S6VoZKCwZq'),
-                ('2024-04-02', 'olle@nodehill.com', 'Olle', 'Olofsson', 'user', '$2a$13$O2Gs3FME3oA1DAzwE0FkOuMAOOAgRyuvNQq937.cl7D.xq0IjgzN.'),
-                ('2024-04-02', 'maria@nodehill.com', 'Maria', 'Mårtensson', 'user', '$2a$13$p4sqCN3V3C1wQXspq4eN0eYwK51ypw7NPL6b6O4lMAOyATJtKqjHS');
+            var ContinentData = @"
+                INSERT INTO Continents (name, bonusConst) VALUES
+                ('Eurtarctica', 3),
+                ('Ameristralia', 2);
             ";
-            command.CommandText = usersData;
+            command.CommandText = ContinentData;
             command.ExecuteNonQuery();
-        } */
+        }
+
+        // Seed Territories
+        command.CommandText = "SELECT COUNT(*) FROM Territories";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var ContinentData = @"
+                INSERT INTO Territories (name, NorthAdjacentId, SouthAdjacentId, WestAdjacentId, EastAdjacentId, Continentid) VALUES
+                ('Halmstad', 2, -1, -1, -1, 1),
+                ('Stockstad', -1, 1, -1, -1, 1);
+            ";
+            command.CommandText = ContinentData;
+            command.ExecuteNonQuery();
+        }
+
+        // Seed the rest of the tables/views here. 
     }
 
     public static void Initialize()
