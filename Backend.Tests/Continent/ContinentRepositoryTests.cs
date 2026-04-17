@@ -1,6 +1,5 @@
 namespace Backend.Tests;
 
-using System.Globalization;
 using Moq;
 using TddGame;
 
