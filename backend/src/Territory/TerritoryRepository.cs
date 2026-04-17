@@ -4,6 +4,7 @@ using MySqlConnector;
 
 public class TerritoryRepository(MySqlDataSource db) : ITerritoryRepository
 {
+    //Get all territories
     public async Task<IEnumerable<TerritoryDto>> GetTerritoriesAsync(CancellationToken ct)
     {
         string sqlQuery = @"SELECT * FROM Territories";
@@ -21,16 +22,46 @@ public class TerritoryRepository(MySqlDataSource db) : ITerritoryRepository
             Territories.Add(
                 new TerritoryDto(
                     Id: reader.GetInt32("id"),
-                    name: reader.GetString("name"),
+                    Name: reader.GetString("name"),
                     NorthAdjacentId: reader.GetInt32("NorthAdjacentId"),
                     SouthAdjacentId: reader.GetInt32("SouthAdjacentId"),
                     WestAdjacentId: reader.GetInt32("WestAdjacentId"),
                     EastAdjacentId: reader.GetInt32("EastAdjacentId"),
-                    continents_id: reader.GetInt32("continents_id")
+                    ContinentId: reader.GetInt32("continentId")
                 )
             );
         }
 
         return Territories;
+    }
+
+    //Insert new Territory
+    public async Task<TerritoryDto> CreateTerritoryAsync(string name, int northAdjacentId, int southAdjacentId, int westAdjacentId, int eastAdjacentId, int continentId, CancellationToken ct)
+    {
+        string sqlQuery = @"INSERT INTO Territories (name, NorthAdjacentId, SouthAdjacentId, WestAdjacentId, EastAdjacentId, Continentid) VALUES (@name, @NorthAdjacentId, @SouthAdjacentId, @WestAdjacentId, @EastAdjacentId, @Continentid)";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@name", name);
+        command.Parameters.AddWithValue("@NorthAdjacentId", northAdjacentId);
+        command.Parameters.AddWithValue("@SouthAdjacentId", southAdjacentId);
+        command.Parameters.AddWithValue("@WestAdjacentId", westAdjacentId);
+        command.Parameters.AddWithValue("@EastAdjacentId", eastAdjacentId);
+        command.Parameters.AddWithValue("@Continentid", continentId);
+
+        await command.ExecuteNonQueryAsync(ct);
+        var territoryId = await SqlUtils.GetAutoIncrementID(connection, ct);
+
+        return new TerritoryDto(
+            Id: territoryId,
+            Name: name,
+            NorthAdjacentId: northAdjacentId,
+            SouthAdjacentId: southAdjacentId,
+            WestAdjacentId: westAdjacentId,
+            EastAdjacentId: eastAdjacentId,
+            ContinentId: continentId
+        );
     }
 }

@@ -2,10 +2,19 @@ namespace TddGame;
 
 public record TerritoryDto(
     int Id,
-    string name,
+    string Name,
     int NorthAdjacentId,
     int SouthAdjacentId,
     int WestAdjacentId,
     int EastAdjacentId,
-    int continents_id
+    int ContinentId
+);
+
+public record CreateTerritoryRequest(
+    string Name,
+    int NorthAdjacentId,
+    int SouthAdjacentId,
+    int WestAdjacentId,
+    int EastAdjacentId,
+    int ContinentId
 );
