@@ -19,12 +19,12 @@ public static class TurnsEndpoints
   public static IEndpointRouteBuilder MapTurnsEndpoints(this IEndpointRouteBuilder app)
   {
     // Create a route group for game-session related turn endpoints.
-    var turnsEndpointsGroup = app.MapGroup("/api/game-session");
+    var turnsEndpointsGroup = app.MapGroup("/api/turn").WithTags("Turns");
 
     turnsEndpointsGroup.MapGet(       // Maps an HTTP GET endpoint.
       "/{gameSessionId}/turn",        // Route for fetching the current turn in a game session.
 
-       // Define the endpoint handler and its possible response types.
+      // Define the endpoint handler and its possible response types.
       async Task<Results<Ok<TurnDto>, NotFound<string>>> (string gameSessionId, ITurnsRepository repo, CancellationToken ct) =>
       {
         // Fetch the current turn for the given game session.
@@ -39,7 +39,7 @@ public static class TurnsEndpoints
         // Otherwise return the current turn as 200 OK.
         return TypedResults.Ok(turn);
       }
-    );
+    ).WithDescription("Fetch current turn for a game session").WithSummary("Get turn for a game session");
 
 
     turnsEndpointsGroup.MapPost(
@@ -75,7 +75,7 @@ public static class TurnsEndpoints
         // Return the created first turn as 200 OK.
         return TypedResults.Ok(createdTurn);
       }
-    );
+    ).WithDescription("Route for creating the very first turn when a game starts").WithSummary("Create first turn at game start");
 
 
     turnsEndpointsGroup.MapPost(
@@ -128,7 +128,7 @@ public static class TurnsEndpoints
 
         return TypedResults.Ok(createdTurn);
       }
-    );
+    ).WithDescription("Route for ending the current turn and creating the next one").WithSummary("End current turn and Create next one");
     // Return the route builder so more endpoint groups can be chained.
     return app;
 
