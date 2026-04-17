@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="MockingDemo.Core.Tests/MockingDemo.Core.Tests.csproj" />
-  <Project Path="MockingDemo.Core/MockingDemo.Core.csproj" />
-</Solution>
