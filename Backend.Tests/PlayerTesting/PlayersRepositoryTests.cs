@@ -81,4 +81,16 @@ public class PlayerRepositoryTests
         Assert.Equal(0, result.NumGold);
         Assert.False(result.IsDead);
     }
+
+    [Fact]
+    public async Task DeletePlayer_ReturnsTrue()
+    {
+        _mockRepo.Setup(repo => repo.DeletePlayerAsync(1, It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(true);
+        
+        var result = await _mockRepo.Object.DeletePlayerAsync(1, CancellationToken.None);
+
+        Assert.True(result);
+    }
+
 }
