@@ -93,4 +93,14 @@ public class PlayerRepositoryTests
         Assert.True(result);
     }
 
+      [Fact]
+    public async Task DeletePlayer_ReturnsFalse()
+    {
+        _mockRepo.Setup(repo => repo.DeletePlayerAsync(99, It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(false);
+        
+        var result = await _mockRepo.Object.DeletePlayerAsync(99, CancellationToken.None);
+
+        Assert.False(result);
+    }
 }
