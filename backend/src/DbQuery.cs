@@ -55,7 +55,7 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS Missions (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 description TEXT NOT NULL,
                 winCondition ENUM('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13') NOT NULL
@@ -75,30 +75,30 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS Continents (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 bonusConst INT NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS Territories (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 NorthAdjacentId INT NOT NULL,
                 SouthAdjacentId INT NOT NULL,
                 EastAdjacentId INT NOT NULL,
                 WestAdjacentId INT NOT NULL,
-                continents_id INT NOT NULL,
-                FOREIGN KEY (continents_id) REFERENCES Continents(id)
+                continentId INT NOT NULL,
+                FOREIGN KEY (continentId) REFERENCES Continents(id)
             );
 
             CREATE TABLE IF NOT EXISTS PlayerTerritories (
                 id INT PRIMARY KEY NOT NULL,
                 troopNum INT NOT NULL DEFAULT 0,
                 hasCity BOOLEAN DEFAULT FALSE,
-                players_id INT NOT NULL,
-                territories_id INT NOT NULL,
-                FOREIGN KEY (players_id) REFERENCES Players(id),
-                FOREIGN KEY (territories_id) REFERENCES Territories(id)
+                playerId INT NOT NULL,
+                territoryId INT NOT NULL,
+                FOREIGN KEY (playerId) REFERENCES Players(id),
+                FOREIGN KEY (territoryId) REFERENCES Territories(id)
             );
 
             CREATE TABLE IF NOT EXISTS Turns (
@@ -208,6 +208,33 @@ public static class DbQuery
             command.CommandText = PlayerData;
             command.ExecuteNonQuery();
         }
+        // Seed Continents
+        command.CommandText = "SELECT COUNT(*) FROM Continents";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var ContinentData = @"
+                INSERT INTO Continents (name, bonusConst) VALUES
+                ('Eurtarctica', 3),
+                ('Ameristralia', 2);
+            ";
+            command.CommandText = ContinentData;
+            command.ExecuteNonQuery();
+        }
+
+        // Seed Territories
+        command.CommandText = "SELECT COUNT(*) FROM Territories";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var ContinentData = @"
+                INSERT INTO Territories (name, NorthAdjacentId, SouthAdjacentId, WestAdjacentId, EastAdjacentId, Continentid) VALUES
+                ('Halmstad', 2, -1, -1, -1, 1),
+                ('Stockstad', -1, 1, -1, -1, 1);
+            ";
+            command.CommandText = ContinentData;
+            command.ExecuteNonQuery();
+        }
+
+        // Seed the rest of the tables/views here. 
     }
 
     public static void Initialize()

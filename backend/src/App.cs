@@ -13,6 +13,8 @@ builder.Services.AddSingleton(new MySqlDataSource(connStr));
 
 builder.Services.AddScoped<IGameSessionsRepository, GameSessionRepository>();
 builder.Services.AddScoped<ITurnsRepository, TurnsRepository>();
+builder.Services.AddScoped<IContinentRepository, ContinentRepository>();
+builder.Services.AddScoped<ITerritoryRepository, TerritoryRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -38,6 +40,8 @@ app.UseSwaggerUI(options =>
 });
 app.MapGameSessionEndpoints();
 app.MapTurnsEndpoints();
+app.MapContinentEndpoints();
+app.MapTerritoryEndpoints();
 
 try
 {
