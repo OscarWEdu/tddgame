@@ -2,7 +2,7 @@ name: Discord PR Notification
 
 on:
     pull_request:
-        types: [opened, reopened, closed, review_requested]
+        types: [opened, reopened, closed]
 jobs:
     notify:
         runs-on: ubuntu-latest
