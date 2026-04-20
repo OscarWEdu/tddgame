@@ -21,37 +21,47 @@ public static class TurnsEndpoints
     // Create a route group for game-session related turn endpoints.
     var turnsEndpointsGroup = app.MapGroup("/api/turn").WithTags("Turns");
 
-    turnsEndpointsGroup.MapGet(       // Maps an HTTP GET endpoint.
-      "/{gameSessionId}/turn",        // Route for fetching the current turn in a game session.
+    turnsEndpointsGroup.MapGet(       // Register the endpoint for reading the current active turn
+      "/{gameSessionId:guid}/turn",        // Route for getting the current active turn by game session id.
 
       // Define the endpoint handler and its possible response types.
-      async Task<Results<Ok<TurnDto>, NotFound<string>>> (string gameSessionId, ITurnsRepository repo, CancellationToken ct) =>
+      async Task<Results<Ok<TurnDto>, NotFound<string>>> (Guid gameSessionId, ITurnsRepository repo, CancellationToken ct) =>
       {
-        // Fetch the current turn for the given game session.
+        // Get the active turn for the given game session from the repository.
         var turn = await repo.GetCurrentTurnByGameSessionIdAsync(gameSessionId, ct);
 
+        // Check if no active turn exist
         if (turn is null)
         {
-          // Returns 404 if no turn exists.
-          return TypedResults.NotFound("No turn found for this game session.");
+          // Returns 404 if no active turn exists.
+          return TypedResults.NotFound("No active turn found for this game session.");
         }
 
-        // Otherwise return the current turn as 200 OK.
+        // Otherwise return 200 with the active turn.
         return TypedResults.Ok(turn);
       }
     ).WithDescription("Fetch current turn for a game session").WithSummary("Get turn for a game session");
 
+    // Register the endpoint for reading all turns in one game session.
+    turnsEndpointsGroup.MapGet(
+      "/{gameSessionId:guid}/turns", // Route for getting all turns by game session id.
+      async Task<Ok<IEnumerable<TurnDto>>> (Guid gameSessionId, ITurnsRepository repo, CancellationToken ct) =>
+      {
+        var turns = await repo.GetTurnsByGameSessionIdAsync(gameSessionId, ct); // Gets all turns for the game session.
+        return TypedResults.Ok(turns);
+        }
+      ).WithDescription("This route is for getting all turns in a game session.").WithSummary("Get all turns");
 
     turnsEndpointsGroup.MapPost(
-      "/{gameSessionId}/turn/start",      // Route for creating the very first turn when a game starts.
-      async Task<Results<Ok<TurnDto>, BadRequest<string>>> (string gameSessionId, ITurnsRepository repo, CancellationToken ct) =>
+      "/{gameSessionId}/turn/start",      // Route for creating/starting the very first turn when a game starts.
+      async Task<Results<Ok<TurnDto>, BadRequest<string>>> (Guid gameSessionId, ITurnsRepository repo, CancellationToken ct) =>
       {
-        // Check whether a turn already exists.
+        // Check whether an active turn already exists.
         var existingTurn = await repo.GetCurrentTurnByGameSessionIdAsync(gameSessionId, ct);
 
         if (existingTurn is not null)
         {
-          return TypedResults.BadRequest("A turn already exists for this game session.");
+          return TypedResults.BadRequest("An active turn already exists for this game session.");
         }
 
         // Get the first player in turn order.
@@ -67,20 +77,47 @@ public static class TurnsEndpoints
             new CreateTurnDto(
                 Round: 1,
                 Phase: "build",
-                GameSessionId: gameSessionId,
+                Status: "active", // First turn starts as active.
+                GameSessionId: gameSessionId.ToString(),
                 PlayerId: firstPlayerId.Value
             ),
             ct
         );
-        // Return the created first turn as 200 OK.
+        // Return the created turn .
         return TypedResults.Ok(createdTurn);
       }
     ).WithDescription("Route for creating the very first turn when a game starts").WithSummary("Create first turn at game start");
 
+    // Register the endpoint for changing the phase of the active turn.
+    turnsEndpointsGroup.MapPatch(
+      "/{gameSessionId:guid}/turn/phase",
+      async Task<Results<Ok<string>, BadRequest<string>>> (Guid gameSessionId, ChangeTurnPhaseRequest request, ITurnsRepository repo, CancellationToken ct) =>
+      {
+        // Define the valid phases allowed
+        var allowedPhases = new[] { "build", "assigned", "attack", "reinforce" };
 
+        if (!allowedPhases.Contains(request.Phase)) // Check whether the requested phase is valid.
+        {
+          return TypedResults.BadRequest("Invalid phase value.");
+        }
+
+        // Update the phase of the active turn.
+        var updated = await repo.ChangeCurrentTurnPhaseAsync(gameSessionId, request.Phase, ct);
+
+        // Check whether no turn was updated.
+        if (!updated)
+        {
+          return TypedResults.BadRequest("Could not change phase because no active turn was found.");
+        }
+
+        return TypedResults.Ok($"Turn phase changed to {request.Phase}.");
+      }
+    ).WithDescription("Route for changing active turn phase").WithSummary("Update active turn phase");
+    
+    // Route for ending the current active turn and creating the next one.
     turnsEndpointsGroup.MapPost(
-      "/{gameSessionId}/turn/end",    // Route for ending the current turn and creating the next one.
-      async Task<Results<Ok<TurnDto>, BadRequest<string>, NotFound<string>>> (string gameSessionId, ITurnsRepository repo, CancellationToken ct) =>
+      "/{gameSessionId}/turn/end",   // Route for ending the current turn
+      async Task<Results<Ok<TurnDto>, BadRequest<string>, NotFound<string>>> (Guid gameSessionId, ITurnsRepository repo, CancellationToken ct) =>
       {
         var currentTurn = await repo.GetCurrentTurnByGameSessionIdAsync(gameSessionId, ct);   // Get the current turn.
 
@@ -107,20 +144,30 @@ public static class TurnsEndpoints
           return TypedResults.BadRequest("No players found in this game session.");
         }
 
-        var nextRound = currentRound;   // Next round becomes the current round, where no round already exists
+        var nextRound = currentRound;   // start next round value as current round
 
-        // Check if the turn order wrapped back to the first player.
+        // if the turn wraps back to the first player...
         if (nextPlayerId.Value == firstPlayerId.Value)
         {
-          nextRound += 1;     // Increase round number when a full cycle is completed.
+          nextRound += 1;     // Increase round number.
         }
 
-        // Create the next turn.
+        // Mark the previous turn as inactive.
+        var oldTurnUpdated = await repo.SetTurnStatusAsync(currentTurn.Id, "inactive", ct);
+
+        // If the previous turn status could not be updated...
+        if (!oldTurnUpdated)
+        {
+          return TypedResults.BadRequest("Could not deactivate the current turn.");
+        }
+
+        // Create the next active turn.
         var createdTurn = await repo.CreateTurnAsync(
             new CreateTurnDto(
                 Round: nextRound,                         // Use the calculated next round.
                 Phase: "build",                           // Reset the next turn to build phase.
-                GameSessionId: gameSessionId,             // Use the provided game session id.
+                Status: "active",                         // New turn starts as active
+                GameSessionId: gameSessionId.ToString(),             // Use the provided game session id.
                 PlayerId: nextPlayerId.Value              // Use the resolved next player's id.
             ),
             ct
@@ -128,7 +175,7 @@ public static class TurnsEndpoints
 
         return TypedResults.Ok(createdTurn);
       }
-    ).WithDescription("Route for ending the current turn and creating the next one").WithSummary("End current turn and Create next one");
+    ).WithDescription("Route for ending the current active turn and creating the next one").WithSummary("End current active turn and Create next one");
     // Return the route builder so more endpoint groups can be chained.
     return app;
 
