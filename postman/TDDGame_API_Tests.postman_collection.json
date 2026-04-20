@@ -1,0 +1,243 @@
+{
+  "info": {
+    "_postman_id": "44af920f-3e64-443f-a8e1-bb3cebb497fc",
+    "name": "TDDGame_API_Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28581175"
+  },
+  "item": [
+    {
+      "name": "Game sessions",
+      "item": [
+        {
+          "name": "Get game sessions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {",
+                  "    pm.response.to.have.status(200)",
+                  "})",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/game-session",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "game-session"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create game session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => {",
+                  "    pm.response.to.have.status(201)",
+                  "})",
+                  "",
+                  "const response = pm.response.json()",
+                  "pm.collectionVariables.set(\"gameSessionId\", response.id)"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\" : \"New Game\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/game-session",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "game-session"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get game session by id",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {",
+                  "    pm.response.to.have.status(200)",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/game-session/{{gameSessionId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "game-session",
+                "{{gameSessionId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change game session status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {",
+                  "    pm.response.to.have.status(200)",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\": \"started\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/game-session/{{gameSessionId}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "game-session",
+                "{{gameSessionId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete game session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 204\", () => {",
+                  "    pm.response.to.have.status(204)",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/game-session/{{gameSessionId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "game-session",
+                "{{gameSessionId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "gameSessionId",
+      "value": "\"\""
+    }
+  ]
+}
