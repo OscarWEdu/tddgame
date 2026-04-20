@@ -8,6 +8,7 @@ public static class TerritoryEndpoints
     {
         var territoryEndpointsGroup = app.MapGroup("/api/territories").WithTags("Territories");
 
+        //Get all Territories
         territoryEndpointsGroup.MapGet(
             "/",
             async Task<Ok<IEnumerable<TerritoryDto>>> (ITerritoryRepository repo, CancellationToken ct)
@@ -18,7 +19,7 @@ public static class TerritoryEndpoints
             }
         ).WithSummary("Get all territories").WithDescription("Return all territories.");
 
-        //Get Continent by id
+        //Get Territory by id
         territoryEndpointsGroup.MapGet(
             "/{id}",
             async Task<Results<Ok<TerritoryDto>, NotFound>> (ITerritoryRepository repo, int id, CancellationToken ct) =>
@@ -33,6 +34,7 @@ public static class TerritoryEndpoints
 
         ).WithSummary("Get territory by id").WithDescription("Return territory by id, or not found.");
 
+        //Add new territory
         territoryEndpointsGroup.MapPost(
             "/",
             async Task<Created<TerritoryDto>> (ITerritoryRepository repo, CreateTerritoryRequest request, CancellationToken ct) =>
@@ -41,7 +43,7 @@ public static class TerritoryEndpoints
 
                 return TypedResults.Created($"/api/territories/{territory.Id}", territory);
             }
-        ).WithSummary("Create new territory").WithDescription("Returns new game session data.");
+        ).WithSummary("Create new territory").WithDescription("Returns new territory.");
 
         return app;
     }
