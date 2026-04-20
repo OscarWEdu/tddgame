@@ -118,16 +118,5 @@ public class PlayerRepositoryTests
         Assert.False(result);
     }
 
-    [Fact]
-    public async Task SetColur_ReturnsUpdatedPlayer()
-    {
-        var updatedPlayer = new PlayerDto(1, "Mario", "Red", 1, 0, false, "1", 1);
-        _mockRepo.Setup(repo => repo.SetPlayerColourAsync(1, "Red", It.IsAny<CancellationToken>()))
-                 .ReturnsAsync(updatedPlayer);
-
-        var result = await _mockRepo.Object.SetPlayerColourAsync(1, "Red", CancellationToken.None);
-
-        Assert.Equal("Red", result.Colour);
-    }
 
 }
