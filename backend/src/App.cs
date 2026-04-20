@@ -56,6 +56,7 @@ catch (Exception ex)
 
 await app.RunStartupUtils();
 
+Console.WriteLine("Server started");
 app.Run();
 
 
