@@ -56,10 +56,10 @@ jobs:
       - name: Run dotnet server and API tests
         run: |
           npm run dev:be &
-          npx wait-on http://localhost:5001
+          npx wait-on@9.0.5 --yes http://localhost:5001
           echo "Server started"
-          npm run test:api
-
+      - name: Run API tests
+        run: npm run test:api
 
 
   # playwright-tests:
