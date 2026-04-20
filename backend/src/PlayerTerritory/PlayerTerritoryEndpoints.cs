@@ -77,6 +77,36 @@ public static class PlayerTerritoryEndpoints
             }
         ).WithSummary("Create new playerTerritory").WithDescription("Returns newly created playerTerritory.");
 
+        playerTerritoryEndpointsGroup.MapDelete(
+            "/{id}",
+            async Task<Results<NoContent, NotFound>> (IPlayerTerritoryRepository repo, int id, CancellationToken ct) =>
+            {
+                var isDeleted = await repo.DeletePlayerTerritoryAsync(id, ct);
+
+                return isDeleted ? TypedResults.NoContent() : TypedResults.NotFound();
+            }
+        ).WithSummary("Delete playerTerritory by id").WithDescription("Removes playerTerritory from the table");
+
+        playerTerritoryEndpointsGroup.MapPatch(
+            "/{id}/troops/{troopNum}",
+            async Task<Results<Ok, NotFound<string>>> (IPlayerTerritoryRepository repo, int id, int troopNum, CancellationToken ct) =>
+            {
+                var isUpdated = await repo.UpdatePlayerTerritoryTroopsAsync(id, troopNum, ct);
+
+                return isUpdated ? TypedResults.Ok() : TypedResults.NotFound("PlayerTerritory does not exists");
+            }
+        ).WithSummary("Update playerTerritory troops").WithDescription("Change the playerTerritory troop count");
+
+        playerTerritoryEndpointsGroup.MapPatch(
+            "/{id}/city/{hasCity}",
+            async Task<Results<Ok, NotFound<string>>> (IPlayerTerritoryRepository repo, int id, bool hasCity, CancellationToken ct) =>
+            {
+                var isUpdated = await repo.UpdatePlayerTerritoryCityAsync(id, hasCity, ct);
+
+                return isUpdated ? TypedResults.Ok() : TypedResults.NotFound("PlayerTerritory does not exists");
+            }
+        ).WithSummary("Update playerTerritory hasCity").WithDescription("Change the playerTerritory hasCity bool");
+
         return app;
     }
 }

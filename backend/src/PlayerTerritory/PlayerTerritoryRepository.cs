@@ -111,4 +111,61 @@ public class PlayerTerritoryRepository(MySqlDataSource db) : IPlayerTerritoryRep
             TerritoryId: territoryId
         );
     }
+
+    //Delete PlayerTerritory by id
+    public async Task<bool> DeletePlayerTerritoryAsync(int id, CancellationToken ct)
+    {
+        var sqlQuery = @"DELETE FROM PlayerTerritories WHERE id = @id";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@id", id);
+
+        var rowsAffected = await command.ExecuteNonQueryAsync(ct);
+
+        if (rowsAffected == 0) { return false; }
+        return true;
+    }
+
+    //Change troop count
+    public async Task<bool> UpdatePlayerTerritoryTroopsAsync(int id, int troopNum, CancellationToken ct)
+    {
+        var sqlQuery = @"UPDATE PlayerTerritories SET troopNum = @troopNum WHERE id = @id";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@id", id);
+        command.Parameters.AddWithValue("@troopNum", troopNum);
+
+        var rowsAffected = await command.ExecuteNonQueryAsync(ct);
+
+        if (rowsAffected == 0)
+            return false;
+
+        return true;  
+    }
+
+    //Change hasCity bool
+    public async Task<bool> UpdatePlayerTerritoryCityAsync(int id, bool hasCity, CancellationToken ct)
+    {
+        var sqlQuery = @"UPDATE PlayerTerritories SET hasCity = @hasCity WHERE id = @id";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@id", id);
+        command.Parameters.AddWithValue("@hasCity", hasCity);
+
+        var rowsAffected = await command.ExecuteNonQueryAsync(ct);
+
+        if (rowsAffected == 0)
+            return false;
+
+        return true;  
+    }
 }
