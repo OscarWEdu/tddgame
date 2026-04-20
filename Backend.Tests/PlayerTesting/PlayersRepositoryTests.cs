@@ -83,6 +83,20 @@ public class PlayerRepositoryTests
     }
 
     [Fact]
+    public async Task UpdatePlayer_ReturnsUpdatedPlayer()
+    {
+        var newState = new PlayerStateDto(10, true);
+        var updatedPlayer = new PlayerDto(1, "Mario", "Red", 1, 10, true, "1", 1);
+        _mockRepo.Setup(repo => repo.UpdatePlayerAsync(1, newState, It.IsAny<CancellationToken>()))
+                 .ReturnsAsync(updatedPlayer);
+
+        var result = await _mockRepo.Object.UpdatePlayerAsync(1, newState, CancellationToken.None);
+
+        Assert.Equal(10, result.NumGold);
+        Assert.True(result.IsDead);
+    }
+
+    [Fact]
     public async Task DeletePlayer_ReturnsTrue()
     {
         _mockRepo.Setup(repo => repo.DeletePlayerAsync(1, It.IsAny<CancellationToken>()))
