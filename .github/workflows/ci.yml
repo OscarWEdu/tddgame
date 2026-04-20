@@ -37,7 +37,7 @@ jobs:
       
       - name: Run dotnet server
         run: |
-          npm run:be &
+          npm run dev:be &
           npx wait-on http://localhost:5001
           echo "Server started"
 
