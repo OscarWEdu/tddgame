@@ -13,11 +13,11 @@ public static class PlayersEndPoints
 {
     public static IEndpointRouteBuilder MapPlayersEndpoints(this IEndpointRouteBuilder app)
     {
-        var gameSessionPlayersGroup = app.MapGroup("/api/game-session/{gameSessionId}/players").WithTags("Players");
+
         var playerGroup = app.MapGroup("/api/players").WithTags("Players");
 
-        //GET /api/game-session/{gameSession_id}/players
-        gameSessionPlayersGroup.MapGet(
+        //GET /api/players?gameSessionId={gameSessionId}
+        playerGroup.MapGet(
            "/",
            async Task<Ok<IEnumerable<PlayerDto>>> (string gameSessionId, IPlayersRepository repo, CancellationToken ct)
               =>
@@ -27,8 +27,8 @@ public static class PlayersEndPoints
            }
         ).WithSummary("Get players in a game session").WithDescription("Return all players in a specific game session.");
 
-        //POST /api/game-session/{gameSession_id}/players
-        gameSessionPlayersGroup.MapPost(
+        //POST /api/players?gameSessionId={gameSessionId}
+        playerGroup.MapPost(
             "/",
             async Task<Created<PlayerDto>> (string gameSessionId, CreatePlayerDto player, IPlayersRepository repo, CancellationToken ct)
             =>
@@ -49,7 +49,7 @@ public static class PlayersEndPoints
             }
             ).WithSummary("Get player by id").WithDescription("Return a specific player by their id.");
 
-
+        //PATCH /api/players/{id}
         playerGroup.MapPatch(
         "/{id:int}",
         async Task<Results<Ok<PlayerDto>, NotFound>> (int id, PlayerStateDto state, IPlayersRepository repo, CancellationToken ct)
