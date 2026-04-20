@@ -53,14 +53,13 @@ jobs:
           }
           EOF
 
-      - name: Run dotnet server
+      - name: Run dotnet server and API tests
         run: |
           npm run dev:be &
           npx wait-on http://localhost:5001
           echo "Server started"
+          npm run test:api
 
-      - name: Run api tests
-        run: npm run test:api
 
 
   # playwright-tests:
