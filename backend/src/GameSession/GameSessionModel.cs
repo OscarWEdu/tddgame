@@ -1,10 +1,17 @@
 namespace TddGame;
 
+public enum GameSessionStatus
+{
+    lobby,
+    started,
+    completed
+}
+
 public record GameSessionDto(
     string Id,
     string Name,
-    string Status
+    GameSessionStatus Status
 );
 
 public record CreateGameSessionRequest(string Name);
-public record UpdateGameSessionStatusRequest(string Status);
+public record UpdateGameSessionStatusRequest(GameSessionStatus Status);

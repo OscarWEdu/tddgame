@@ -22,12 +22,14 @@ public static class GameSessionsEndpoint
 
         gameSessionEndpointsGroup.MapGet(
             "/{id}",
-            async Task<Results<Ok<GameSessionDto>, NotFound>> (IGameSessionsRepository repo, Guid id, CancellationToken ct)
+            async Task<Results<Ok<GameSessionDto>, NotFound<string>, BadRequest<string>>> (IGameSessionsRepository repo, Guid id, CancellationToken ct)
             =>
             {
+                if (!Guid.TryParse(id.ToString(), out var guid))
+                    return TypedResults.BadRequest($"Invalid id format {guid}. Game session id should be UUID");
                 var gameSession = await repo.GetGameSessionByIdAsync(id, ct);
                 if (gameSession is null)
-                    return TypedResults.NotFound();
+                    return TypedResults.NotFound("Game session cna't be found with this id.");
 
                 return TypedResults.Ok(gameSession);
             }
@@ -35,9 +37,15 @@ public static class GameSessionsEndpoint
 
         gameSessionEndpointsGroup.MapPost(
             "/",
-            async Task<Created<GameSessionDto>> (IGameSessionsRepository repo, CreateGameSessionRequest request, CancellationToken ct)
+            async Task<Results<Created<GameSessionDto>, BadRequest<string>>> (IGameSessionsRepository repo, CreateGameSessionRequest request, CancellationToken ct)
             =>
             {
+                if (request.Name == null || request.Name.Trim() == "")
+                    return TypedResults.BadRequest("Name can not be empty or null");
+
+                if (request.Name.Trim().Length > 100)
+                    return TypedResults.BadRequest("Name can not be longer than 100 symbols");
+
                 var gameSession = await repo.CreateGameSessionAsync(request.Name, ct);
 
                 return TypedResults.Created($"/api/game-session/{gameSession.Id}", gameSession);
@@ -46,12 +54,20 @@ public static class GameSessionsEndpoint
 
         gameSessionEndpointsGroup.MapPatch(
             "/{id}/status",
-            async Task<Results<Ok, NotFound>> (IGameSessionsRepository repo, Guid id, UpdateGameSessionStatusRequest request, CancellationToken ct)
+            async Task<Results<Ok, NotFound<string>, BadRequest<string>>> (IGameSessionsRepository repo, Guid id, UpdateGameSessionStatusRequest request, CancellationToken ct)
             =>
             {
-                var isUpdated = await repo.UpdateGameSessionStatusAsync(id, request.Status, ct);
+                if (request.Status.ToString().Trim() == "")
+                    return TypedResults.BadRequest("Status must not be empty");
 
-                return isUpdated ? TypedResults.Ok() : TypedResults.NotFound();
+                if (!Enum.IsDefined(typeof(GameSessionStatus), request.Status))
+                    return TypedResults.BadRequest("Status must be one of allowed values: lobby, started, finished");
+
+
+
+                var isUpdated = await repo.UpdateGameSessionStatusAsync(id, request.Status.ToString(), ct);
+
+                return isUpdated ? TypedResults.Ok() : TypedResults.NotFound("Game session does not exists");
             }
         ).WithSummary("Update game session status").WithDescription("Changing the game session status");
 
