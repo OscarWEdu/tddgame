@@ -21,6 +21,28 @@ jobs:
 
       - name: Run unit tests
         run: dotnet test Backend.Tests/Backend.Tests.csproj --no-build --verbosity normal
+      
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache-dependency-path: package-lock.json
+          cache: "npm"
+
+      - name: Restore npm dependencies
+        run: npm ci
+
+      - name: Build frontend with Vite
+        run: npm run build
+      
+      - name: Run dotnet server
+        run: |
+          npm run backend &
+          npx wait-on http://localhost:5001
+          echo "Server started"
+
+      - name: Run api tests
+        run: npm run test:api
 
 
   # playwright-tests:
