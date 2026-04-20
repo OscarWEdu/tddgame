@@ -105,6 +105,7 @@ public static class DbQuery
                 id INT PRIMARY KEY NOT NULL,
                 round INT NOT NULL DEFAULT 0,
                 phase ENUM('build', 'assigned', 'attack', 'reinforce') NOT NULL DEFAULT 'build',
+                status ENUM('active', 'inactive') NOT NULL DEFAULT 'active'
                 createAt DATE DEFAULT (CURDATE()) NOT NULL,
                 gameSessions_id VARCHAR(255) NOT NULL,
                 players_id INT NOT NULL,
