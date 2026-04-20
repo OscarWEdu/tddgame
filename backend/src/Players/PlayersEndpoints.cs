@@ -49,6 +49,19 @@ public static class PlayersEndPoints
             }
             ).WithSummary("Get player by id").WithDescription("Return a specific player by their id.");
 
+
+        playerGroup.MapPatch(
+        "/{id:int}",
+        async Task<Results<Ok<PlayerDto>, NotFound>> (int id, PlayerStateDto state, IPlayersRepository repo, CancellationToken ct)
+        =>
+        {
+            var updatedPlayer = await repo.UpdatePlayerAsync(id, state, ct);
+
+            return updatedPlayer is not null ? TypedResults.Ok(updatedPlayer) : TypedResults.NotFound();
+        }
+
+        ).WithSummary("Update player state").WithDescription("Update a players numGold and isDead by their id");
+
         //DELETE /api/players/{id}  
         playerGroup.MapDelete(
             "/{id:int}",
