@@ -82,6 +82,7 @@ public class PlayerTerritoryRepositoryTests
         Assert.Equal(1, results.TerritoryId);
     }
 
+    //Check that true is returned when an entry exists and can be deleted, and false if not
     [Theory]
     [InlineData(0, false)]
     [InlineData(1, true)]
@@ -90,6 +91,37 @@ public class PlayerTerritoryRepositoryTests
         _mockRepo.Setup(repo => repo.DeletePlayerTerritoryAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         var result = await _mockRepo.Object.DeletePlayerTerritoryAsync(testId, CancellationToken.None);
+
+        if (isValidRequest) { Assert.True(result); }
+        else { Assert.False(result); }
+    }
+
+    //Check that true is returned when an entry exists and can be deleted, and false if not
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(1, true)]
+    public async Task UpdatePlayerTerritoryTroopsAsync_ReturnsCorrectResponse(int testId, bool isValidRequest)
+    {
+        _mockRepo.Setup(repo => repo.UpdatePlayerTerritoryTroopsAsync(1, 5, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+        var result = await _mockRepo.Object.UpdatePlayerTerritoryTroopsAsync(testId, 5, CancellationToken.None);
+
+        if (isValidRequest)
+        {
+            Assert.True(result);
+        }
+        else { Assert.False(result); }
+    }
+
+    //Check that true is returned when an entry exists and can be deleted, and false if not
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(1, true)]
+    public async Task UpdatePlayerTerritoryCityAsync_ReturnsCorrectResponse(int testId, bool isValidRequest)
+    {
+        _mockRepo.Setup(repo => repo.UpdatePlayerTerritoryCityAsync(1, true, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+        var result = await _mockRepo.Object.UpdatePlayerTerritoryCityAsync(testId, true, CancellationToken.None);
 
         if (isValidRequest)
         {
