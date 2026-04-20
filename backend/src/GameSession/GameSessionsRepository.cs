@@ -21,7 +21,7 @@ public class GameSessionRepository(MySqlDataSource db) : IGameSessionsRepository
                 new GameSessionDto(
                     Id: reader.GetString("id"),
                     Name: reader.GetString("name"),
-                    Status: reader.GetString("status")
+                    Status: Enum.Parse<GameSessionStatus>(reader.GetString("status"))
                 )
             );
         }
@@ -46,7 +46,7 @@ public class GameSessionRepository(MySqlDataSource db) : IGameSessionsRepository
         return new GameSessionDto(
             Id: reader.GetString("id"),
             Name: reader.GetString("name"),
-            Status: reader.GetString("status")
+            Status: Enum.Parse<GameSessionStatus>(reader.GetString("status"))
         );
     }
 
@@ -68,7 +68,7 @@ public class GameSessionRepository(MySqlDataSource db) : IGameSessionsRepository
         return new GameSessionDto(
             Id: sessionId.ToString(),
             Name: name,
-            Status: "lobby"
+            Status: GameSessionStatus.lobby
         );
     }
 
