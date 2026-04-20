@@ -61,7 +61,7 @@ public static class GameSessionsEndpoint
                     return TypedResults.BadRequest("Status must not be empty");
 
                 if (!Enum.IsDefined(typeof(GameSessionStatus), request.Status))
-                    return TypedResults.BadRequest("Status must be one of allowed values: lobby, started, finished");
+                    return TypedResults.BadRequest("Status must be one of allowed values: lobby, started, completed");
 
 
 
