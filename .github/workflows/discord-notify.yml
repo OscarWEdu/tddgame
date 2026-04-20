@@ -7,7 +7,8 @@ jobs:
     notify:
         runs-on: ubuntu-latest
         steps:
-            - name: Send Discord Notification
+            - name: Notify PR Opened
+              if: github.event.action == 'opened' || github.event.action == 'reopened'
               uses: Ilshidur/action-discord@master
               env:
                 DISCORD_WEBHOOK: ${{secrets.DISCORD_WEBHOOK}}
@@ -16,5 +17,15 @@ jobs:
                     📬 **New PR: ${{ github.event.pull_request.title }}**
                     👤 By: ${{ github.event.pull_request.user.login }}
                     🔗 ${{ github.event.pull_request.html_url }}
+            - name: Notify PR Merged
+              if: github.event.action == 'closed' || github.event.pull_request.merged == true
+              uses: Ilshidur/action-discord@master
+              env:
+                DISCORD_WEBHOOK: ${{secrets.DISCORD_WEBHOOK}}
+              with:
+                args: |
+                  ✅ **PR Merged: ${{ github.event.pull_request.title }}**
+                  👤 By: ${{ github.event.pull_request.user.login }}
+                  🔗 ${{ github.event.pull_request.html_url }}
 
 
