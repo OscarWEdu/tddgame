@@ -7,3 +7,8 @@ public record PlayerTerritoryDto(
     int PlayerId,
     int TerritoryId
 );
+
+public record CreatePlayerTerritoryRequest(
+    int PlayerId,
+    int TerritoryId
+);

@@ -87,4 +87,28 @@ public class PlayerTerritoryRepository(MySqlDataSource db) : IPlayerTerritoryRep
             TerritoryId: reader.GetInt32("territoryId")
         );
     }
+
+    //Insert new playerTerritory
+    public async Task<PlayerTerritoryDto> CreatePlayerTerritoryAsync(int playerId, int territoryId, CancellationToken ct)
+    {
+        string sqlQuery = @"INSERT INTO PlayerTerritories (playerId, territoryId) VALUES (@playerId, @territoryId)";
+
+        await using var connection = await db.OpenConnectionAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = sqlQuery;
+        command.Parameters.AddWithValue("@playerId", playerId);
+        command.Parameters.AddWithValue("@territoryId", territoryId);
+
+        await command.ExecuteNonQueryAsync(ct);
+        var playerTerritoryId = await SqlUtils.GetAutoIncrementID(connection, ct);
+
+        return new PlayerTerritoryDto(
+            Id: playerTerritoryId,
+            TroopNum: 0,
+            HasCity: false,
+            PlayerId: playerId,
+            TerritoryId: territoryId
+        );
+    }
 }

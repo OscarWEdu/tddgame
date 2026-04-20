@@ -66,6 +66,17 @@ public static class PlayerTerritoryEndpoints
 
         ).WithSummary("Get playerterritory by territoryid and gameSessionId").WithDescription("Return playerterritory by territoryId by a gameSessionId, or not found.");
 
+        //Add new playerTerritory
+        playerTerritoryEndpointsGroup.MapPost(
+            "/",
+            async Task<Created<PlayerTerritoryDto>> (IPlayerTerritoryRepository repo, CreatePlayerTerritoryRequest request, CancellationToken ct) =>
+            {
+                var playerTerritory = await repo.CreatePlayerTerritoryAsync(request.PlayerId, request.TerritoryId, ct);
+
+                return TypedResults.Created($"/api/playerterritories/{playerTerritory.Id}", playerTerritory);
+            }
+        ).WithSummary("Create new playerTerritory").WithDescription("Returns newly created playerTerritory.");
+
         return app;
     }
 }
