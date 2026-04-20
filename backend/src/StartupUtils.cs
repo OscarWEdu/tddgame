@@ -7,8 +7,11 @@ public static class StartupUtils
     public static async Task RunStartupUtils(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-
         var repo = scope.ServiceProvider.GetRequiredService<ITerritoryRepository>();
-        await TerritoryGeneration.AddTerritories(1, 1, repo, CancellationToken.None);
+        //Checks of territories are already added before creating
+        var territory0 = await repo.GetTerritoryByIdAsync(1, CancellationToken.None);
+        if (territory0==null) {
+            await TerritoryGeneration.AddTerritories(7, 7, repo, CancellationToken.None);
+        }
     }
 }

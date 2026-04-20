@@ -221,19 +221,6 @@ public static class DbQuery
             command.ExecuteNonQuery();
         }
 
-        // Seed Territories
-        command.CommandText = "SELECT COUNT(*) FROM Territories";
-        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-        {
-            var ContinentData = @"
-                INSERT INTO Territories (name, NorthAdjacentId, SouthAdjacentId, WestAdjacentId, EastAdjacentId, Continentid) VALUES
-                ('Halmstad', 2, -1, -1, -1, 1),
-                ('Stockstad', -1, 1, -1, -1, 1);
-            ";
-            command.CommandText = ContinentData;
-            command.ExecuteNonQuery();
-        }
-
         // Seed the rest of the tables/views here. 
     }
 
