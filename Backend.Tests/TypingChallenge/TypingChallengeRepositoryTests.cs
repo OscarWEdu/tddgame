@@ -13,6 +13,7 @@ public class TypingChallengesRepositoryTests
     }
 
     [Fact]
+    // Verify that a typing challenge is correctly returned when it exists
     public async Task GetTypingChallengeByIdAsync_ReturnTypingChallenge_WhenFound()
     {
         var dto = new TypingChallengeDto(
@@ -36,6 +37,7 @@ public class TypingChallengesRepositoryTests
     }
 
     [Fact]
+    // Verify that null is returned when the typing challenge does not exist
     public async Task GetTypingChallengeByIdAsync_ReturnNull_WhenNotFound()
     {
         _mockRepo
@@ -48,6 +50,7 @@ public class TypingChallengesRepositoryTests
     }
 
     [Fact]
+    // Verify that the typing challenge linked to a specific battle is returned when it exists
     public async Task GetTypingChallengeByBattleIdAsync_ReturnTypingChallenge_WhenFound()
     {
         var dto = new TypingChallengeDto(
@@ -71,6 +74,7 @@ public class TypingChallengesRepositoryTests
     }
 
     [Fact]
+    // Verify that null is returned when no typing challenge exists for the given battle
     public async Task GetTypingChallengeByBattleIdAsync_ReturnNull_WhenNotFound()
     {
         _mockRepo
@@ -83,6 +87,7 @@ public class TypingChallengesRepositoryTests
     }
 
     [Fact]
+    // Verify that a new typing challenge is successfully created and returned with correct data
     public async Task CreateTypingChallengeAsync_ReturnCreatedTypingChallenge()
     {
         var createDto = new CreateTypingChallengeDto(
