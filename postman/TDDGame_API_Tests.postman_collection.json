@@ -736,31 +736,31 @@
   "variable": [
     {
       "key": "gameSessionId",
-      "value": "\"\""
+      "value": "550e8400-e29b-41d4-a716-446655440000"
     },
     {
       "key": "playerTerritoryId",
-      "value": ""
+      "value": 1
     },
     {
       "key": "playerId",
-      "value": ""
+      "value": 1
     },
     {
       "key": "troopNum",
-      "value": ""
+      "value": 5
     },
     {
       "key": "hasCity",
-      "value": ""
+      "value": true
     },
     {
       "key": "continentId",
-      "value": ""
+      "value": 1
     },
     {
       "key": "territoryId",
-      "value": ""
+      "value": 1
     }
   ]
 }
