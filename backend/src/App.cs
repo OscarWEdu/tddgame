@@ -16,6 +16,7 @@ builder.Services.AddScoped<IPlayersRepository, PlayersRepository>();
 builder.Services.AddScoped<ITurnsRepository, TurnsRepository>();
 builder.Services.AddScoped<IContinentRepository, ContinentRepository>();
 builder.Services.AddScoped<ITerritoryRepository, TerritoryRepository>();
+builder.Services.AddScoped<IBattlesRepository, BattlesRepository>();
 builder.Services.AddScoped<IPlayerTerritoryRepository, PlayerTerritoryRepository>();
 builder.Services.AddScoped<ITypingChallengesRepository, TypingChallengesRepository>();
 
@@ -30,6 +31,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SupportNonNullableReferenceTypes();
+    options.SchemaFilter<RequiredNotNullableSchemaFilter>();
+
     options.SwaggerDoc("v1", new() { Title = "TDD Game API", Version = "v1" });
 });
 
@@ -46,6 +50,7 @@ app.MapPlayersEndpoints();
 app.MapTurnsEndpoints();
 app.MapContinentEndpoints();
 app.MapTerritoryEndpoints();
+app.MapBattlesEndpoints();
 app.MapPlayerTerritoryEndpoints();
 app.MapTypingChallengesEndpoints();
 
