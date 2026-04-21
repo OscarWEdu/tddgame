@@ -124,9 +124,11 @@ public static class DbQuery
 
             CREATE TABLE IF NOT EXISTS TypingChallenges (
                 id INT PRIMARY KEY NOT NULL,
-                speed INT NOT NULL,
-                mistakes INT NOT NULL,
-                promptText TEXT NOT NULL
+                speed INT NOT NULL DEFAULT 0,
+                mistakes INT NOT NULL DEFAULT 0,
+                promptText TEXT NOT NULL,
+                battles_id INT NOT NULL UNIQUE,
+                FOREIGN KEY (battles_id) REFERENCES Battles(id)
             );
 
             CREATE TABLE IF NOT EXISTS Results (

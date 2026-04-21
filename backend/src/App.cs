@@ -17,6 +17,7 @@ builder.Services.AddScoped<ITurnsRepository, TurnsRepository>();
 builder.Services.AddScoped<IContinentRepository, ContinentRepository>();
 builder.Services.AddScoped<ITerritoryRepository, TerritoryRepository>();
 builder.Services.AddScoped<IPlayerTerritoryRepository, PlayerTerritoryRepository>();
+builder.Services.AddScoped<ITypingChallengesRepository, TypingChallengesRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -46,6 +47,7 @@ app.MapTurnsEndpoints();
 app.MapContinentEndpoints();
 app.MapTerritoryEndpoints();
 app.MapPlayerTerritoryEndpoints();
+app.MapTypingChallengesEndpoints();
 
 try
 {
