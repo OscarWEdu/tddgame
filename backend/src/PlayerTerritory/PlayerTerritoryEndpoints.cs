@@ -58,7 +58,7 @@ public static class PlayerTerritoryEndpoints
                     var playerTerritories = await repo.GetPlayerPlayerTerritoriesAsync(player.id, ct);
                     foreach (PlayerTerritoryDto? playerTerritory in playerTerritories)
                     {
-                        if (playerTerritory is not null) { return TypedResults.Ok(playerTerritory); }
+                        if (playerTerritory is not null && playerTerritory.TerritoryId == territoryId) { return TypedResults.Ok(playerTerritory); }
                     }
                 }
                 return TypedResults.NotFound();
