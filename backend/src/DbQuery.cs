@@ -132,6 +132,7 @@ public static class DbQuery
                 FOREIGN KEY (battles_id) REFERENCES Battles(id)
             );
 
+            -- Updated and expanded as needed
             REATE TABLE IF NOT EXISTS Results (
                 id INT PRIMARY KEY NOT NULL,
                 battles_id INT NOT NULL UNIQUE,
