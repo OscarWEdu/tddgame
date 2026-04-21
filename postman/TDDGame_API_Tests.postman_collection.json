@@ -568,41 +568,6 @@
           "response": []
         },
         {
-          "name": "Get PlayerTerritory by GameSession and Territory",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
-                  "})\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/playerterritories/{{gameSessionId}}/{{territoryId}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "playerterritories",
-                "{{gameSessionId}}",
-                "{{territoryId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Change PlayerTerritory Troops",
           "event": [
             {
