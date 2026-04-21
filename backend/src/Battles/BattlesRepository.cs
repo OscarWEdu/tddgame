@@ -51,7 +51,7 @@ public class BattlesRepository(MySqlDataSource db) : IBattlesRepository
             FROM Battles b
             INNER JOIN PlayerTerritories pt ON pt.id = b.attackerTerritoryId
             INNER JOIN Players p ON p.id = pt.playerId
-            WHERE ap.gameSessions_id = @gameSessionId
+            WHERE p.gameSessions_id = @gameSessionId
             ORDER BY b.id ASC
         ";
 
