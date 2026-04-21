@@ -92,7 +92,7 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS PlayerTerritories (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 troopNum INT NOT NULL DEFAULT 0,
                 hasCity BOOLEAN DEFAULT FALSE,
                 playerId INT NOT NULL,
