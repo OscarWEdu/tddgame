@@ -214,38 +214,6 @@
       "name": "Continents",
       "item": [
         {
-          "name": "Get Continents",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/continents",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "continents"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Create Continent",
           "event": [
             {
@@ -257,7 +225,7 @@
                   "})\r",
                   "\r",
                   "const response = pm.response.json()\r",
-                  "pm.collectionVariables.set(\"gameSessionId\", response.id)"
+                  "pm.collectionVariables.set(\"continentId\", response.id)"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -277,6 +245,38 @@
                 }
               }
             },
+            "url": {
+              "raw": "{{base_url}}/continents",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "continents"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Continents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200)\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
             "url": {
               "raw": "{{base_url}}/continents",
               "host": [
@@ -325,6 +325,58 @@
       ]
     },
     {
+      "name": "Players",
+      "item": [
+        {
+          "name": "Create player",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => {\r",
+                  "    pm.response.to.have.status(201)\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Jacob\",\r\n  \"colour\": \"Red\",\r\n  \"turnOrder\": 1,\r\n  \"missionId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/players?gameSessionId=550e8400-e29b-41d4-a716-446655440000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "players"
+              ],
+              "query": [
+                {
+                  "key": "gameSessionId",
+                  "value": "550e8400-e29b-41d4-a716-446655440000"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Territories",
       "item": [
         {
@@ -336,7 +388,9 @@
                 "exec": [
                   "pm.test(\"Status 200\", () => {\r",
                   "    pm.response.to.have.status(200)\r",
-                  "})"
+                  "})\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"territoryId\", 1)"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -404,11 +458,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
+                  "pm.test(\"Status 201\", () => {\r",
+                  "    pm.response.to.have.status(201)\r",
                   "})\r",
                   "\r",
-                  "postman.setNextRequest(\"Get PlayerTerritories\")"
+                  "pm.collectionVariables.set(\"playerTerritoryId\", response.id)\r",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -450,8 +505,7 @@
                   "pm.test(\"Status 200\", () => {\r",
                   "    pm.response.to.have.status(200)\r",
                   "})\r",
-                  "\r",
-                  "postman.setNextRequest(\"Get PlayerTerritories by PlayerId\")"
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -484,8 +538,7 @@
                   "pm.test(\"Status 200\", () => {\r",
                   "    pm.response.to.have.status(200)\r",
                   "})\r",
-                  "\r",
-                  "postman.setNextRequest(\"Get PlayerTerritory by Id\")"
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -519,9 +572,7 @@
                 "exec": [
                   "pm.test(\"Status 200\", () => {\r",
                   "    pm.response.to.have.status(200)\r",
-                  "})\r",
-                  "\r",
-                  "postman.setNextRequest(\"Get PlayerTerritory by GameSession and Territory\")"
+                  "})"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -555,8 +606,7 @@
                   "pm.test(\"Status 200\", () => {\r",
                   "    pm.response.to.have.status(200)\r",
                   "})\r",
-                  "\r",
-                  "postman.setNextRequest(\"Change PlayerTerritory Troops\")"
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -591,8 +641,7 @@
                   "pm.test(\"Status 200\", () => {",
                   "    pm.response.to.have.status(200)",
                   "})",
-                  "",
-                  "postman.setNextRequest(\"Change PlayerTerritory City\")"
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -613,7 +662,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}/troops/{{troopNum}}",
+              "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}/troops/5",
               "host": [
                 "{{base_url}}"
               ],
@@ -621,7 +670,7 @@
                 "playerterritories",
                 "{{playerTerritoryId}}",
                 "troops",
-                "{{troopNum}}"
+                "5"
               ]
             }
           },
@@ -636,9 +685,7 @@
                 "exec": [
                   "pm.test(\"Status 200\", () => {",
                   "    pm.response.to.have.status(200)",
-                  "})",
-                  "",
-                  "postman.setNextRequest(\"Delete PlayerTerritory\")"
+                  "})"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -659,7 +706,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}/city/{{hasCity}}",
+              "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}/city/true",
               "host": [
                 "{{base_url}}"
               ],
@@ -667,7 +714,7 @@
                 "playerterritories",
                 "{{playerTerritoryId}}",
                 "city",
-                "{{hasCity}}"
+                "true"
               ]
             }
           },
@@ -736,31 +783,15 @@
   "variable": [
     {
       "key": "gameSessionId",
-      "value": "550e8400-e29b-41d4-a716-446655440000"
-    },
-    {
-      "key": "playerTerritoryId",
-      "value": 1
-    },
-    {
-      "key": "playerId",
-      "value": 1
-    },
-    {
-      "key": "troopNum",
-      "value": 5
-    },
-    {
-      "key": "hasCity",
-      "value": true
+      "value": ""
     },
     {
       "key": "continentId",
-      "value": 1
+      "value": ""
     },
     {
       "key": "territoryId",
-      "value": 1
+      "value": ""
     }
   ]
 }
