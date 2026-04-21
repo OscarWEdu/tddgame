@@ -6,10 +6,9 @@ namespace TddGame;
 //defines the contract for all mission based database operations
 public interface IMissionsRepository
 {
-  Task<IEnumerable<MissionDto>?> GetMissionsAsync(string MissionId, CancellationToken ct);
+  Task<IEnumerable<MissionDto>?> GetMissionsAsync(CancellationToken ct);
   Task<MissionDto?> CreateMissionAsync(CreateMissionDto turn, CancellationToken ct);
-  Task<int?> GetMissionsIdByGameSessionIdAsync(string MissionId, CancellationToken ct);
-  Task<int?> GetMissionByPlayerIDAsync(string MissionID, int currentMission, CancellationToken ct);
-  Task<int?> CreateMissionAsync(string MissionID, int NextMission, CancellationToken ct);
+  Task<int?> GetMissionByPlayerIdAsync(string MissionID, int currentMission, CancellationToken ct);
+
 
 }
