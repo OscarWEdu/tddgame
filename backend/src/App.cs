@@ -30,6 +30,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SupportNonNullableReferenceTypes();
+    options.SchemaFilter<RequiredNotNullableSchemaFilter>();
+
     options.SwaggerDoc("v1", new() { Title = "TDD Game API", Version = "v1" });
 });
 
