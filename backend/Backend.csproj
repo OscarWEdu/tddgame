@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
     <PackageReference Include="Dyndata" Version="1.0.5" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.*" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.2" />
   </ItemGroup>
 
 </Project>
