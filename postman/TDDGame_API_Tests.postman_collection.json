@@ -336,7 +336,10 @@
                 "exec": [
                   "pm.test(\"Status 201\", () => {\r",
                   "    pm.response.to.have.status(201)\r",
-                  "})"
+                  "})\r",
+                  "\r",
+                  "const response = pm.response.json()\r",
+                  "pm.collectionVariables.set(\"playerId\", response.id)"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -357,7 +360,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/players?gameSessionId=550e8400-e29b-41d4-a716-446655440000",
+              "raw": "{{base_url}}/players?gameSessionId={{gameSessionId}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -462,7 +465,8 @@
                   "    pm.response.to.have.status(201)\r",
                   "})\r",
                   "\r",
-                  "pm.collectionVariables.set(\"playerTerritoryId\", response.id)\r",
+                  "const body = pm.response.json();\r",
+                  "pm.collectionVariables.set(\"playerTerritoryId\", body.id);\r",
                   ""
                 ],
                 "type": "text/javascript",
@@ -476,7 +480,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"playerId\": 1,\r\n  \"territoryId\": 1\r\n}",
+              "raw": "{\r\n  \"playerId\": {{playerId}},\r\n  \"territoryId\": {{territoryId}}\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -791,6 +795,14 @@
     },
     {
       "key": "territoryId",
+      "value": ""
+    },
+    {
+      "key": "playerId",
+      "value": ""
+    },
+    {
+      "key": "playerTerritoryId",
       "value": ""
     }
   ]
