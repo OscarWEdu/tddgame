@@ -753,6 +753,14 @@
     {
       "key": "hasCity",
       "value": ""
+    },
+    {
+      "key": "continentId",
+      "value": ""
+    },
+    {
+      "key": "territoryId",
+      "value": ""
     }
   ]
 }
