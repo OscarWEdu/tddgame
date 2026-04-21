@@ -18,7 +18,6 @@ builder.Services.AddScoped<IContinentRepository, ContinentRepository>();
 builder.Services.AddScoped<ITerritoryRepository, TerritoryRepository>();
 builder.Services.AddScoped<IBattlesRepository, BattlesRepository>();
 builder.Services.AddScoped<IPlayerTerritoryRepository, PlayerTerritoryRepository>();
-builder.Services.AddScoped<IBattlesRepository, BattlesRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -49,7 +48,6 @@ app.MapContinentEndpoints();
 app.MapTerritoryEndpoints();
 app.MapBattlesEndpoints();
 app.MapPlayerTerritoryEndpoints();
-app.MapBattlesEndpoints();
 
 try
 {
