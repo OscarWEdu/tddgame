@@ -133,7 +133,7 @@ public static class DbQuery
             );
 
             -- Updated and expanded as needed
-            REATE TABLE IF NOT EXISTS Results (
+            CREATE TABLE IF NOT EXISTS Results (
                 id INT PRIMARY KEY NOT NULL,
                 battles_id INT NOT NULL UNIQUE,
                 winner ENUM('attacker', 'defender') NOT NULL,

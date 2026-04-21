@@ -17,14 +17,14 @@ public static class ResultEndpoints
     {
       var result = await repository.GetResultByIdAsync(id, ct);
       return result is null ? Results.NotFound() : Results.Ok(result);
-    }).WithSummary("Get one result by id").WithDescription("Get one result");
+    }).WithSummary("Get one result").WithDescription("Get one result by id");
 
     // Get the result connected to one battle.
     resultEndpointGroup.MapGet("/battle/{battleId:int}", async (int battleId, IResultsRepository repository, CancellationToken ct) =>
     {
       var result = await repository.GetResultByBattleIdAsync(battleId, ct);
       return result is null ? Results.NotFound() : Results.Ok(result);
-    }).WithSummary("Get the result connected to one particular battle").WithDescription("Get a battle's result");
+    }).WithSummary("Get a battle's result").WithDescription("Get the result connected to one particular battle");
 
     // Create a resolved result for one battle using both players' typing data.
     resultEndpointGroup.MapPost("/battle/{battleId:int}", async (int battleId, CreateResultRequest request, IResultsRepository repository, CancellationToken ct) =>
@@ -91,7 +91,7 @@ public static class ResultEndpoints
 
       var created = await repository.CreateResultAsync(dto, ct);
       return Results.Created($"/api/results/{created.Id}", created);
-    }).WithSummary("Create a resolved result for one battle using both players' typing data.").WithDescription("Create a result");
+    }).WithSummary("Create a result").WithDescription("Create a resolved result for one battle using both players' typing data.");
 
     return app;
   }
