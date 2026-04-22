@@ -1,3 +1,5 @@
+import { useParams } from "react-router-dom";
+
 import { useGetApiTerritories } from "@/api/generated/territories/territories";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -9,14 +11,14 @@ import {
 } from "@/components/ui/card"
 
 GamePage.route = {
-  path: "/game",
+  path: "/game/:sessionId",
 };
 
 export default function GamePage() {
-  
+  const { sessionId } = useParams<{ sessionId: string }>();
+
   const { data, isLoading, isError } = useGetApiTerritories();
 
-  
   console.log("data", data);
   console.log("isLoading", isLoading);
   console.log("isError", isError);
@@ -53,6 +55,7 @@ export default function GamePage() {
         <div className="container mx-auto">
           <div className="text-center text-3xl font-bold mb-6">
             <h1>Typing Territory</h1>
+            <p className="mt-2 text-white/70">Session id: {sessionId}</p>
           </div>
 
           <div className="flex gap-6">

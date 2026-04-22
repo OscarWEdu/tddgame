@@ -129,6 +129,42 @@
   color: var(--primary) !important;
 }
 
+[data-slot="select-trigger"] {
+  width: 100% !important;
+  border-radius: var(--radius) !important;
+  border-color: var(--border) !important;
+  background: color-mix(in oklch, var(--secondary) 50%, transparent) !important;
+  padding: 0.75rem 1rem !important;
+  height: auto !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+}
+
+[data-slot="select-trigger"]:hover {
+  background: var(--secondary) !important;
+}
+
+[data-slot="select-trigger"]:focus-visible {
+  border-color: var(--ring) !important;
+  outline: none !important;
+}
+
+[data-slot="select-content"] {
+  border-radius: var(--radius) !important;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 4px 12px oklch(0 0 0 / 0.4) !important;
+}
+
+[data-slot="select-item"] {
+  border-radius: var(--radius-sm) !important;
+}
+
+[data-slot="select-item"]:focus {
+  background: var(--secondary) !important;
+  color: var(--foreground) !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

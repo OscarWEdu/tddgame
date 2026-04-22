@@ -33,7 +33,7 @@ import type {
 
 
 /**
- * Fetch current turn for a game session
+ * // Route for getting the current active turn by game session id.
  * @summary Get turn for a game session
  */
 export type getApiTurnGameSessionIdTurnResponse200 = {
@@ -160,7 +160,7 @@ export function useGetApiTurnGameSessionIdTurn<TData = Awaited<ReturnType<typeof
 
 
 /**
- * This route is for getting all turns in a game session.
+ * Route for getting all turns in a game session.
  * @summary Get all turns
  */
 export type getApiTurnGameSessionIdTurnsResponse200 = {
@@ -475,7 +475,7 @@ export const usePatchApiTurnGameSessionIdTurnPhase = <TError = string,
     }
     /**
  * Route for ending the current active turn and creating the next one
- * @summary End current active turn and Create next one
+ * @summary End current active turn and create next one
  */
 export type postApiTurnGameSessionIdTurnEndResponse200 = {
   data: TurnDto
@@ -562,7 +562,7 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
     export type PostApiTurnGameSessionIdTurnEndMutationError = string
 
     /**
- * @summary End current active turn and Create next one
+ * @summary End current active turn and create next one
  */
 export const usePostApiTurnGameSessionIdTurnEnd = <TError = string,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiTurnGameSessionIdTurnEnd>>, TError,{gameSessionId: string}, TContext>, fetch?: RequestInit}
