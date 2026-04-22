@@ -14,6 +14,8 @@ HomePage.route = {
 
 type View = "menu" | "new-game" | "load-game";
 
+const defaultColours = ['Black', 'Blue', 'Green', 'Pink', 'Red', 'Yellow'];
+
 export default function HomePage() {
   const { data, isLoading, isError } = useGetApiGameSession();
   const gameSessionMutation = usePostApiGameSession();
