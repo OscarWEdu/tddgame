@@ -15,6 +15,8 @@ HomePage.route = {
 type View = "menu" | "new-game" | "load-game";
 
 const defaultColours = ['Black', 'Blue', 'Green', 'Pink', 'Red', 'Yellow'];
+const minPlayers = 2;
+const maxPlayers = 6;
 
 export default function HomePage() {
   const { data, isLoading, isError } = useGetApiGameSession();
