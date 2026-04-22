@@ -4,8 +4,8 @@
  * TDD Game API
  * OpenAPI spec version: v1
  */
-import type { TurnPhase } from './turnPhase';
 
-export interface ChangeTurnPhaseRequest {
-  phase?: TurnPhase;
+export interface CreateTypingChallengeDto {
+  battleId: number;
+  promptText: string;
 }
