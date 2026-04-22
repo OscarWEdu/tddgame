@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
+import { Toaster } from "./components/ui/sonner";
 import routes from "./routes";
 import { AuthProvider } from "./utils/AuthProvider";
 
@@ -27,5 +28,10 @@ createRoot(document.querySelector("#root")!).render(
         <RouterProvider router={router} />
       </AuthProvider>
     </QueryClientProvider>
+    <Toaster
+      toastOptions={{
+        unstyled: false,
+      }}
+    />
   </StrictMode>,
 );
