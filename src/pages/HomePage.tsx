@@ -23,7 +23,7 @@ export default function HomePage() {
           <h1 className="mb-6 text-center text-3xl font-bold text-white">
             TDD Game
           </h1>
-          <nav>
+          <nav className="flex flex-col gap-3">
             <button>
               Start a new game
             </button>
