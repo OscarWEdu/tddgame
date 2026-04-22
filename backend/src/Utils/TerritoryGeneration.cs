@@ -1,7 +1,5 @@
 namespace TddGame;
 
-using Microsoft.AspNetCore.Http.HttpResults;
-
 public static class TerritoryGeneration
 {
     public static async Task<IResult> AddTerritories(int width, int height, ITerritoryRepository repo, CancellationToken ct)
