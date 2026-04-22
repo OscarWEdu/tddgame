@@ -6,6 +6,7 @@ import {
   usePostApiGameSession,
 } from "../api/generated/game-sessions/game-sessions";
 import { usePostApiPlayers } from "../api/generated/players/players";
+import { min } from "date-fns";
 
 
 HomePage.route = {
@@ -61,6 +62,9 @@ export default function HomePage() {
            <input
            id="game-name" type="text" value={gameName} onChange={(e) => setGameName(e.target.value)} className="rounded-lg bg-white/10 px-4 py-3 text-white placeholder-white/40 outline-none focus:bg-white/20 placeholder:text-sm" placeholder="My new game">
            </input>
+           <label>
+            Number of players ({minPlayers}-{maxPlayers})
+           </label>
             <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20"
             disabled={!gameName.trim()}
             onClick={() => gameSessionMutation.mutate({ data: {name: gameName}})}
