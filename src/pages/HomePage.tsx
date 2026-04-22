@@ -65,6 +65,13 @@ export default function HomePage() {
            <label>
             Number of players ({minPlayers}-{maxPlayers})
            </label>
+           <input id="player-count" type="number" min={minPlayers} max={maxPlayers} value={playerCount}
+           onChange={(e) => 
+            setPlayerCount(Math.min(maxPlayers, Math.max(minPlayers, Number(e.target.value) || minPlayers)))
+           }
+           >
+           
+           </input>
             <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20"
             disabled={!gameName.trim()}
             onClick={() => gameSessionMutation.mutate({ data: {name: gameName}})}
