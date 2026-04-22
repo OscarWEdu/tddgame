@@ -4,12 +4,14 @@
  * TDD Game API
  * OpenAPI spec version: v1
  */
+import type { TurnPhase } from './turnPhase';
+import type { TurnStatus } from './turnStatus';
 
 export interface TurnDto {
   id: number;
   round: number;
-  phase: string;
-  status: string;
+  phase?: TurnPhase;
+  status?: TurnStatus;
   createAt: string;
   gameSessionId: string;
   playerId: number;

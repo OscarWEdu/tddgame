@@ -5,13 +5,17 @@
  * OpenAPI spec version: v1
  */
 
+export * from './battleDto';
 export * from './changeTurnPhaseRequest';
 export * from './continentDto';
+export * from './createBattleRequest';
 export * from './createContinentRequest';
 export * from './createGameSessionRequest';
 export * from './createPlayerDto';
 export * from './createPlayerTerritoryRequest';
+export * from './createResultRequest';
 export * from './createTerritoryRequest';
+export * from './createTypingChallengeDto';
 export * from './gameSessionDto';
 export * from './gameSessionStatus';
 export * from './getApiPlayersParams';
@@ -21,4 +25,7 @@ export * from './playerTerritoryDto';
 export * from './postApiPlayersParams';
 export * from './territoryDto';
 export * from './turnDto';
+export * from './turnPhase';
+export * from './turnStatus';
+export * from './typingChallengeDto';
 export * from './updateGameSessionStatusRequest';
