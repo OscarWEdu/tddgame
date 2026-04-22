@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import {
   useGetApiGameSession,
   usePostApiGameSession,
@@ -13,7 +13,7 @@ HomePage.route = {
   path: "/",
 };
 
-type View = "menu" | "new-game" | "load-game";
+type View = "menu" | "new-game" | "load-game" | "ready";
 
 const defaultColours = ['Black', 'Blue', 'Green', 'Pink', 'Red', 'Yellow'];
 const minPlayers = 2;
@@ -24,9 +24,11 @@ export default function HomePage() {
   const { data, isLoading, isError } = useGetApiGameSession();
   const gameSessionMutation = usePostApiGameSession();
   const playerMutation = usePostApiPlayers();
+  const navigate = useNavigate();
   const [view, setView] = useState<View>("menu");
   const [gameName, setGameName] = useState("");
   const [playerCount, setPlayerCount] = useState(minPlayers);
+  const [createdSessionId, setCreatedSessionId] = useState<string | null>(null);
 
   const handleCreateGame = async () => {
     const session = await gameSessionMutation.mutateAsync({ data: { name: gameName },
@@ -42,6 +44,9 @@ export default function HomePage() {
       params: { gameSessionId: sessionId}
       });
   }
+
+  setCreatedSessionId(sessionId);
+  setView("ready");
   };
 
   const isCreatingGame = gameSessionMutation.isPending || playerMutation.isPending;
@@ -105,6 +110,21 @@ export default function HomePage() {
           </nav>
 
           )}
+
+          {view === "ready" && (
+            <div className="flex flex-col gap-3">
+              <p className="text-center text-white">
+                Game created with {playerCount} players!
+              </p>
+              <button
+                className="rounded-lg bg-white/20 px-4 py-3 text-white transition hover:bg-white/30"
+                onClick={() => navigate(`/game/${createdSessionId}`)}
+              >
+                Start game
+              </button>
+              
+            </div>
+          ) } 
           
 
         </div>
