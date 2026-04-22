@@ -130,6 +130,7 @@ public class TurnsRepository(MySqlDataSource db) : ITurnsRepository
     await using var command = connection.CreateCommand();
 
     command.CommandText = sqlQuery;
+    command.Parameters.AddWithValue("@gameSessionId", gameSessionId.ToString());
     command.Parameters.AddWithValue("@phase", newPhase.ToString());
 
     var rows = await command.ExecuteNonQueryAsync(ct);
