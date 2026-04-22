@@ -122,18 +122,29 @@ public static class DbQuery
                 FOREIGN KEY (defenderTerritoryId) REFERENCES PlayerTerritories(id)
             );
 
+            -- Table modified (battle id included)
             CREATE TABLE IF NOT EXISTS TypingChallenges (
                 id INT PRIMARY KEY NOT NULL,
-                speed INT NOT NULL,
-                mistakes INT NOT NULL,
-                promptText TEXT NOT NULL
+                speed INT NOT NULL DEFAULT 0,
+                mistakes INT NOT NULL DEFAULT 0,
+                promptText TEXT NOT NULL,
+                battles_id INT NOT NULL UNIQUE,
+                FOREIGN KEY (battles_id) REFERENCES Battles(id)
             );
 
+            -- Updated and expanded as needed
             CREATE TABLE IF NOT EXISTS Results (
                 id INT PRIMARY KEY NOT NULL,
+                battles_id INT NOT NULL UNIQUE,
+                winner ENUM('attacker', 'defender') NOT NULL,
                 attackerScore INT NOT NULL DEFAULT 0,
                 defenderScore INT NOT NULL DEFAULT 0,
-                battles_id INT NOT NULL,
+                attackerMistakes INT NOT NULL DEFAULT 0,
+                defenderMistakes INT NOT NULL DEFAULT 0,
+                attackerCompleted BOOLEAN NOT NULL DEFAULT FALSE,
+                defenderCompleted BOOLEAN NOT NULL DEFAULT FALSE,
+                attackerTroopLoss INT NOT NULL DEFAULT 0,
+                defenderTroopLoss INT NOT NULL DEFAULT 0,
                 FOREIGN KEY (battles_id) REFERENCES Battles(id)
             );
         ";

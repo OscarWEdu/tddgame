@@ -116,8 +116,8 @@ public class BattlesRepositoryTests
     var turn = new TurnDto(
         Id: 7,
         Round: 2,
-        Phase: "attack",
-        Status: "active",
+        Phase: TurnPhase.attack,
+      Status: TurnStatus.active,
         CreateAt: DateTime.Today,
         GameSessionId: gameSessionId.ToString(),
         PlayerId: 15
@@ -130,7 +130,7 @@ public class BattlesRepositoryTests
     var result = await _mockRepo.Object.GetCurrentTurnByGameSessionIdAsync(gameSessionId, CancellationToken.None);
 
     Assert.NotNull(result);
-    Assert.Equal("attack", result.Phase);
+    Assert.Equal(TurnPhase.attack, result.Phase);
     Assert.Equal(15, result.PlayerId);
   }
 
