@@ -21,8 +21,10 @@ const maxPlayers = 6;
 export default function HomePage() {
   const { data, isLoading, isError } = useGetApiGameSession();
   const gameSessionMutation = usePostApiGameSession();
+  const playerMutation = usePostApiPlayers();
   const [view, setView] = useState<View>("menu");
   const [gameName, setGameName] = useState("");
+  const [playerCount, setPlayerCount] = useState(minPlayers);
 
   console.log("data", data);
   console.log("isLoading", isLoading);
