@@ -10,12 +10,13 @@ HomePage.route = {
   path: "/",
 };
 
-
+type View = "menu" | "new-game" | "load-game";
 
 export default function HomePage() {
   const { data, isLoading, isError } = useGetApiGameSession();
-
   const gameSessionMutation = usePostApiGameSession();
+  const [view, setView] = useState<View>("menu");
+  const [gameName, setGameName] = useState("");
 
   console.log("data", data);
   console.log("isLoading", isLoading);
@@ -28,8 +29,11 @@ export default function HomePage() {
           <h1 className="mb-6 text-center text-3xl font-bold text-white">
             TDD Game
           </h1>
-          <nav className="flex flex-col gap-3">
-            <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
+          {view === "menu" &&(
+            <nav className="flex flex-col gap-3">
+            <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20"
+            onClick={() => setView("new-game")}
+            >
               Start a new game
             </button>
             <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
@@ -39,6 +43,26 @@ export default function HomePage() {
               How to play
             </a>
           </nav>
+          )}
+
+          {view === "new-game" && (
+            <nav className="flex flex-col gap-3">
+           <label>
+            Name your game
+           </label>
+           <input
+           id="game-name" type="text" value={gameName} onChange={(e) => setGameName(e.target.value)} className="rounded-lg bg-white/10 px-4 py-3 text-white placeholder-white/40 outline-none focus:bg-white/20 placeholder:text-sm" placeholder="My new game">
+           </input>
+            <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
+            Create game
+            </button>
+            <button className="rounded-lg px-4 py-3 text-sm text-white/60 transition hover:text-white">
+              Go back
+            </button>
+          </nav>
+
+          )}
+          
 
         </div>
 
