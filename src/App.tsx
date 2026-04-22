@@ -12,7 +12,7 @@ export default function App() {
       <div className="fixed inset-0 -z-10 bg-[url('/background.jpg')] bg-cover bg-center bg-no-repeat" />
       <div className="flex min-h-screen flex-col overflow-x-hidden">
         <header className="flex items-center justify-between px-6 py-4">
-          <span className="font-mono text-lg font-bold tracking-tight text-primary">
+          <span className="font-mono text-lg font-bold tracking-tight text-primary-foreground">
             TDDGame
           </span>
           <a
