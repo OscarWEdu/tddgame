@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import {
   useGetApiGameSession,
   useGetApiGameSessionId,
-  usePostApiGameSession,
 } from "../api/generated/game-sessions/game-sessions";
 
 HomePage.route = {
@@ -18,18 +17,6 @@ export default function HomePage() {
   );
 
   console.log("gameSessionById", gameSessionById);
-
-  const gameSessionMutation = usePostApiGameSession({
-    mutation: {
-      onSuccess: (response) => {
-        if (response.status >= 400) {
-          toast.error("Error!!!!!");
-        } else {
-          toast.success("Let's goooo");
-        }
-      },
-    },
-  });
 
   console.log("data", data);
   console.log("isLoading", isLoading);
