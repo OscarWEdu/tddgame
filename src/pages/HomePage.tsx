@@ -5,6 +5,8 @@ import {
   useGetApiGameSession,
   usePostApiGameSession,
 } from "../api/generated/game-sessions/game-sessions";
+import { usePostApiPlayers } from "../api/generated/players/players";
+
 
 HomePage.route = {
   path: "/",
