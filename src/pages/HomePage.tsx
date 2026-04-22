@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   useGetApiGameSession,
@@ -20,8 +21,12 @@ export default function HomePage() {
 
   const gameSessionMutation = usePostApiGameSession({
     mutation: {
-      onError: () => {
-        return toast.error("Error!!!!!");
+      onSuccess: (response) => {
+        if (response.status >= 400) {
+          toast.error("Error!!!!!");
+        } else {
+          toast.success("Let's goooo");
+        }
       },
     },
   });
@@ -32,12 +37,37 @@ export default function HomePage() {
   return (
     <div className="container mx-auto">
       <h1>Hello World</h1>
-      <button
-        title="Click me!"
-        onClick={() => gameSessionMutation.mutate({ data: { name: "" } })}
+      <Button
+        className="bg-success"
+        onClick={() => {
+          toast.success("Let's goooo!");
+        }}
       >
-        <span>Click me!</span>
-      </button>
+        <span>Success</span>
+      </Button>
+      <Button
+        onClick={() => {
+          toast.info("Important info!");
+        }}
+      >
+        <span>Info</span>
+      </Button>
+      <Button
+        className="bg-warning"
+        onClick={() => {
+          toast.warning("Oh Warning!");
+        }}
+      >
+        <span>Warning</span>
+      </Button>
+      <Button
+        className="bg-destructive"
+        onClick={() => {
+          toast.error("Oh nooooo!");
+        }}
+      >
+        <span>Error</span>
+      </Button>
     </div>
   );
 }
