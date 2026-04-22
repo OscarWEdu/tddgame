@@ -72,15 +72,7 @@ export default function HomePage() {
         </div>
 
       </div>
-      <h1>Hello World</h1>
-      <button
-        title="Click me!"
-        onClick={() =>
-          gameSessionMutation.mutate({ data: { name: "My new game!" } })
-        }
-      >
-        <span>Click me!</span>
-      </button>
+      
     </>
   );
 }
