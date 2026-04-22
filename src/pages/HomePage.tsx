@@ -30,9 +30,9 @@ export default function HomePage() {
             <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
               Load game
             </button>
-            <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
+            <a href="https://github.com/OscarWEdu/tddgame/wiki/Standard-RISK-Rules" className="rounded-lg bg-white/10 px-4 py-3 text-white text-center transition hover:bg-white/20">
               How to play
-            </button>
+            </a>
           </nav>
 
         </div>
