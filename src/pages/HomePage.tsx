@@ -56,7 +56,9 @@ export default function HomePage() {
             <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
             Create game
             </button>
-            <button className="rounded-lg px-4 py-3 text-sm text-white/60 transition hover:text-white">
+            <button className="rounded-lg px-4 py-3 text-sm text-white/60 transition hover:text-white"
+            onClick={() => setView("menu")}
+            >
               Go back
             </button>
           </nav>
