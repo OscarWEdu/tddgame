@@ -24,7 +24,7 @@ export default function HomePage() {
             TDD Game
           </h1>
           <nav className="flex flex-col gap-3">
-            <button>
+            <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
               Start a new game
             </button>
             <button>
