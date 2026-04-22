@@ -20,6 +20,9 @@ export default function HomePage() {
       <div className="fixed inset-0 -z-10 bg-[url('/background.jpg')] bg-cover bg-center bg-no-repeat" />
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="w-full max-w-sm rounded 2xl bg-black/60 p-8 shadow-2xl backdrop-blur-md">
+          <h1 className="mb-6 text-center text-3xl font-bold text-white">
+            TDD Game
+          </h1>
 
         </div>
 
