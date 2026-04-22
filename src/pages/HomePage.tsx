@@ -27,10 +27,10 @@ export default function HomePage() {
             <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
               Start a new game
             </button>
-            <button>
+            <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
               Load game
             </button>
-            <button>
+            <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
               How to play
             </button>
           </nav>
