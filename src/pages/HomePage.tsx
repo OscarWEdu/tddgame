@@ -6,7 +6,7 @@ import {
   usePostApiGameSession,
 } from "../api/generated/game-sessions/game-sessions";
 import { usePostApiPlayers } from "../api/generated/players/players";
-import { min } from "date-fns";
+
 
 
 HomePage.route = {
@@ -19,6 +19,7 @@ const defaultColours = ['Black', 'Blue', 'Green', 'Pink', 'Red', 'Yellow'];
 const minPlayers = 2;
 const maxPlayers = 6;
 
+
 export default function HomePage() {
   const { data, isLoading, isError } = useGetApiGameSession();
   const gameSessionMutation = usePostApiGameSession();
@@ -26,6 +27,24 @@ export default function HomePage() {
   const [view, setView] = useState<View>("menu");
   const [gameName, setGameName] = useState("");
   const [playerCount, setPlayerCount] = useState(minPlayers);
+
+  const handleCreateGame = async () => {
+    const session = await gameSessionMutation.mutateAsync({ data: { name: gameName },
+     });
+    if (session.status !== 201) {
+      console.error("Failed to create game session", session.data);
+      return;
+    }
+    const sessionId = session.data.id;
+
+    for (let i = 0;  i < playerCount; i++) {
+      await playerMutation.mutateAsync({ data: { name: `Player ${i + 1}`, colour: defaultColours[i], turnOrder: i + 1, missionId: 1},
+      params: { gameSessionId: sessionId}
+      });
+  }
+  };
+
+  const isCreatingGame = gameSessionMutation.isPending || playerMutation.isPending;
 
   console.log("data", data);
   console.log("isLoading", isLoading);
@@ -73,10 +92,10 @@ export default function HomePage() {
            
            </input>
             <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20"
-            disabled={!gameName.trim()}
-            onClick={() => gameSessionMutation.mutate({ data: {name: gameName}})}
+            disabled={!gameName.trim() || isCreatingGame}
+            onClick={handleCreateGame}
             >
-            Create game
+              {isCreatingGame ? "Creating game..." : "Create game"}
             </button>
             <button className="rounded-lg px-4 py-3 text-sm text-white/60 transition hover:text-white"
             onClick={() => setView("menu")}
