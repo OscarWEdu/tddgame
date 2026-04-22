@@ -16,7 +16,8 @@ export default function HomePage() {
   console.log("isLoading", isLoading);
   console.log("isError", isError);
   return (
-    <div className="container mx-auto">
+    <>
+      <div className="fixed inset-0 -z-10 bg-[url('/background.jpg')] bg-cover bg-center bg-no-repeat" />
       <h1>Hello World</h1>
       <button
         title="Click me!"
@@ -26,6 +27,6 @@ export default function HomePage() {
       >
         <span>Click me!</span>
       </button>
-    </div>
+    </>
   );
 }
