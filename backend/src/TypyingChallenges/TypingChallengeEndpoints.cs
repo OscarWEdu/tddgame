@@ -23,7 +23,7 @@ public static class TypingChallengesEndpoints
                   ? TypedResults.Ok(typingChallenge)
                   : TypedResults.NotFound("Typing challenge not found.");
         }
-    ).WithSummary("Get one specific typing challenge by id").WithDescription("Get one typing challenge");
+    ).WithSummary("Get one typing challenge").WithDescription("Get one specific typing challenge by id");
 
     // GET /api/typing-challenges/battle/{battleId}
     // Get typing challenge belonging to a particular battle by id
@@ -40,7 +40,7 @@ public static class TypingChallengesEndpoints
                   ? TypedResults.Ok(typingChallenge)
                   : TypedResults.NotFound("Typing challenge for this battle was not found.");
         }
-    ).WithSummary("Get typing challenge belonging to a particular battle by id").WithDescription("Get typing challenge for a battle.");
+    ).WithSummary("Get typing challenge for a battle").WithDescription("Get typing challenge belonging to a particular battle by id");
 
     // POST /api/typing-challenges
     // Create new typing challenge for a battle
@@ -81,7 +81,7 @@ public static class TypingChallengesEndpoints
 
           return TypedResults.Created($"/api/typing-challenges/{typingChallenge.Id}", typingChallenge);
         }
-    ).WithSummary("Create new typing challenge for a battle").WithDescription("Creates typing challenge");
+    ).WithSummary("Creates typing challenge").WithDescription("Create new typing challenge for a battle");
 
     return app;
   }

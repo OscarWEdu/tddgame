@@ -1,28 +1,45 @@
-// Contains models related to turns
-// includes; TurnDto, EndTurnRequestDto, ChangePhaseRequestDto (DTO records)
-// Represents turn data such as id, round, phase, player_id, gameSession_id, createdAt.
-
 namespace TddGame;
 
-// DTO used when returning Turns data from API or repository
+using System.Text.Json.Serialization;
+
+// Enum used for the current phase of a turn.
+// JsonStringEnumConverter makes the API serialize and deserialize enum values as strings.
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum TurnPhase
+{
+  build,
+  assigned,
+  attack,
+  reinforce
+}
+
+// Enum used for whether a turn is currently active or already finished.
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum TurnStatus
+{
+  active,
+  inactive
+}
+
+// DTO returned from the API and repository when reading a turn.
 public record TurnDto(
   int Id,
   int Round,
-  string Phase,
-  string Status,
+  TurnPhase Phase,
+  TurnStatus Status,
   DateTime CreateAt,
   string GameSessionId,
   int PlayerId
 );
 
-// Data needed when creating a new Turn
+// DTO used when creating a new turn row.
 public record CreateTurnDto(
   int Round,
-  string Phase,
-  string Status,
+  TurnPhase Phase,
+  TurnStatus Status,
   string GameSessionId,
   int PlayerId
 );
 
-// Define the request body used when changing phase.
-public record ChangeTurnPhaseRequest(string Phase);
+// Request model used when changing the phase of a turn
+public record ChangeTurnPhaseRequest(TurnPhase Phase);
