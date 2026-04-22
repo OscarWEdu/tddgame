@@ -1,695 +1,909 @@
 {
   "info": {
-    "_postman_id": "97c71fda-9cc7-42cb-89e8-edb43ed17b7a",
+    "_postman_id": "5a999786-13c4-46ef-b039-186fb12f2b53",
     "name": "TDDGame_API_Tests",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "54167496",
-    "_collection_link": "https://go.postman.co/collection/54167545-97c71fda-9cc7-42cb-89e8-edb43ed17b7a?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/54167545-5a999786-13c4-46ef-b039-186fb12f2b53?source=collection_link"
   },
   "item": [
     {
-      "name": "Game sessions",
-      "item": [
+      "name": "Create game session",
+      "event": [
         {
-          "name": "Get game sessions",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {",
-                  "    pm.response.to.have.status(200)",
-                  "})",
-                  "",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/game-session",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "game-session"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Create game session",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 201\", () => {",
-                  "    pm.response.to.have.status(201)",
-                  "})",
-                  "",
-                  "const response = pm.response.json()",
-                  "pm.collectionVariables.set(\"gameSessionId\", response.id)"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\" : \"New Game\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/game-session",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "game-session"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get game session by id",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {",
-                  "    pm.response.to.have.status(200)",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/game-session/{{gameSessionId}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "game-session",
-                "{{gameSessionId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Change game session status",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {",
-                  "    pm.response.to.have.status(200)",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"status\": \"started\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/game-session/{{gameSessionId}}/status",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "game-session",
-                "{{gameSessionId}}",
-                "status"
-              ]
-            }
-          },
-          "response": []
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 201\", () => {",
+              "    pm.response.to.have.status(201)",
+              "})",
+              "",
+              "const response = pm.response.json()",
+              "pm.collectionVariables.set(\"gameSessionId\", response.id)"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
         }
-      ]
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\" : \"New Game\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/game-session",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "game-session"
+          ]
+        }
+      },
+      "response": []
     },
     {
-      "name": "Continents",
-      "item": [
+      "name": "Get game sessions",
+      "event": [
         {
-          "name": "Create Continent",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 201\", () => {\r",
-                  "    pm.response.to.have.status(201)\r",
-                  "})\r",
-                  "\r",
-                  "const response = pm.response.json()\r",
-                  "pm.collectionVariables.set(\"continentId\", response.id)"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Europe\",\r\n  \"bonusConst\": 5\r\n}\r\n",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/continents",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "continents"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Continents",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/continents",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "continents"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Continent by Id",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/continents/{{continentId}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "continents",
-                "{{continentId}}"
-              ]
-            }
-          },
-          "response": []
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              "",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
         }
-      ]
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/game-session",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "game-session"
+          ]
+        }
+      },
+      "response": []
     },
     {
-      "name": "Players",
-      "item": [
+      "name": "Get game session by id",
+      "event": [
         {
-          "name": "Create player",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 201\", () => {\r",
-                  "    pm.response.to.have.status(201)\r",
-                  "})\r",
-                  "\r",
-                  "const response = pm.response.json()\r",
-                  "pm.collectionVariables.set(\"playerId\", response.id)"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Jacob\",\r\n  \"colour\": \"Red\",\r\n  \"turnOrder\": 1,\r\n  \"missionId\": 1\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/players?gameSessionId={{gameSessionId}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "players"
-              ],
-              "query": [
-                {
-                  "key": "gameSessionId",
-                  "value": "550e8400-e29b-41d4-a716-446655440000"
-                }
-              ]
-            }
-          },
-          "response": []
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {",
+              "    pm.response.to.have.status(200)",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
         }
-      ]
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/game-session/{{gameSessionId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "game-session",
+            "{{gameSessionId}}"
+          ]
+        }
+      },
+      "response": []
     },
     {
-      "name": "Territories",
-      "item": [
+      "name": "Change game session status",
+      "event": [
         {
-          "name": "Get Territories",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
-                  "})\r",
-                  "\r",
-                  "pm.collectionVariables.set(\"territoryId\", 1)"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/territories",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "territories"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Territory by Id",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/territories/{{territoryId}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "territories",
-                "{{territoryId}}"
-              ]
-            }
-          },
-          "response": []
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {",
+              "    pm.response.to.have.status(200)",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
         }
-      ]
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"status\": \"started\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/game-session/{{gameSessionId}}/status",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "game-session",
+            "{{gameSessionId}}",
+            "status"
+          ]
+        }
+      },
+      "response": []
     },
     {
-      "name": "Player Territories",
-      "item": [
+      "name": "Get Territories",
+      "event": [
         {
-          "name": "Create PlayerTerritory",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 201\", () => {\r",
-                  "    pm.response.to.have.status(201)\r",
-                  "})\r",
-                  "\r",
-                  "const body = pm.response.json();\r",
-                  "pm.collectionVariables.set(\"playerTerritoryId\", body.id);\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"playerId\": {{playerId}},\r\n  \"territoryId\": {{territoryId}}\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/playerterritories",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "playerterritories"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get PlayerTerritories",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
-                  "})\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/playerterritories",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "playerterritories"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get PlayerTerritories by PlayerId",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
-                  "})\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/playerterritories/player/{{playerId}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "playerterritories",
-                "player",
-                "{{playerId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get PlayerTerritory by Id",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {\r",
-                  "    pm.response.to.have.status(200)\r",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "playerterritories",
-                "{{playerTerritoryId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Change PlayerTerritory Troops",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {",
-                  "    pm.response.to.have.status(200)",
-                  "})",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}/troops/5",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "playerterritories",
-                "{{playerTerritoryId}}",
-                "troops",
-                "5"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Change PlayerTerritory City",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 200\", () => {",
-                  "    pm.response.to.have.status(200)",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"status\": \"started\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}/city/true",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "playerterritories",
-                "{{playerTerritoryId}}",
-                "city",
-                "true"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Delete PlayerTerritory",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status 204\", () => {",
-                  "    pm.response.to.have.status(204)",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "playerterritories",
-                "{{playerTerritoryId}}"
-              ]
-            }
-          },
-          "response": []
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              "\r",
+              "pm.collectionVariables.set(\"territoryId\", 1)"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
         }
-      ]
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/territories",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "territories"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Territory by Id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/territories/{{territoryId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "territories",
+            "{{territoryId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Continent",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 201\", () => {\r",
+              "    pm.response.to.have.status(201)\r",
+              "})\r",
+              "\r",
+              "const response = pm.response.json()\r",
+              "pm.collectionVariables.set(\"continentId\", response.id)"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Europe\",\r\n  \"bonusConst\": 5\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/continents",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "continents"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Continents",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/continents",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "continents"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Continent by Id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/continents/{{continentId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "continents",
+            "{{continentId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create player",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 201\", () => {\r",
+              "    pm.response.to.have.status(201)\r",
+              "})\r",
+              "\r",
+              "const response = pm.response.json()\r",
+              "pm.collectionVariables.set(\"playerId\", response.id)"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Jacob\",\r\n  \"colour\": \"Red\",\r\n  \"turnOrder\": 1,\r\n  \"missionId\": 1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/players?gameSessionId={{gameSessionId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "players"
+          ],
+          "query": [
+            {
+              "key": "gameSessionId",
+              "value": "{{gameSessionId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get players in gameSession",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"status\": \"started\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/players?gameSessionId={{gameSessionId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "players"
+          ],
+          "query": [
+            {
+              "key": "gameSessionId",
+              "value": "{{gameSessionId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get players by id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"status\": \"started\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/players/{{playerId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "players",
+            "{{playerId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update player",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"numGold\": 80,\r\n  \"isDead\": false\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/players/{{playerId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "players",
+            "{{playerId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create PlayerTerritory",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 201\", () => {\r",
+              "    pm.response.to.have.status(201)\r",
+              "})\r",
+              "\r",
+              "const body = pm.response.json();\r",
+              "pm.collectionVariables.set(\"playerTerritoryId\", body.id);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"playerId\": {{playerId}},\r\n  \"territoryId\": {{territoryId}}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/playerterritories",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "playerterritories"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get PlayerTerritories",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/playerterritories",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "playerterritories"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get PlayerTerritories by PlayerId",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/playerterritories/player/{{playerId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "playerterritories",
+            "player",
+            "{{playerId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get PlayerTerritory by Id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "playerterritories",
+            "{{playerTerritoryId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get PlayerTerritory by GameSession and Territory",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/playerterritories/{{gameSessionId}}/{{territoryId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "playerterritories",
+            "{{gameSessionId}}",
+            "{{territoryId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Change PlayerTerritory Troops",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}/troops/5",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "playerterritories",
+            "{{playerTerritoryId}}",
+            "troops",
+            "5"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Change PlayerTerritory City",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", () => {",
+              "    pm.response.to.have.status(200)",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"status\": \"started\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}/city/true",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "playerterritories",
+            "{{playerTerritoryId}}",
+            "city",
+            "true"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete PlayerTerritory",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 204\", () => {",
+              "    pm.response.to.have.status(204)",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/playerterritories/{{playerTerritoryId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "playerterritories",
+            "{{playerTerritoryId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Remove player",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 204\", () => {\r",
+              "    pm.response.to.have.status(204)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/players/{{playerId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "players",
+            "{{playerId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete game session",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 204\", () => {",
+              "    pm.response.to.have.status(204)",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/game-session/{{gameSessionId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "game-session",
+            "{{gameSessionId}}"
+          ]
+        }
+      },
+      "response": []
     }
   ],
   "event": [
