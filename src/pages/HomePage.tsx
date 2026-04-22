@@ -23,6 +23,17 @@ export default function HomePage() {
           <h1 className="mb-6 text-center text-3xl font-bold text-white">
             TDD Game
           </h1>
+          <nav>
+            <button>
+              Start a new game
+            </button>
+            <button>
+              Load game
+            </button>
+            <button>
+              How to play
+            </button>
+          </nav>
 
         </div>
 
