@@ -3,9 +3,12 @@ import { createElement } from 'react';
 
 // page components
 import HomePage from './pages/HomePage.tsx';
+// page components
+import GamePage from './pages/GamePage.tsx';
 
 export default [
-  HomePage
+  HomePage,
+  GamePage
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route }) as Route)

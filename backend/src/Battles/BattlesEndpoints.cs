@@ -56,7 +56,7 @@ public static class BattlesEndpoints
           }
 
           // Battles can only be started during the attack phase.
-          if (currentTurn.Phase != "attack")
+          if (currentTurn.Phase != TurnPhase.attack)
           {
             return TypedResults.BadRequest("Battle can only start during the attack phase.");
           }

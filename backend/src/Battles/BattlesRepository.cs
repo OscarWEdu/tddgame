@@ -135,8 +135,8 @@ public class BattlesRepository(MySqlDataSource db) : IBattlesRepository
       return new TurnDto(
           Id: reader.GetInt32("id"),
           Round: reader.GetInt32("round"),
-          Phase: reader.GetString("phase"),
-          Status: reader.GetString("status"),
+          Phase: Enum.Parse<TurnPhase>(reader.GetString("phase")),
+          Status: Enum.Parse<TurnStatus>(reader.GetString("status")),
           CreateAt: reader.GetDateTime("createAt"),
           GameSessionId: reader.GetString("gameSessions_id"),
           PlayerId: reader.GetInt32("players_id")
