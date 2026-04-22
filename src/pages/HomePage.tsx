@@ -1,10 +1,18 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
   useGetApiGameSession,
-  useGetApiGameSessionId,
   usePostApiGameSession,
 } from "../api/generated/game-sessions/game-sessions";
 import { usePostApiPlayers } from "../api/generated/players/players";
@@ -19,10 +27,19 @@ const defaultColours = ["Black", "Blue", "Green", "Pink", "Red", "Yellow"];
 const minPlayers = 2;
 const maxPlayers = 6;
 
+const glassBtn =
+  "w-full rounded-lg bg-secondary/50 px-4 py-3 text-foreground transition hover:bg-secondary h-auto justify-start font-normal";
+
 export default function HomePage() {
-  const { data, isLoading, isError } = useGetApiGameSession();
+  const { data, isLoading, isError, error } = useGetApiGameSession();
   const gameSessionMutation = usePostApiGameSession();
-  const playerMutation = usePostApiPlayers();
+  const playerMutation = usePostApiPlayers({
+    mutation: {
+      onError: () => {
+        toast.error("");
+      },
+    },
+  });
   const navigate = useNavigate();
   const [view, setView] = useState<View>("menu");
   const [gameName, setGameName] = useState("");
@@ -55,144 +72,98 @@ export default function HomePage() {
     setView("ready");
   };
 
+  if (isError) {
+    toast.error("Error!");
+  }
+
   const isCreatingGame =
     gameSessionMutation.isPending || playerMutation.isPending;
-
-  const { data: gameSessionById } = useGetApiGameSessionId(
-    "550e8400-e29b-41d4-a716-446655440000",
-  );
-
-  console.log("gameSessionById", gameSessionById);
 
   console.log("data", data);
   console.log("isLoading", isLoading);
   console.log("isError", isError);
+
   return (
-    <>
-      <div className="fixed inset-0 -z-10 bg-[url('/background.jpg')] bg-cover bg-center bg-no-repeat" />
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-full max-w-sm rounded-2xl bg-black/60 p-8 shadow-2xl backdrop-blur-md">
-          <h1 className="mb-6 text-center text-3xl font-bold text-white">
-            TDD Game
-          </h1>
-          {view === "menu" && (
-            <nav className="flex flex-col gap-3">
-              <button
-                className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20"
-                onClick={() => setView("new-game")}
-              >
-                Start a new game
-              </button>
-              <button className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20">
-                Load game
-              </button>
-              <a
-                href="https://github.com/OscarWEdu/tddgame/wiki/Standard-RISK-Rules"
-                className="rounded-lg bg-white/10 px-4 py-3 text-white text-center transition hover:bg-white/20"
-              >
-                How to play
-              </a>
-            </nav>
-          )}
+    <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
+      <div className="w-full max-w-sm rounded-2xl bg-card/80 p-8 shadow-2xl backdrop-blur-md pointer-events-auto">
+        <h1 className="mb-6 text-center text-3xl font-bold text-foreground">
+          TDD Game
+        </h1>
 
-          {view === "new-game" && (
-            <nav className="flex flex-col gap-3">
-              <label>Name your game</label>
-              <input
-                id="game-name"
-                type="text"
-                value={gameName}
-                onChange={(e) => setGameName(e.target.value)}
-                className="rounded-lg bg-white/10 px-4 py-3 text-white placeholder-white/40 outline-none focus:bg-white/20 placeholder:text-sm"
-                placeholder="My new game"
-              ></input>
-              <label>
-                Number of players ({minPlayers}-{maxPlayers})
-              </label>
-              <input
-                id="player-count"
-                type="number"
-                min={minPlayers}
-                max={maxPlayers}
-                value={playerCount}
-                onChange={(e) =>
-                  setPlayerCount(
-                    Math.min(
-                      maxPlayers,
-                      Math.max(
-                        minPlayers,
-                        Number(e.target.value) || minPlayers,
-                      ),
-                    ),
-                  )
-                }
-              ></input>
-              <button
-                className="rounded-lg bg-white/10 px-4 py-3 text-white transition hover:bg-white/20"
-                disabled={!gameName.trim() || isCreatingGame}
-                onClick={handleCreateGame}
-              >
-                {isCreatingGame ? "Creating game..." : "Create game"}
-              </button>
-              <button
-                className="rounded-lg px-4 py-3 text-sm text-white/60 transition hover:text-white"
-                onClick={() => setView("menu")}
-              >
-                Go back
-              </button>
-            </nav>
-          )}
+        {view === "menu" && (
+          <nav className="flex flex-col gap-3">
+            <Button className={glassBtn} onClick={() => setView("new-game")}>
+              Start a new game
+            </Button>
+            <Button className={glassBtn}>Load game</Button>
+          </nav>
+        )}
 
-          {view === "ready" && (
-            <div className="flex flex-col gap-3">
-              <p className="text-center text-white">
-                Game created with {playerCount} players!
-              </p>
-              <button
-                className="rounded-lg bg-white/20 px-4 py-3 text-white transition hover:bg-white/30"
-                onClick={() => navigate(`/game/${createdSessionId}`)}
-              >
-                Start game
-              </button>
-            </div>
-          )}
-        </div>
+        {view === "new-game" && (
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="game-name" className="text-foreground">
+              Name your game
+            </Label>
+            <Input
+              id="game-name"
+              type="text"
+              value={gameName}
+              onChange={(e) => setGameName(e.target.value)}
+              className="rounded-lg bg-secondary/50 border-border px-4 py-3 text-foreground placeholder:text-muted-foreground placeholder:text-sm focus-visible:ring-0 focus-visible:bg-secondary"
+              placeholder="My new game"
+            />
+            <Label htmlFor="player-count" className="text-foreground">
+              Number of players
+            </Label>
+            <Select
+              value={String(playerCount)}
+              onValueChange={(v) => setPlayerCount(Number(v))}
+            >
+              <SelectTrigger id="player-count">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from(
+                  { length: maxPlayers - minPlayers + 1 },
+                  (_, i) => i + minPlayers,
+                ).map((n) => (
+                  <SelectItem key={n} value={String(n)}>
+                    {n} players
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              className={glassBtn}
+              disabled={!gameName.trim() || isCreatingGame}
+              onClick={handleCreateGame}
+            >
+              {isCreatingGame ? "Creating game..." : "Create game"}
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-muted-foreground hover:text-foreground hover:bg-transparent text-sm"
+              onClick={() => setView("menu")}
+            >
+              Go back
+            </Button>
+          </div>
+        )}
+
+        {view === "ready" && (
+          <div className="flex flex-col gap-3">
+            <p className="text-center text-foreground">
+              Game created with {playerCount} players!
+            </p>
+            <Button
+              className="rounded-lg bg-secondary text-foreground hover:bg-secondary/80 h-auto"
+              onClick={() => navigate(`/game/${createdSessionId}`)}
+            >
+              Start game
+            </Button>
+          </div>
+        )}
       </div>
-
-      <div className="container mx-auto">
-        <h1>Hello World</h1>
-        <Button
-          className="bg-success"
-          onClick={() => {
-            toast.success("Let's goooo!");
-          }}
-        >
-          <span>Success</span>
-        </Button>
-        <Button
-          onClick={() => {
-            toast.info("Important info!");
-          }}
-        >
-          <span>Info</span>
-        </Button>
-        <Button
-          className="bg-warning"
-          onClick={() => {
-            toast.warning("Oh Warning!");
-          }}
-        >
-          <span>Warning</span>
-        </Button>
-        <Button
-          className="bg-destructive"
-          onClick={() => {
-            toast.error("Oh nooooo!");
-          }}
-        >
-          <span>Error</span>
-        </Button>
-      </div>
-    </>
+    </div>
   );
 }
