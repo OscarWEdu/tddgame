@@ -5,12 +5,15 @@ import { GameSessionStatus } from "@/api/generated/models";
 import { useGetApiGameSessionId, usePatchApiGameSessionIdStatus } from "../api/generated/game-sessions/game-sessions";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { usePostApiTurnGameSessionIdTurnStart } from "@/api/generated/turns/turns";
 
 export default function LobbyPage() {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
 
-  const { mutateAsync } = usePatchApiGameSessionIdStatus()
+  const { mutateAsync: startTurn } = usePostApiTurnGameSessionIdTurnStart();
+  const { mutateAsync: updateStatus } = usePatchApiGameSessionIdStatus();
+
 
   //Fetches session status every x/1000 sec
   const { data, isError } = useGetApiGameSessionId(sessionId!, {
@@ -35,15 +38,20 @@ export default function LobbyPage() {
   //Function to navigate to the game and handle all the setup
   const handleStart = async () => {
     try {
-      await mutateAsync({
+      // Starts gameSession
+      await updateStatus({
         id: sessionId!,
         data: {
           status: GameSessionStatus.started // <-- must match UpdateGameSessionStatusRequest
         }
       });
+      // Starts the 1st turn
+      await startTurn({
+        gameSessionId: sessionId!
+      });
       navigate(`/game/${sessionId}`);
     } catch (err) {
-      console.error("Failed to update session status", err);
+      console.error("Failed to start game", err);
     }
   };
 
