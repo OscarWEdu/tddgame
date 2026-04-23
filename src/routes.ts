@@ -3,11 +3,12 @@ import { createElement } from 'react';
 
 // page components
 import HomePage from './pages/HomePage.tsx';
-// page components
+import LobbyPage from './pages/LobbyPage.tsx';
 import GamePage from './pages/GamePage.tsx';
 
 export default [
   HomePage,
+  LobbyPage,
   GamePage
 ]
   // map the route property of each page component to a Route
