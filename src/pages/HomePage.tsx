@@ -1,6 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -46,6 +54,18 @@ const statusLabel: Record<string, string> = {
 
 const SKELETON_KEYS = ["a", "b", "c", "d", "e"];
 
+function getJoinUnavailableMessage(session: GameSessionDto) {
+  if (session.status !== GameSessionStatus.lobby) {
+    return "This lobby is no longer accepting players.";
+  }
+
+  if (session.playerCount >= session.maxPlayers) {
+    return "This lobby is already full.";
+  }
+
+  return null;
+}
+
 function SessionCardSkeleton() {
   return (
     <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
@@ -63,6 +83,8 @@ export default function HomePage() {
 
   const [createOpen, setCreateOpen] = useState(false);
   const [joinSession, setJoinSession] = useState<GameSessionDto | null>(null);
+  const [fullLobbySession, setFullLobbySession] =
+    useState<GameSessionDto | null>(null);
   const [gameName, setGameName] = useState("");
   const [hostName, setHostName] = useState("");
   const [playerCount, setPlayerCount] = useState(minPlayers);
@@ -82,7 +104,12 @@ export default function HomePage() {
     const sessionId = session.data.id;
 
     const player = await playerMutation.mutateAsync({
-      data: { name: hostName.trim(), colour: defaultColours[0], turnOrder: 1, missionId: 1 },
+      data: {
+        name: hostName.trim(),
+        colour: defaultColours[0],
+        turnOrder: 1,
+        missionId: 1,
+      },
       params: { gameSessionId: sessionId },
     });
     if (player.status !== 201) {
@@ -90,7 +117,7 @@ export default function HomePage() {
       return;
     }
 
-    localStorage.setItem(`player_${sessionId}`, String(player.data.id));
+    sessionStorage.setItem(`player_${sessionId}`, String(player.data.id));
     setGameName("");
     setHostName("");
     setPlayerCount(minPlayers);
@@ -100,22 +127,40 @@ export default function HomePage() {
 
   const handleJoinGame = async () => {
     if (!joinSession) return;
+
+    const joinUnavailableMessage = getJoinUnavailableMessage(joinSession);
+    if (joinUnavailableMessage) {
+      if (joinSession.playerCount >= joinSession.maxPlayers) {
+        setFullLobbySession(joinSession);
+      } else {
+        toast.error(joinUnavailableMessage);
+      }
+      setJoinSession(null);
+      return;
+    }
+
     const targetSessionId = joinSession.id;
     try {
       const player = await playerMutation.mutateAsync({
         data: {
           name: joinName.trim(),
-          colour: defaultColours[joinSession.playerCount % defaultColours.length],
+          colour:
+            defaultColours[joinSession.playerCount % defaultColours.length],
           turnOrder: joinSession.playerCount + 1,
           missionId: 1,
         },
         params: { gameSessionId: targetSessionId },
       });
       if (player.status !== 201) {
-        toast.error(typeof player.data === "string" ? player.data : "Failed to join game");
+        toast.error(
+          typeof player.data === "string" ? player.data : "Failed to join game",
+        );
         return;
       }
-      localStorage.setItem(`player_${targetSessionId}`, String(player.data.id));
+      sessionStorage.setItem(
+        `player_${targetSessionId}`,
+        String(player.data.id),
+      );
       setJoinName("");
       setJoinSession(null);
       navigate(`/lobby/${targetSessionId}`);
@@ -154,7 +199,20 @@ export default function HomePage() {
               <Card
                 key={session.id}
                 className="cursor-pointer p-1 rounded-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30 hover:border-border/60"
-                onClick={() => setJoinSession(session)}
+                onClick={() => {
+                  const joinUnavailableMessage =
+                    getJoinUnavailableMessage(session);
+                  if (joinUnavailableMessage) {
+                    if (session.playerCount >= session.maxPlayers) {
+                      setFullLobbySession(session);
+                    } else {
+                      toast.error(joinUnavailableMessage);
+                    }
+                    return;
+                  }
+
+                  setJoinSession(session);
+                }}
               >
                 <CardContent className="flex items-center justify-between px-3 py-2">
                   <span className="text-sm font-medium text-foreground">
@@ -232,11 +290,19 @@ export default function HomePage() {
 
       <CustomDialog
         open={joinSession !== null}
-        onOpenChange={(open) => { if (!open) { setJoinSession(null); setJoinName(""); } }}
+        onOpenChange={(open) => {
+          if (!open) {
+            setJoinSession(null);
+            setJoinName("");
+          }
+        }}
         title="Join game"
         description={`Joining ${joinSession?.name} (${joinSession?.playerCount}/${joinSession?.maxPlayers} players)`}
         onConfirm={handleJoinGame}
-        onCancel={() => { setJoinSession(null); setJoinName(""); }}
+        onCancel={() => {
+          setJoinSession(null);
+          setJoinName("");
+        }}
         confirmLabel="Join"
         confirmDisabled={!joinName.trim()}
         isSubmitting={playerMutation.isPending}
@@ -252,6 +318,27 @@ export default function HomePage() {
           />
         </div>
       </CustomDialog>
+
+      <Dialog
+        open={fullLobbySession !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setFullLobbySession(null);
+          }
+        }}
+      >
+        <DialogContent className="rounded-md">
+          <DialogHeader>
+            <DialogTitle>Lobby is full</DialogTitle>
+            <DialogDescription>
+              {fullLobbySession
+                ? `${fullLobbySession.name} already has ${fullLobbySession.maxPlayers} players. Please choose another lobby or create a new one.`
+                : "This lobby is already full."}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter showCloseButton />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
