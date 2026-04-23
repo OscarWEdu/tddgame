@@ -7,4 +7,5 @@
 
 export interface CreateGameSessionRequest {
   name: string;
+  maxPlayers: number;
 }
