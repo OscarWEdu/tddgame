@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 
 LobbyPage.route = {
   path: "/lobby/:sessionId",
