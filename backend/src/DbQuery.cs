@@ -91,6 +91,15 @@ public static class DbQuery
                 FOREIGN KEY (continentId) REFERENCES Continents(id)
             );
 
+            
+            CREATE TABLE IF NOT EXISTS TerritoryAdjacencies (
+                territoryId INT NOT NULL,
+                adjacentTerritoryId INT NOT NULL,
+                PRIMARY KEY (territoryId, adjacentTerritoryId),
+                FOREIGN KEY (territoryId) REFERENCES Territories(id),
+                FOREIGN KEY (adjacentTerritoryId) REFERENCES Territories(id)
+            );
+
             CREATE TABLE IF NOT EXISTS PlayerTerritories (
                 id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 troopNum INT NOT NULL DEFAULT 0,
@@ -218,16 +227,143 @@ public static class DbQuery
             command.CommandText = PlayerData;
             command.ExecuteNonQuery();
         }
-        // Seed Continents
+         // Seed Continents (6 classic Risk continents, ids match Territories.continentId below)
         command.CommandText = "SELECT COUNT(*) FROM Continents";
         if (Convert.ToInt32(command.ExecuteScalar()) == 0)
         {
             var ContinentData = @"
-                INSERT INTO Continents (name, bonusConst) VALUES
-                ('Eurtarctica', 3),
-                ('Ameristralia', 2);
+                INSERT INTO Continents (id, name, bonusConst) VALUES
+                (1, 'North America', 5),
+                (2, 'South America', 2),
+                (3, 'Europe', 5),
+                (4, 'Africa', 3),
+                (5, 'Asia', 7),
+                (6, 'Australia', 2);
             ";
             command.CommandText = ContinentData;
+            command.ExecuteNonQuery();
+        }
+
+        // Seed Territories (42 classic Risk territories; names match the SVG path ids
+        // when slugified, so the frontend RiskMap can match by name. Adjacency fields
+        // are placeholders (0) until the schema gains a real adjacency list.)
+        command.CommandText = "SELECT COUNT(*) FROM Territories";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var TerritoryData = @"
+                INSERT INTO Territories (name, NorthAdjacentId, SouthAdjacentId, EastAdjacentId, WestAdjacentId, continentId) VALUES
+                ('Alaska', 0, 0, 0, 0, 1),
+                ('Alberta', 0, 0, 0, 0, 1),
+                ('Central America', 0, 0, 0, 0, 1),
+                ('Eastern United States', 0, 0, 0, 0, 1),
+                ('Greenland', 0, 0, 0, 0, 1),
+                ('Northwest Territory', 0, 0, 0, 0, 1),
+                ('Ontario', 0, 0, 0, 0, 1),
+                ('Quebec', 0, 0, 0, 0, 1),
+                ('Western United States', 0, 0, 0, 0, 1),
+                ('Argentina', 0, 0, 0, 0, 2),
+                ('Brazil', 0, 0, 0, 0, 2),
+                ('Venezuela', 0, 0, 0, 0, 2),
+                ('Peru', 0, 0, 0, 0, 2),
+                ('Great Britain', 0, 0, 0, 0, 3),
+                ('Iceland', 0, 0, 0, 0, 3),
+                ('Northern Europe', 0, 0, 0, 0, 3),
+                ('Scandinavia', 0, 0, 0, 0, 3),
+                ('Southern Europe', 0, 0, 0, 0, 3),
+                ('Ukraine', 0, 0, 0, 0, 3),
+                ('Western Europe', 0, 0, 0, 0, 3),
+                ('Congo', 0, 0, 0, 0, 4),
+                ('East Africa', 0, 0, 0, 0, 4),
+                ('Egypt', 0, 0, 0, 0, 4),
+                ('Madagascar', 0, 0, 0, 0, 4),
+                ('North Africa', 0, 0, 0, 0, 4),
+                ('South Africa', 0, 0, 0, 0, 4),
+                ('Afghanistan', 0, 0, 0, 0, 5),
+                ('China', 0, 0, 0, 0, 5),
+                ('India', 0, 0, 0, 0, 5),
+                ('Irkutsk', 0, 0, 0, 0, 5),
+                ('Japan', 0, 0, 0, 0, 5),
+                ('Kamchatka', 0, 0, 0, 0, 5),
+                ('Middle East', 0, 0, 0, 0, 5),
+                ('Mongolia', 0, 0, 0, 0, 5),
+                ('Siam', 0, 0, 0, 0, 5),
+                ('Siberia', 0, 0, 0, 0, 5),
+                ('Ural', 0, 0, 0, 0, 5),
+                ('Yakutsk', 0, 0, 0, 0, 5),
+                ('Eastern Australia', 0, 0, 0, 0, 6),
+                ('New Guinea', 0, 0, 0, 0, 6),
+                ('Indonesia', 0, 0, 0, 0, 6),
+                ('Western Australia', 0, 0, 0, 0, 6);
+            ";
+            command.CommandText = TerritoryData;
+            command.ExecuteNonQuery();
+        }
+
+        // Seed Territory Adjacencies (classic Risk neighbor pairs, stored
+        // symmetrically — each edge becomes two rows so a single lookup by
+        // territoryId returns all neighbors. Ids match the insertion order of
+        // the Territories seed above.)
+        command.CommandText = "SELECT COUNT(*) FROM TerritoryAdjacencies";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var edges = new (int A, int B)[]
+            {
+                // North America (1=Alaska, 2=Alberta, 3=Central America, 4=EUS,
+                // 5=Greenland, 6=NWT, 7=Ontario, 8=Quebec, 9=WUS)
+                (1, 2), (1, 6), (1, 32),
+                (2, 6), (2, 7), (2, 9),
+                (3, 4), (3, 9), (3, 12),
+                (4, 7), (4, 8), (4, 9),
+                (5, 6), (5, 7), (5, 8), (5, 15),
+                (6, 7),
+                (7, 8), (7, 9),
+                // South America (10=Argentina, 11=Brazil, 12=Venezuela, 13=Peru)
+                (10, 11), (10, 13),
+                (11, 12), (11, 13), (11, 25),
+                (12, 13),
+                // Europe (14=GB, 15=Iceland, 16=NEU, 17=Scandinavia, 18=SEU,
+                // 19=Ukraine, 20=WEU)
+                (14, 15), (14, 16), (14, 17), (14, 20),
+                (15, 17),
+                (16, 17), (16, 18), (16, 19), (16, 20),
+                (17, 19),
+                (18, 19), (18, 20), (18, 23), (18, 25), (18, 33),
+                (19, 27), (19, 33), (19, 37),
+                (20, 25),
+                // Africa (21=Congo, 22=East Africa, 23=Egypt, 24=Madagascar,
+                // 25=North Africa, 26=South Africa)
+                (21, 22), (21, 25), (21, 26),
+                (22, 23), (22, 24), (22, 25), (22, 26), (22, 33),
+                (23, 25), (23, 33),
+                (24, 26),
+                // Asia (27=Afghanistan, 28=China, 29=India, 30=Irkutsk, 31=Japan,
+                // 32=Kamchatka, 33=Middle East, 34=Mongolia, 35=Siam, 36=Siberia,
+                // 37=Ural, 38=Yakutsk)
+                (27, 28), (27, 29), (27, 33), (27, 37),
+                (28, 29), (28, 34), (28, 35), (28, 36), (28, 37),
+                (29, 33), (29, 35),
+                (30, 32), (30, 34), (30, 36), (30, 38),
+                (31, 32), (31, 34),
+                (32, 34), (32, 38),
+                (34, 36),
+                (35, 41),
+                (36, 37), (36, 38),
+                // Australia (39=Eastern Australia, 40=New Guinea, 41=Indonesia,
+                // 42=Western Australia)
+                (39, 40), (39, 42),
+                (40, 41), (40, 42),
+                (41, 42),
+            };
+
+            var values = new List<string>(edges.Length * 2);
+            foreach (var (a, b) in edges)
+            {
+                values.Add($"({a},{b})");
+                values.Add($"({b},{a})");
+            }
+            command.CommandText =
+                "INSERT INTO TerritoryAdjacencies (territoryId, adjacentTerritoryId) VALUES "
+                + string.Join(",", values) + ";";
             command.ExecuteNonQuery();
         }
 

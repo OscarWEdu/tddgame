@@ -7,7 +7,8 @@ public record TerritoryDto(
     int SouthAdjacentId,
     int WestAdjacentId,
     int EastAdjacentId,
-    int ContinentId
+    int ContinentId,
+    int[] AdjacentTerritoryIds
 );
 
 public record CreateTerritoryRequest(
