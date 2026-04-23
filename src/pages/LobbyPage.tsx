@@ -1,13 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 
-LobbyPage.route = {
-  path: "/lobby/:sessionId",
-};
-
 export default function LobbyPage() {
   const navigate = useNavigate();
-  const { sessionId } = useParams();
+  const { sessionId } = useParams<{ sessionId: string }>();
 
   return (
     <div className="flex flex-col gap-6 py-8 ">
