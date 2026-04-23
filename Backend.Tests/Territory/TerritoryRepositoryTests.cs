@@ -17,7 +17,7 @@ public class TerritoryRepositoryTests
     {
         var territories = new List<TerritoryDto>
         {
-            new TerritoryDto(1, "string", -1, -1, -1, -1, 1)
+            new TerritoryDto(1, "string", -1, -1, -1, -1, 1, new List<int>().ToArray())
         };
         _mockRepo.Setup(repo => repo.GetTerritoriesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(territories);
 
@@ -33,7 +33,7 @@ public class TerritoryRepositoryTests
     [InlineData(1, true)]
     public async Task GetTerritoryByIdAsync_ReturnsCorrectResponse(int testId, bool isValidRequest)
     {
-        TerritoryDto dto = new TerritoryDto(1, "Test", -1, -1, -1, -1, 1);
+        TerritoryDto dto = new TerritoryDto(1, "Test", -1, -1, -1, -1, 1, new List<int>().ToArray());
 
         _mockRepo.Setup(repo => repo.GetTerritoryByIdAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
 
@@ -51,7 +51,7 @@ public class TerritoryRepositoryTests
     [Fact]
     public async Task CreateTerritoryAsync_ReturnsNewTerritory()
     {
-        TerritoryDto dto = new TerritoryDto(1, "Test", -1, -1, -1, -1, 1);
+        TerritoryDto dto = new TerritoryDto(1, "Test", -1, -1, -1, -1, 1, new List<int>().ToArray());
 
         _mockRepo.Setup(repo => repo.CreateTerritoryAsync("Test", -1, -1, -1, -1, 1, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
 
