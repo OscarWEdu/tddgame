@@ -12,7 +12,7 @@ LobbyPage.route = {
 
 export default function LobbyPage() {
   const navigate = useNavigate();
-  const { sessionId } = useParams();
+  const { sessionId } = useParams<{ sessionId: string }>();
 
   const { mutateAsync } = usePatchApiGameSessionIdStatus()
 

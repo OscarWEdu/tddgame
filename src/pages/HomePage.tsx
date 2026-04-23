@@ -32,10 +32,6 @@ import type { GameSessionDto } from "../api/generated/models/gameSessionDto";
 import { GameSessionStatus } from "../api/generated/models/gameSessionStatus";
 import { usePostApiPlayers } from "../api/generated/players/players";
 
-HomePage.route = {
-  path: "/",
-};
-
 const defaultColours = ["Black", "Blue", "Green", "Pink", "Red", "Yellow"];
 const minPlayers = 2;
 const maxPlayers = 6;

@@ -10,10 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-GamePage.route = {
-  path: "/game/:sessionId",
-};
-
 export default function GamePage() {
   const { sessionId } = useParams<{ sessionId: string }>();
 
