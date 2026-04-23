@@ -4,11 +4,15 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-jobs: 
+jobs:
   unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Start database
+        run: docker compose up -d --wait
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -21,6 +25,41 @@ jobs:
 
       - name: Run unit tests
         run: dotnet test Backend.Tests/Backend.Tests.csproj --no-build --verbosity normal
+      
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache-dependency-path: package-lock.json
+          cache: "npm"
+
+      - name: Restore npm dependencies
+        run: npm ci
+
+      - name: Build frontend with Vite
+        run: npm run build
+      
+      - name: Create db-config.json
+        run: |
+          cat > backend/db-config.json << EOF
+          {
+            "host": "${{ secrets.DB_HOST }}",
+            "port": ${{ secrets.DB_PORT }},
+            "username": "${{ secrets.DB_USERNAME }}",
+            "password": "${{ secrets.DB_PASSWORD }}",
+            "database": "${{ secrets.DB_NAME }}",
+            "createTablesIfNotExist": true,
+            "seedDataIfEmpty": true
+          }
+          EOF
+
+      - name: Run dotnet server and API tests
+        run: |
+          npm run dev:be &
+          npx wait-on@9.0.5 --yes http://localhost:5001
+          echo "Server started"
+      - name: Run API tests
+        run: npm run test:api
 
 
   # playwright-tests:

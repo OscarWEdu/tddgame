@@ -13,7 +13,7 @@ public class TerritoryRepositoryTests
 
     //Check that a territory is returned
     [Fact]
-    public async Task GetTerritoriesAsync_ReturnsContinent()
+    public async Task GetTerritoriesAsync_ReturnsTerritory()
     {
         var territories = new List<TerritoryDto>
         {

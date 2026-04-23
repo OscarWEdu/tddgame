@@ -92,7 +92,7 @@ public static class DbQuery
             );
 
             CREATE TABLE IF NOT EXISTS PlayerTerritories (
-                id INT PRIMARY KEY NOT NULL,
+                id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
                 troopNum INT NOT NULL DEFAULT 0,
                 hasCity BOOLEAN DEFAULT FALSE,
                 playerId INT NOT NULL,
@@ -105,6 +105,7 @@ public static class DbQuery
                 id INT PRIMARY KEY NOT NULL,
                 round INT NOT NULL DEFAULT 0,
                 phase ENUM('build', 'assigned', 'attack', 'reinforce') NOT NULL DEFAULT 'build',
+                status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
                 createAt DATE DEFAULT (CURDATE()) NOT NULL,
                 gameSessions_id VARCHAR(255) NOT NULL,
                 players_id INT NOT NULL,
@@ -123,16 +124,25 @@ public static class DbQuery
 
             CREATE TABLE IF NOT EXISTS TypingChallenges (
                 id INT PRIMARY KEY NOT NULL,
-                speed INT NOT NULL,
-                mistakes INT NOT NULL,
-                promptText TEXT NOT NULL
+                speed INT NOT NULL DEFAULT 0,
+                mistakes INT NOT NULL DEFAULT 0,
+                promptText TEXT NOT NULL,
+                battles_id INT NOT NULL UNIQUE,
+                FOREIGN KEY (battles_id) REFERENCES Battles(id)
             );
 
             CREATE TABLE IF NOT EXISTS Results (
                 id INT PRIMARY KEY NOT NULL,
+                battles_id INT NOT NULL UNIQUE,
+                winner ENUM('attacker', 'defender') NOT NULL,
                 attackerScore INT NOT NULL DEFAULT 0,
                 defenderScore INT NOT NULL DEFAULT 0,
-                battles_id INT NOT NULL,
+                attackerMistakes INT NOT NULL DEFAULT 0,
+                defenderMistakes INT NOT NULL DEFAULT 0,
+                attackerCompleted BOOLEAN NOT NULL DEFAULT FALSE,
+                defenderCompleted BOOLEAN NOT NULL DEFAULT FALSE,
+                attackerTroopLoss INT NOT NULL DEFAULT 0,
+                defenderTroopLoss INT NOT NULL DEFAULT 0,
                 FOREIGN KEY (battles_id) REFERENCES Battles(id)
             );
         ";
@@ -216,19 +226,6 @@ public static class DbQuery
                 INSERT INTO Continents (name, bonusConst) VALUES
                 ('Eurtarctica', 3),
                 ('Ameristralia', 2);
-            ";
-            command.CommandText = ContinentData;
-            command.ExecuteNonQuery();
-        }
-
-        // Seed Territories
-        command.CommandText = "SELECT COUNT(*) FROM Territories";
-        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-        {
-            var ContinentData = @"
-                INSERT INTO Territories (name, NorthAdjacentId, SouthAdjacentId, WestAdjacentId, EastAdjacentId, Continentid) VALUES
-                ('Halmstad', 2, -1, -1, -1, 1),
-                ('Stockstad', -1, 1, -1, -1, 1);
             ";
             command.CommandText = ContinentData;
             command.ExecuteNonQuery();
