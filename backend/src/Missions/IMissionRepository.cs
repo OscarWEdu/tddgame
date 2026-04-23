@@ -7,7 +7,7 @@ namespace TddGame;
 public interface IMissionsRepository
 {
   Task<IEnumerable<MissionDto>?> GetMissionsAsync(CancellationToken ct);
-  Task<MissionDto?> CreateMissionAsync(CreateMissionDto turn, CancellationToken ct);
+  Task<MissionDto?> CreateMissionAsync(CreateMissionDto mission, CancellationToken ct);
   Task<int?> GetMissionByPlayerIdAsync(string MissionID, int currentMission, CancellationToken ct);
 
 
