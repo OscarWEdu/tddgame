@@ -98,8 +98,14 @@ export default function RiskMap({ territories = []}: RiskMapProps) {
   const hoveredTerritory = hoveredId ? territoryBySvgId.get(hoveredId) : null;
 
     return (
-      <div>
-        
+      <div className='relative w-full'>
+        <div>
+          <label className='inline-flex cursor-pointer items-center gap-2 text-slate-700'>
+            <input type="checkbox" checked={showText} onChange={(e) => setShowText(e.target.checked)} className='h-4 w-4 cursor-pointer'/>
+            Show territory names
+          </label>
+        </div>
+
       </div>
 
     );
