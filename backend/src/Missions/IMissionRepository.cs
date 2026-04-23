@@ -8,7 +8,7 @@ public interface IMissionsRepository
 {
   Task<IEnumerable<MissionDto>?> GetMissionsAsync(CancellationToken ct);
   Task<MissionDto?> CreateMissionAsync(CreateMissionDto mission, CancellationToken ct);
-  Task<int?> GetMissionByPlayerIdAsync(string MissionID, int currentMission, CancellationToken ct);
+  Task<int?> GetMissionByPlayerIdAsync(int MissionID, CancellationToken ct);
 
 
 }
