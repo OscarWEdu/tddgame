@@ -43,11 +43,11 @@ export default function GamePage() {
           {/* Game Decisions */}
           <div className="flex w-80 flex-col gap-2 rounded border bg-white p-4">
             <p className="font-semibold">Game Status</p>
-            {isLoading && <p className="text-sm text-slate-500">Laddar territorier…</p>}
-            {isError && <p className="text-sm text-red-600">Kunde inte hämta territorier</p>}
+            {isLoading && <p className="text-sm text-slate-500">Loading territories…</p>}
+            {isError && <p className="text-sm text-red-600">could not get territories</p>}
             {!isLoading && !isError && (
               <p className="text-sm text-slate-500">
-                {territories.length} territorier laddade
+                {territories.length} territories loaded
               </p>
             )}
           </div>
