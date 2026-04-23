@@ -46,7 +46,10 @@ public static class GameSessionsEndpoint
                 if (request.Name.Trim().Length > 100)
                     return TypedResults.BadRequest("Name can not be longer than 100 symbols");
 
-                var gameSession = await repo.CreateGameSessionAsync(request.Name, ct);
+                if (request.MaxPlayers < 2 || request.MaxPlayers > 6)
+                    return TypedResults.BadRequest("MaxPlayers must be between 2 and 6");
+
+                var gameSession = await repo.CreateGameSessionAsync(request.Name, request.MaxPlayers, ct);
 
                 return TypedResults.Created($"/api/game-session/{gameSession.Id}", gameSession);
             }

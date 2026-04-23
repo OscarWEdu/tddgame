@@ -18,8 +18,8 @@ public class PlayerRepositoryTests
     {
         var players = new List<PlayerDto>
         {
-            new PlayerDto(1, "Mario", "Red", 1, 0, false, "1", 1),
-            new PlayerDto(2, "Wario", "Yellow", 2, 0, false, "1", 1)
+            new PlayerDto(1, "Mario", "Red", 1, 0, false, true, "1", 1),
+            new PlayerDto(2, "Wario", "Yellow", 2, 0, false, false, "1", 1)
         };
 
         _mockRepo.Setup(repo => repo.GetPlayersByGameSessionAsync("1", It.IsAny<CancellationToken>()))
@@ -44,7 +44,7 @@ public class PlayerRepositoryTests
     [Fact]
     public async Task GetPlayerById_ReturnsPlayer()
     {
-        var player = new PlayerDto(1, "Mario", "Red", 1, 0, false, "1", 1);
+        var player = new PlayerDto(1, "Mario", "Red", 1, 0, false, true, "1", 1);
 
         _mockRepo.Setup(repo => repo.GetPlayerByIdAsync(1, It.IsAny<CancellationToken>()))
                  .ReturnsAsync(player);
@@ -69,11 +69,11 @@ public class PlayerRepositoryTests
     public async Task AddPlayer_ReturnsCreatedPlayer()
     {
         var CreatePlayerDto = new CreatePlayerDto("Luigi", "Green", 2, 1);
-        var createdPlayer = new PlayerDto(2, "Luigi", "Green", 2, 0, false, "1", 1);
-        _mockRepo.Setup(repo => repo.AddPlayerToGameAsync("1", CreatePlayerDto, It.IsAny<CancellationToken>()))
+        var createdPlayer = new PlayerDto(2, "Luigi", "Green", 2, 0, false, false, "1", 1);
+        _mockRepo.Setup(repo => repo.AddPlayerToGameAsync("1", CreatePlayerDto, false, It.IsAny<CancellationToken>()))
                  .ReturnsAsync(createdPlayer);
 
-        var result = await _mockRepo.Object.AddPlayerToGameAsync("1", CreatePlayerDto, CancellationToken.None);
+        var result = await _mockRepo.Object.AddPlayerToGameAsync("1", CreatePlayerDto, false, CancellationToken.None);
 
         Assert.NotNull(result);
         Assert.Equal("Luigi", result.Name);
@@ -86,7 +86,7 @@ public class PlayerRepositoryTests
     public async Task UpdatePlayer_ReturnsUpdatedPlayer()
     {
         var newState = new PlayerStateDto(10, true);
-        var updatedPlayer = new PlayerDto(1, "Mario", "Red", 1, 10, true, "1", 1);
+        var updatedPlayer = new PlayerDto(1, "Mario", "Red", 1, 10, true, true, "1", 1);
         _mockRepo.Setup(repo => repo.UpdatePlayerAsync(1, newState, It.IsAny<CancellationToken>()))
                  .ReturnsAsync(updatedPlayer);
 

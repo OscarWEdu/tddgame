@@ -171,12 +171,29 @@ export type postApiPlayersResponse201 = {
   status: 201
 }
 
+export type postApiPlayersResponse400 = {
+  data: string
+  status: 400
+}
+
+export type postApiPlayersResponse404 = {
+  data: string
+  status: 404
+}
+
+export type postApiPlayersResponse409 = {
+  data: string
+  status: 409
+}
+
 export type postApiPlayersResponseSuccess = (postApiPlayersResponse201) & {
   headers: Headers;
 };
-;
+export type postApiPlayersResponseError = (postApiPlayersResponse400 | postApiPlayersResponse404 | postApiPlayersResponse409) & {
+  headers: Headers;
+};
 
-export type postApiPlayersResponse = (postApiPlayersResponseSuccess)
+export type postApiPlayersResponse = (postApiPlayersResponseSuccess | postApiPlayersResponseError)
 
 export const getPostApiPlayersUrl = (params: PostApiPlayersParams,) => {
   const normalizedParams = new URLSearchParams();
@@ -216,7 +233,7 @@ export const postApiPlayers = async (createPlayerDto: CreatePlayerDto,
 
 
 
-export const getPostApiPlayersMutationOptions = <TError = unknown,
+export const getPostApiPlayersMutationOptions = <TError = string,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiPlayers>>, TError,{data: CreatePlayerDto;params: PostApiPlayersParams}, TContext>, fetch?: RequestInit}
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiPlayers>>, TError,{data: CreatePlayerDto;params: PostApiPlayersParams}, TContext> => {
 
@@ -245,12 +262,12 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
 
     export type PostApiPlayersMutationResult = NonNullable<Awaited<ReturnType<typeof postApiPlayers>>>
     export type PostApiPlayersMutationBody = CreatePlayerDto
-    export type PostApiPlayersMutationError = unknown
+    export type PostApiPlayersMutationError = string
 
     /**
  * @summary Add a player to a game session
  */
-export const usePostApiPlayers = <TError = unknown,
+export const usePostApiPlayers = <TError = string,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiPlayers>>, TError,{data: CreatePlayerDto;params: PostApiPlayersParams}, TContext>, fetch?: RequestInit}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiPlayers>>,

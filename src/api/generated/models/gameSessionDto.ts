@@ -10,4 +10,6 @@ export interface GameSessionDto {
   id: string;
   name: string;
   status?: GameSessionStatus;
+  maxPlayers: number;
+  playerCount: number;
 }

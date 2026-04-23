@@ -51,7 +51,8 @@ public static class DbQuery
             CREATE TABLE IF NOT EXISTS GameSessions (
                 id VARCHAR(255) PRIMARY KEY NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                status ENUM('lobby', 'started', 'completed') NOT NULL DEFAULT 'lobby'
+                status ENUM('lobby', 'started', 'completed') NOT NULL DEFAULT 'lobby',
+                maxPlayers INT NOT NULL DEFAULT 6
             );
 
             CREATE TABLE IF NOT EXISTS Missions (
@@ -68,10 +69,11 @@ public static class DbQuery
                 turnOrder INT NOT NULL,
                 numGold INT NOT NULL DEFAULT 0,
                 isDead BOOLEAN NOT NULL DEFAULT FALSE,
+                isHost BOOLEAN NOT NULL DEFAULT FALSE,
                 gameSessions_id VARCHAR(255) NOT NULL,
                 missions_id INT NOT NULL,
-                FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id),
-                FOREIGN KEY (missions_id) REFERENCES Missions(id)
+                CONSTRAINT FK_Players_GameSessions FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id) ON DELETE CASCADE,
+                CONSTRAINT FK_Players_Missions FOREIGN KEY (missions_id) REFERENCES Missions(id)
             );
 
             CREATE TABLE IF NOT EXISTS Continents (
@@ -106,8 +108,8 @@ public static class DbQuery
                 hasCity BOOLEAN DEFAULT FALSE,
                 playerId INT NOT NULL,
                 territoryId INT NOT NULL,
-                FOREIGN KEY (playerId) REFERENCES Players(id),
-                FOREIGN KEY (territoryId) REFERENCES Territories(id)
+                CONSTRAINT FK_PlayerTerritories_Players FOREIGN KEY (playerId) REFERENCES Players(id) ON DELETE CASCADE,
+                CONSTRAINT FK_PlayerTerritories_Territories FOREIGN KEY (territoryId) REFERENCES Territories(id)
             );
 
             CREATE TABLE IF NOT EXISTS Turns (
@@ -118,8 +120,8 @@ public static class DbQuery
                 createAt DATE DEFAULT (CURDATE()) NOT NULL,
                 gameSessions_id VARCHAR(255) NOT NULL,
                 players_id INT NOT NULL,
-                FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id),
-                FOREIGN KEY (players_id) REFERENCES Players(id)
+                CONSTRAINT FK_Turns_GameSessions FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id) ON DELETE CASCADE,
+                CONSTRAINT FK_Turns_Players FOREIGN KEY (players_id) REFERENCES Players(id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS Battles (
@@ -127,8 +129,8 @@ public static class DbQuery
                 attackingTroops INT NOT NULL DEFAULT 0,
                 attackerTerritoryId INT NOT NULL,
                 defenderTerritoryId INT NOT NULL,
-                FOREIGN KEY (attackerTerritoryId) REFERENCES PlayerTerritories(id),
-                FOREIGN KEY (defenderTerritoryId) REFERENCES PlayerTerritories(id)
+                CONSTRAINT FK_Battles_AttackerPlayerTerritories FOREIGN KEY (attackerTerritoryId) REFERENCES PlayerTerritories(id) ON DELETE CASCADE,
+                CONSTRAINT FK_Battles_DefenderPlayerTerritories FOREIGN KEY (defenderTerritoryId) REFERENCES PlayerTerritories(id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS TypingChallenges (
@@ -137,7 +139,7 @@ public static class DbQuery
                 mistakes INT NOT NULL DEFAULT 0,
                 promptText TEXT NOT NULL,
                 battles_id INT NOT NULL UNIQUE,
-                FOREIGN KEY (battles_id) REFERENCES Battles(id)
+                CONSTRAINT FK_TypingChallenges_Battles FOREIGN KEY (battles_id) REFERENCES Battles(id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS Results (
@@ -152,7 +154,7 @@ public static class DbQuery
                 defenderCompleted BOOLEAN NOT NULL DEFAULT FALSE,
                 attackerTroopLoss INT NOT NULL DEFAULT 0,
                 defenderTroopLoss INT NOT NULL DEFAULT 0,
-                FOREIGN KEY (battles_id) REFERENCES Battles(id)
+                CONSTRAINT FK_Results_Battles FOREIGN KEY (battles_id) REFERENCES Battles(id) ON DELETE CASCADE
             );
         ";
 

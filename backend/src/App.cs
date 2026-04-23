@@ -8,7 +8,7 @@ builder.Configuration.AddJsonFile("db-config.json", optional: true);
 builder.Configuration.AddEnvironmentVariables();
 
 var c = builder.Configuration;
-var connStr = $"Server={c["host"]};Port={c["port"]};Database={c["database"]};User={c["username"]};Password={c["password"]};";
+var connStr = $"Server={c["host"]};Port={c["port"]};Database={c["database"]};User={c["username"]};Password={c["password"]};SslMode=Required;";
 
 builder.Services.AddSingleton(new MySqlDataSource(connStr));
 

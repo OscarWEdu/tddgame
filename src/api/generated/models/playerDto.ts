@@ -12,6 +12,7 @@ export interface PlayerDto {
   turnOrder: number;
   numGold: number;
   isDead: boolean;
+  isHost: boolean;
   gameSessionId: string;
   missionId: number;
 }
