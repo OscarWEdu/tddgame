@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 
-import type { GameSessionDto } from "../api/generated/models/gameSessionDto";
 import { GameSessionStatus } from "@/api/generated/models";
 import { useGetApiGameSessionId, usePatchApiGameSessionIdStatus } from "../api/generated/game-sessions/game-sessions";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 LobbyPage.route = {
   path: "/lobby/:sessionId",
@@ -17,12 +17,15 @@ export default function LobbyPage() {
   const { mutateAsync } = usePatchApiGameSessionIdStatus()
 
   //Fetches session status every x/1000 sec
-  const { data, isLoading, error } = useGetApiGameSessionId(sessionId!, {
+  const { data, isError } = useGetApiGameSessionId(sessionId!, {
     query: {
       refetchInterval: 2000
     }
   });
-  
+  if(isError){
+    toast.error("Error fetching session");
+  }
+
   //Navigates to the game page if the session has started
   useEffect(() => {
   // If the query hasn't returned anything yet, do nothing
