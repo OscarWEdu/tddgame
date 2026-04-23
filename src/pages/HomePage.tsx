@@ -106,7 +106,7 @@ export default function HomePage() {
     setCreateOpen(false);
     setGameName("");
     setPlayerCount(minPlayers);
-    navigate(`/game/${sessionId}`);
+    navigate(`/lobby/${sessionId}`);
   };
 
   return (
@@ -230,7 +230,7 @@ export default function HomePage() {
             <Button variant="ghost" onClick={() => setJoinSession(null)}>
               Cancel
             </Button>
-            <Button onClick={() => navigate(`/game/${joinSession?.id}`)}>
+            <Button onClick={() => navigate(`/lobby/${joinSession?.id}`)}>
               Join
             </Button>
           </DialogFooter>
