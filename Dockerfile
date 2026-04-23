@@ -9,7 +9,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Stage 2: Build the .NET backend and bundle frontend output into wwwroot
+# Stage 2: Build the .NET backend and bundle frontend output into wwwroot.
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backend-builder
 WORKDIR /src
 
@@ -26,4 +26,4 @@ WORKDIR /app
 
 COPY --from=backend-builder /app/publish .
 
-CMD ["sh", "-c", "ASPNETCORE_URLS=http://+:${PORT:-10000} dotnet src.dll"]
+CMD ["sh", "-c", "ASPNETCORE_URLS=http://+:${PORT:-10000} dotnet Backend.dll"]
