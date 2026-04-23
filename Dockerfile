@@ -26,4 +26,4 @@ WORKDIR /app
 
 COPY --from=backend-builder /app/publish .
 
-CMD ["sh", "-c", "ASPNETCORE_URLS=http://+:${PORT:-10000} dotnet src.dll"]
+CMD ["sh", "-c", "ASPNETCORE_URLS=http://+:${PORT:-10000} dotnet Backend.dll"]
