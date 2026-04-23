@@ -13,6 +13,6 @@ public record CreateMissionDto(
     string Name,
     string Description);
 
-public record MissionStateDto(
+public record MissionsDto(
     string Name,
     string Description);
