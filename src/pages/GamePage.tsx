@@ -105,7 +105,7 @@ export default function GamePage() {
                   onClick={() => setSelectedSvgId(null)}
                   className="mt-2 w-full rounded border border-slate-300 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100"
                 >
-                  Avmarkera
+                  Clear selection
                 </button>
               </div>
             ) : (
