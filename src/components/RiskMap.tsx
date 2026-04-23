@@ -60,6 +60,11 @@ export default function RiskMap({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const selectedRef = useRef(selectedSvgId);
+  useEffect(() => {
+    selectedRef.current = selectedSvgId;
+  }, [selectedSvgId]);
+
   const territoryBySvgId = useMemo(() => {
     const map = new Map<string, TerritoryDto>();
     territories.forEach((t) => map.set(nameToSvgId(t.name), t));
@@ -72,6 +77,17 @@ export default function RiskMap({
     return map;
   }, [territories]);
 
+   const adjacentSvgIds = useMemo(() => {
+    if (!selectedSvgId) return new Set<string>();
+    const selected = territoryBySvgId.get(selectedSvgId);
+    if (!selected) return new Set<string>();
+    const ids = new Set<string>();
+    selected.adjacentTerritoryIds.forEach((id) => {
+      const neighbor = territoryById.get(id);
+      if (neighbor) ids.add(nameToSvgId(neighbor.name));
+    });
+    return ids;
+  }, [selectedSvgId, territoryBySvgId, territoryById]);
     
   useEffect(() => {
     let cancelled = false;
@@ -91,53 +107,116 @@ export default function RiskMap({
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !svgMarkup) return;
-    const paths = container.querySelectorAll<SVGPathElement>(
-      `.${territoryClass}`,
-    );
-    const cleanups: Array<() => void> = [];
-    paths.forEach((path) => {
-      const onEnter = () => setHoveredId(path.id);
-      const onLeave = () =>
-        setHoveredId((current) => (current === path.id ? null : current));
-      path.addEventListener("mouseenter", onEnter);
-      path.addEventListener("mouseleave", onLeave);
-      cleanups.push(() => {
-        path.removeEventListener("mouseenter", onEnter);
-        path.removeEventListener("mouseleave", onLeave);
-      });
+    if (!container) return;
+
+    // Event delegation on the container instead of per-path listeners. React's
+    // dangerouslySetInnerHTML may replace the inner SVG nodes without notifying
+    // us, leaving per-path listeners attached to detached nodes. The container
+    // div itself is React-owned and stable for the component's lifetime.
+    const findTerritory = (target: EventTarget | null) =>
+      target instanceof SVGPathElement &&
+      target.classList.contains(territoryClass)
+        ? target
+        : null;
+
+    const onOver = (e: MouseEvent) => {
+      const t = findTerritory(e.target);
+      if (t) setHoveredId(t.id);
+    };
+    const onOut = (e: MouseEvent) => {
+      const t = findTerritory(e.target);
+      if (t) {
+        setHoveredId((current) => (current === t.id ? null : current));
+      }
+    };
+    const onClick = (e: MouseEvent) => {
+      const t = findTerritory(e.target);
+      if (!t) return;
+      const next = selectedRef.current === t.id ? null : t.id;
+      onSelectChange?.(next);
+    };
+
+    container.addEventListener("mouseover", onOver);
+    container.addEventListener("mouseout", onOut);
+    container.addEventListener("click", onClick);
+    return () => {
+      container.removeEventListener("mouseover", onOver);
+      container.removeEventListener("mouseout", onOut);
+      container.removeEventListener("click", onClick);
+    };
+  }, [onSelectChange]);
+
+  // Reflect the selected prop onto the DOM by toggling a class on the matching
+  // path. Done imperatively because the SVG lives outside React's tree.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container
+      .querySelectorAll(`.${territoryClass}.${selectedClass}`)
+      .forEach((p) => p.classList.remove(selectedClass));
+    if (selectedSvgId) {
+      container
+        .querySelector(`.${territoryClass}#${CSS.escape(selectedSvgId)}`)
+        ?.classList.add(selectedClass);
+    }
+  }, [selectedSvgId, svgMarkup]);
+
+  // Mark adjacent territories so the player can see which ones can be attacked
+  // from the selected territory.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container
+      .querySelectorAll(`.${territoryClass}.${adjacentClass}`)
+      .forEach((p) => p.classList.remove(adjacentClass));
+    adjacentSvgIds.forEach((id) => {
+      container
+        .querySelector(`.${territoryClass}#${CSS.escape(id)}`)
+        ?.classList.add(adjacentClass);
     });
-    return () => cleanups.forEach((fn) => fn());
-  }, [svgMarkup]);
+  }, [adjacentSvgIds, svgMarkup]);
 
   const hoveredTerritory = hoveredId ? territoryBySvgId.get(hoveredId) : null;
 
     return (
-      <div className='relative w-full'>
-        <style>{
-          `
-          .risk-map svg {width: 100%; height: auto; display: block;}
-          .risk-map.no-text svg text {display: none;}
-          .risk-map .${territoryClass} { transition: stroke 120ms ease; cursor: pointer;
-          }
-
-          .risk-map .${territoryClass}:hover {
+      <div className="relative w-full">
+      <style>{`
+        .risk-map svg { width: 100%; height: auto; display: block; }
+        .risk-map.no-text svg text { display: none; }
+        .risk-map .${territoryClass} {
+          transition: stroke 120ms ease;
+          cursor: pointer;
+        }
+        .risk-map .${territoryClass}.${adjacentClass} {
+          stroke: #f97316 !important;
+          stroke-width: 2.5 !important;
+          stroke-opacity: 1 !important;
+        }
+        .risk-map .${territoryClass}.${selectedClass} {
+          stroke: #ef4444 !important;
+          stroke-width: 3 !important;
+          stroke-opacity: 1 !important;
+        }
+        .risk-map .${territoryClass}:hover {
           stroke: #facc15 !important;
           stroke-width: 3 !important;
           stroke-opacity: 1 !important;
-  }
-         ` }
+        }
+      `}</style>
 
-        </style>
+      <div className="mb-3 flex items-center gap-2 text-sm">
+        <label className="inline-flex cursor-pointer items-center gap-2 text-slate-700">
+          <input
+            type="checkbox"
+            checked={showText}
+            onChange={(e) => setShowText(e.target.checked)}
+            className="h-4 w-4 cursor-pointer"
+          />
+          Visa landstexter
+        </label>
+      </div>
 
-        <div>
-          <label className='inline-flex cursor-pointer items-center gap-2 text-slate-700'>
-            <input type="checkbox" checked={showText} onChange={(e) => setShowText(e.target.checked)} className='h-4 w-4 cursor-pointer'/>
-            Show territory names
-          </label>
-        </div>
-
-         <div
+      <div
         ref={containerRef}
         className={`risk-map ${showText ? "" : "no-text"}`}
         dangerouslySetInnerHTML={svgMarkup ? { __html: svgMarkup } : undefined}
@@ -156,8 +235,7 @@ export default function RiskMap({
           )}
         </div>
       )}
-
-      </div>
+    </div>
 
     );
 }

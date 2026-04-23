@@ -13,4 +13,5 @@ export interface TerritoryDto {
   westAdjacentId: number;
   eastAdjacentId: number;
   continentId: number;
+  adjacentTerritoryIds: number[];
 }
