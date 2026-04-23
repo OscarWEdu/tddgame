@@ -59,6 +59,92 @@ public class PlayerTerritoryRepository(MySqlDataSource db) : IPlayerTerritoryRep
         }
         return playerTerritories;
     }
+     public async Task<IEnumerable<PlayerTerritoryDto>> AssignInitialTerritoriesAsync(string gameSessionId, CancellationToken ct)
+    {
+        await using var connection = await db.OpenConnectionAsync(ct);
+
+        var playerIds = new List<int>();
+        await using (var cmd = connection.CreateCommand())
+        {
+            cmd.CommandText = "SELECT id FROM Players WHERE gameSessions_id = @sid ORDER BY turnOrder";
+            cmd.Parameters.AddWithValue("@sid", gameSessionId);
+            await using var reader = await cmd.ExecuteReaderAsync(ct);
+            while (await reader.ReadAsync(ct))
+            {
+                playerIds.Add(reader.GetInt32(0));
+            }
+        }
+
+        if (playerIds.Count == 0)
+        {
+            return Array.Empty<PlayerTerritoryDto>();
+        }
+
+        var playerIdsCsv = string.Join(",", playerIds);
+
+        await using (var cmd = connection.CreateCommand())
+        {
+            cmd.CommandText = $"SELECT COUNT(*) FROM PlayerTerritories WHERE playerId IN ({playerIdsCsv})";
+            var existing = Convert.ToInt32(await cmd.ExecuteScalarAsync(ct));
+            if (existing > 0)
+            {
+                return Array.Empty<PlayerTerritoryDto>();
+            }
+        }
+
+        var allTerritoryIds = new List<int>();
+        await using (var cmd = connection.CreateCommand())
+        {
+            cmd.CommandText = "SELECT id FROM Territories";
+            await using var reader = await cmd.ExecuteReaderAsync(ct);
+            while (await reader.ReadAsync(ct))
+            {
+                allTerritoryIds.Add(reader.GetInt32(0));
+            }
+        }
+
+        for (int i = allTerritoryIds.Count - 1; i > 0; i--)
+        {
+            var j = Random.Shared.Next(i + 1);
+            (allTerritoryIds[i], allTerritoryIds[j]) = (allTerritoryIds[j], allTerritoryIds[i]);
+        }
+
+        var values = new List<string>(allTerritoryIds.Count);
+        for (int i = 0; i < allTerritoryIds.Count; i++)
+        {
+            var playerId = playerIds[i % playerIds.Count];
+            var territoryId = allTerritoryIds[i];
+            values.Add($"({playerId},{territoryId})");
+        }
+
+        await using (var insertCmd = connection.CreateCommand())
+        {
+            insertCmd.CommandText =
+                "INSERT INTO PlayerTerritories (playerId, territoryId) VALUES "
+                + string.Join(",", values);
+            await insertCmd.ExecuteNonQueryAsync(ct);
+        }
+
+        var newAssignments = new List<PlayerTerritoryDto>();
+        await using (var cmd = connection.CreateCommand())
+        {
+            cmd.CommandText = $"SELECT id, troopNum, hasCity, playerId, territoryId FROM PlayerTerritories WHERE playerId IN ({playerIdsCsv})";
+            await using var reader = await cmd.ExecuteReaderAsync(ct);
+            while (await reader.ReadAsync(ct))
+            {
+                newAssignments.Add(new PlayerTerritoryDto(
+                    Id: reader.GetInt32("id"),
+                    TroopNum: reader.GetInt32("troopNum"),
+                    HasCity: reader.GetBoolean("hasCity"),
+                    PlayerId: reader.GetInt32("playerId"),
+                    TerritoryId: reader.GetInt32("territoryId")
+                ));
+            }
+        }
+
+        return newAssignments;
+    }
+
 
     //Get PlayerTerritory by id
     public async Task<PlayerTerritoryDto?> GetPlayerTerritoryByIdAsync(int id, CancellationToken ct)
