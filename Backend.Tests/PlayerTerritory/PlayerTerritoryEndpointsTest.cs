@@ -1,20 +1,25 @@
-
 using Moq;
 using TddGame;
 using Xunit;
 
 namespace Backend.Tests.PlayerTerritoryTesting;
 
-
-public async Task DeletePlayerTerritory_ReturnsTrue_WhenDeleted()
+public class PlayerTerritoryEndpointsTests
 {
-    var mockRepo = new Mock<IPlayerTerritoryRepository>();
+    [Fact]
+    public async Task DeletePlayerTerritory_ReturnsTrue_WhenDeleted()
+    {
+        
+        var _mockRepo = new Mock<IPlayerTerritoryRepository>();
 
-    mockRepo
-        .Setup(r => r.DeletePlayerTerritoryAsync(1, It.IsAny<CancellationToken>()))
-        .ReturnsAsync(true);
+        _mockRepo
+            .Setup(r => r.DeletePlayerTerritoryAsync(1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
-    var result = await _mockRepo.Object.DeletePlayerTerritoryAsync(1, CancellationToken.None);
+        // Act
+        var result = await _mockRepo.Object.DeletePlayerTerritoryAsync(1, CancellationToken.None);
 
-    Assert.True(result);
+       
+        Assert.True(result);
+    }
 }
