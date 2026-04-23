@@ -65,7 +65,7 @@ public class MissionRepository : IMissionsRepository
 
     command.CommandText = "SELECT id FROM Missions WHERE id > @currentMission LIMIT 1";
 
-    command.Parameters.AddWithValue("@currentMission", currentMission);
+    command.Parameters.AddWithValue("PlayerId", currentMission);
 
     var result = await command.ExecuteScalarAsync(ct);
 
