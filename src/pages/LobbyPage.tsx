@@ -6,10 +6,6 @@ import { useGetApiGameSessionId, usePatchApiGameSessionIdStatus } from "../api/g
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-LobbyPage.route = {
-  path: "/lobby/:sessionId",
-};
-
 export default function LobbyPage() {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
