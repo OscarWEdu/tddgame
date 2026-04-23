@@ -1,14 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -31,6 +23,7 @@ import {
 import type { GameSessionDto } from "../api/generated/models/gameSessionDto";
 import { GameSessionStatus } from "../api/generated/models/gameSessionStatus";
 import { usePostApiPlayers } from "../api/generated/players/players";
+import { CustomDialog } from "../components/custom/CustomDialog";
 
 const defaultColours = ["Black", "Blue", "Green", "Pink", "Red", "Yellow"];
 const minPlayers = 2;
@@ -71,15 +64,16 @@ export default function HomePage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [joinSession, setJoinSession] = useState<GameSessionDto | null>(null);
   const [gameName, setGameName] = useState("");
+  const [hostName, setHostName] = useState("");
   const [playerCount, setPlayerCount] = useState(minPlayers);
+  const [joinName, setJoinName] = useState("");
 
   const sessions: GameSessionDto[] = data?.status === 200 ? data.data : [];
-  const isCreatingGame =
-    gameSessionMutation.isPending || playerMutation.isPending;
+  const isCreating = gameSessionMutation.isPending || playerMutation.isPending;
 
   const handleCreateGame = async () => {
     const session = await gameSessionMutation.mutateAsync({
-      data: { name: gameName },
+      data: { name: gameName, maxPlayers: playerCount },
     });
     if (session.status !== 201) {
       toast.error("Failed to create game session");
@@ -87,22 +81,47 @@ export default function HomePage() {
     }
     const sessionId = session.data.id;
 
-    for (let i = 0; i < playerCount; i++) {
-      await playerMutation.mutateAsync({
-        data: {
-          name: `Player ${i + 1}`,
-          colour: defaultColours[i],
-          turnOrder: i + 1,
-          missionId: 1,
-        },
-        params: { gameSessionId: sessionId },
-      });
+    const player = await playerMutation.mutateAsync({
+      data: { name: hostName.trim(), colour: defaultColours[0], turnOrder: 1, missionId: 1 },
+      params: { gameSessionId: sessionId },
+    });
+    if (player.status !== 201) {
+      toast.error("Failed to create player");
+      return;
     }
 
-    setCreateOpen(false);
+    localStorage.setItem(`player_${sessionId}`, String(player.data.id));
     setGameName("");
+    setHostName("");
     setPlayerCount(minPlayers);
+    setCreateOpen(false);
     navigate(`/lobby/${sessionId}`);
+  };
+
+  const handleJoinGame = async () => {
+    if (!joinSession) return;
+    const targetSessionId = joinSession.id;
+    try {
+      const player = await playerMutation.mutateAsync({
+        data: {
+          name: joinName.trim(),
+          colour: defaultColours[joinSession.playerCount % defaultColours.length],
+          turnOrder: joinSession.playerCount + 1,
+          missionId: 1,
+        },
+        params: { gameSessionId: targetSessionId },
+      });
+      if (player.status !== 201) {
+        toast.error(typeof player.data === "string" ? player.data : "Failed to join game");
+        return;
+      }
+      localStorage.setItem(`player_${targetSessionId}`, String(player.data.id));
+      setJoinName("");
+      setJoinSession(null);
+      navigate(`/lobby/${targetSessionId}`);
+    } catch {
+      toast.error("Failed to join game");
+    }
   };
 
   return (
@@ -141,97 +160,98 @@ export default function HomePage() {
                   <span className="text-sm font-medium text-foreground">
                     {session.name}
                   </span>
-                  {session.status && (
-                    <Badge variant={statusVariant[session.status]}>
-                      {statusLabel[session.status]}
-                    </Badge>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      {session.playerCount}/{session.maxPlayers}
+                    </span>
+                    {session.status && (
+                      <Badge variant={statusVariant[session.status]}>
+                        {statusLabel[session.status]}
+                      </Badge>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
         </div>
       </ScrollArea>
 
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="rounded-md">
-          <DialogHeader>
-            <DialogTitle>Create a new game</DialogTitle>
-            <DialogDescription>
-              Set up your game session and choose the number of players.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-4 py-2">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="game-name">Game name</Label>
-              <Input
-                id="game-name"
-                value={gameName}
-                onChange={(e) => setGameName(e.target.value)}
-                placeholder="My new game"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="player-count">Number of players</Label>
-              <Select
-                value={String(playerCount)}
-                onValueChange={(v) => setPlayerCount(Number(v))}
-              >
-                <SelectTrigger id="player-count">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from(
-                    { length: maxPlayers - minPlayers + 1 },
-                    (_, i) => i + minPlayers,
-                  ).map((n) => (
-                    <SelectItem key={n} value={String(n)}>
-                      {n} players
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="ghost"
-              className="rounded-md"
-              onClick={() => setCreateOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              className="rounded-md"
-              disabled={!gameName.trim() || isCreatingGame}
-              onClick={handleCreateGame}
-            >
-              {isCreatingGame ? "Creating..." : "Create game"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog
-        open={joinSession !== null}
-        onOpenChange={(open) => !open && setJoinSession(null)}
+      <CustomDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        title="Create a new game"
+        description="Set up your game session and choose the number of players."
+        onConfirm={handleCreateGame}
+        confirmLabel="Create game"
+        confirmDisabled={!gameName.trim() || !hostName.trim()}
+        isSubmitting={isCreating}
+        submittingLabel="Creating..."
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Join game</DialogTitle>
-            <DialogDescription>
-              Do you want to join <strong>{joinSession?.name}</strong>?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setJoinSession(null)}>
-              Cancel
-            </Button>
-            <Button onClick={() => navigate(`/lobby/${joinSession?.id}`)}>
-              Join
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="game-name">Game name</Label>
+            <Input
+              id="game-name"
+              value={gameName}
+              onChange={(e) => setGameName(e.target.value)}
+              placeholder="My new game"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="host-name">Your name</Label>
+            <Input
+              id="host-name"
+              value={hostName}
+              onChange={(e) => setHostName(e.target.value)}
+              placeholder="Enter your name"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="player-count">Max players</Label>
+            <Select
+              value={String(playerCount)}
+              onValueChange={(v) => setPlayerCount(Number(v))}
+            >
+              <SelectTrigger id="player-count">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from(
+                  { length: maxPlayers - minPlayers + 1 },
+                  (_, i) => i + minPlayers,
+                ).map((n) => (
+                  <SelectItem key={n} value={String(n)}>
+                    {n} players
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </CustomDialog>
+
+      <CustomDialog
+        open={joinSession !== null}
+        onOpenChange={(open) => { if (!open) { setJoinSession(null); setJoinName(""); } }}
+        title="Join game"
+        description={`Joining ${joinSession?.name} (${joinSession?.playerCount}/${joinSession?.maxPlayers} players)`}
+        onConfirm={handleJoinGame}
+        onCancel={() => { setJoinSession(null); setJoinName(""); }}
+        confirmLabel="Join"
+        confirmDisabled={!joinName.trim()}
+        isSubmitting={playerMutation.isPending}
+        submittingLabel="Joining..."
+      >
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="join-name">Your name</Label>
+          <Input
+            id="join-name"
+            value={joinName}
+            onChange={(e) => setJoinName(e.target.value)}
+            placeholder="Enter your name"
+          />
+        </div>
+      </CustomDialog>
     </div>
   );
 }
