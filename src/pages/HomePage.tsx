@@ -1,14 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -319,26 +311,20 @@ export default function HomePage() {
         </div>
       </CustomDialog>
 
-      <Dialog
+      <CustomDialog
         open={fullLobbySession !== null}
-        onOpenChange={(open) => {
-          if (!open) {
-            setFullLobbySession(null);
-          }
-        }}
+        onOpenChange={(open) => !open && setFullLobbySession(null)}
+        title="Lobby is full"
+        description={
+          fullLobbySession
+            ? `${fullLobbySession.name} already has ${fullLobbySession.maxPlayers} players. Please choose another lobby or create a new one.`
+            : "This lobby is already full."
+        }
+        onConfirm={() => setFullLobbySession(null)}
+        confirmLabel="OK"
       >
-        <DialogContent className="rounded-md">
-          <DialogHeader>
-            <DialogTitle>Lobby is full</DialogTitle>
-            <DialogDescription>
-              {fullLobbySession
-                ? `${fullLobbySession.name} already has ${fullLobbySession.maxPlayers} players. Please choose another lobby or create a new one.`
-                : "This lobby is already full."}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter showCloseButton />
-        </DialogContent>
-      </Dialog>
+        <></>
+      </CustomDialog>
     </div>
   );
 }
