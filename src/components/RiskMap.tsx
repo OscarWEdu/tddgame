@@ -99,12 +99,34 @@ export default function RiskMap({ territories = []}: RiskMapProps) {
 
     return (
       <div className='relative w-full'>
+        <style>{
+          `
+          .risk-map svg {width: 100%; height: auto; display: block;}
+          .risk-map.no-text svg text {display: none;}
+          .risk-map .${territoryClass} { transition: stroke 120ms ease; cursor: pointer;
+          }
+
+          .risk-map .${territoryClass}: hover {
+          stroke: #facc15 !important;
+          stroke-width: 3 !important;
+          stroke-opacity: 1 !important;
+  }
+         ` }
+
+        </style>
+
         <div>
           <label className='inline-flex cursor-pointer items-center gap-2 text-slate-700'>
             <input type="checkbox" checked={showText} onChange={(e) => setShowText(e.target.checked)} className='h-4 w-4 cursor-pointer'/>
             Show territory names
           </label>
         </div>
+
+         <div
+        ref={containerRef}
+        className={`risk-map ${showText ? "" : "no-text"}`}
+        dangerouslySetInnerHTML={svgMarkup ? { __html: svgMarkup } : undefined}
+      />
 
       </div>
 
