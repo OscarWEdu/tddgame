@@ -28,15 +28,9 @@ export default function LobbyPage() {
 
   //Navigates to the game page if the session has started
   useEffect(() => {
-  // If the query hasn't returned anything yet, do nothing
   if (!data || !data.data) return;
-
   const session = data.data;
-
-  // If the backend returned a string, ignore it
-  if (typeof session === "string") return;
-
-  // Now session is guaranteed to be GameSessionDto
+  if (typeof session === "string") return; // If the backend returned a string, ignore it
   if (session.status === GameSessionStatus.started) {
     navigate(`/game/${sessionId!}`);
   }
