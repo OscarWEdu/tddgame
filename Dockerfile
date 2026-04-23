@@ -13,7 +13,7 @@ RUN npm run build
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backend-builder
 WORKDIR /src
 
-COPY backend/Backend.csproj ./backend/src/
+COPY backend/Backend.csproj ./backend/
 RUN  dotnet restore backend/Backend.csproj
 
 COPY backend/ ./backend/
