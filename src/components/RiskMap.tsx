@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import type { TerritoryDto } from '@/api/generated/models';
 
 const svgURL = "/risk-map.svg";
 const  interactiveLayerID = "map-interactive-layer";
@@ -11,4 +12,31 @@ function nameToSvgId(name: string) {
 
 function prettifyId(id: string) {
     return id.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+}
+
+function buildInteractiveSvg(rawSvg: string): string {
+  const doc = new DOMParser().parseFromString(rawSvg, "image/svg+xml");
+
+  doc.querySelectorAll("[filter]").forEach((element) => {
+    const ref = element.getAttribute("filter");
+    if (ref === "url(#filter_texture)" || ref === "url(#filter_glow)") {
+      element.removeAttribute("filter");
+    }
+  });
+
+  const mapInDefs = doc.querySelector<SVGGElement>("defs > g#map");
+  if (mapInDefs) {
+    const layer = mapInDefs.cloneNode(true) as SVGGElement;
+    layer.setAttribute("id", interactiveLayerID);
+    layer.removeAttribute("fill");
+    layer.querySelectorAll("path").forEach((path) => {
+      path.setAttribute("fill", "transparent");
+      path.setAttribute("stroke", "transparent");
+      path.setAttribute("pointer-events", "all");
+      path.classList.add(territoryClass);
+    });
+    doc.querySelector("svg > g[transform]")?.appendChild(layer);
+  }
+
+  return new XMLSerializer().serializeToString(doc.documentElement);
 }
