@@ -45,3 +45,32 @@ type RiskMapProps = {
     territories: TerritoryDto[];
 }
 
+export default function RiskMap({ territories = []}: RiskMapProps) {
+
+    const [showText, setShowText] = useState(true);
+  const [svgMarkup, setSvgMarkup] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const territoryBySvgId = useMemo(() => {
+    const map = new Map<string, TerritoryDto>();
+    territories.forEach((t) => map.set(nameToSvgId(t.name), t));
+    return map;
+  }, [territories]);
+    
+  useEffect(() => {
+    let cancelled = false;
+    fetch(svgURL)
+      .then((r) => r.text())
+      .then((text) => {
+        if (cancelled) return;
+        const cleaned = text
+          .replace(/<\?xml[^>]*\?>\s*/g, "")
+          .replace(/<!DOCTYPE[^>]*>\s*/g, "");
+        setSvgMarkup(buildInteractiveSvg(cleaned));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+}
