@@ -60,7 +60,7 @@ export default function GamePage() {
             )}
             {!isLoading && !isError && (
               <p className="text-sm text-slate-500">
-                {territories.length} territorier loaded
+                {territories.length} territories loaded
               </p>
             )}
 

@@ -212,7 +212,7 @@ export default function RiskMap({
             onChange={(e) => setShowText(e.target.checked)}
             className="h-4 w-4 cursor-pointer"
           />
-          Visa landstexter
+          Show country names
         </label>
       </div>
 
@@ -231,7 +231,7 @@ export default function RiskMap({
               ID {hoveredTerritory.id} · Continent {hoveredTerritory.continentId}
             </div>
           ) : (
-            <div className="text-xs text-amber-300">Ingen DB-matchning</div>
+            <div className="text-xs text-amber-300">No DB-match</div>
           )}
         </div>
       )}
