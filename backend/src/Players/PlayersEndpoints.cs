@@ -30,10 +30,25 @@ public static class PlayersEndPoints
         //POST /api/players?gameSessionId={gameSessionId}
         playerGroup.MapPost(
             "/",
-            async Task<Created<PlayerDto>> (string gameSessionId, CreatePlayerDto player, IPlayersRepository repo, CancellationToken ct)
+            async Task<Results<Created<PlayerDto>, NotFound<string>, BadRequest<string>, Conflict<string>>> (string gameSessionId, CreatePlayerDto player, IPlayersRepository playerRepo, IGameSessionsRepository sessionRepo, CancellationToken ct)
             =>
             {
-                var createdPlayer = await repo.AddPlayerToGameAsync(gameSessionId, player, ct);
+                if (!Guid.TryParse(gameSessionId, out var guid))
+                    return TypedResults.BadRequest("Invalid gameSessionId format. Must be a UUID.");
+
+                var session = await sessionRepo.GetGameSessionByIdAsync(guid, ct);
+                if (session is null)
+                    return TypedResults.NotFound("Game session not found.");
+
+                if (session.Status != GameSessionStatus.lobby)
+                    return TypedResults.Conflict("Cannot join a game session that has already started or completed.");
+
+                var existingPlayers = (await playerRepo.GetPlayersByGameSessionAsync(gameSessionId, ct)).ToList();
+                if (existingPlayers.Count >= session.MaxPlayers)
+                    return TypedResults.Conflict($"Lobby is full ({session.MaxPlayers}/{session.MaxPlayers} players).");
+
+                var isHost = existingPlayers.Count == 0;
+                var createdPlayer = await playerRepo.AddPlayerToGameAsync(gameSessionId, player, isHost, ct);
                 return TypedResults.Created($"/api/players/{createdPlayer.id}", createdPlayer);
             }
             ).WithSummary("Add a player to a game session").WithDescription("Create a new player in a specific game session.");

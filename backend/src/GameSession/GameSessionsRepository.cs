@@ -6,7 +6,11 @@ public class GameSessionRepository(MySqlDataSource db) : IGameSessionsRepository
 {
     public async Task<IEnumerable<GameSessionDto>> GetGameSessionsAsync(CancellationToken ct)
     {
-        var sqlQuery = @"SELECT * FROM GameSessions";
+        var sqlQuery = @"
+            SELECT gs.id, gs.name, gs.status, gs.maxPlayers, COUNT(p.id) AS playerCount
+            FROM GameSessions gs
+            LEFT JOIN Players p ON p.gameSessions_id = gs.id
+            GROUP BY gs.id, gs.name, gs.status, gs.maxPlayers";
 
         await using var connection = await db.OpenConnectionAsync(ct);
         await using var command = connection.CreateCommand();
@@ -21,7 +25,9 @@ public class GameSessionRepository(MySqlDataSource db) : IGameSessionsRepository
                 new GameSessionDto(
                     Id: reader.GetString("id"),
                     Name: reader.GetString("name"),
-                    Status: Enum.Parse<GameSessionStatus>(reader.GetString("status"))
+                    Status: Enum.Parse<GameSessionStatus>(reader.GetString("status")),
+                    MaxPlayers: reader.GetInt32("maxPlayers"),
+                    PlayerCount: Convert.ToInt32(reader["playerCount"])
                 )
             );
         }
@@ -30,7 +36,12 @@ public class GameSessionRepository(MySqlDataSource db) : IGameSessionsRepository
 
     public async Task<GameSessionDto?> GetGameSessionByIdAsync(Guid id, CancellationToken ct)
     {
-        var sqlQuery = @"SELECT * FROM GameSessions WHERE id = @id";
+        var sqlQuery = @"
+            SELECT gs.id, gs.name, gs.status, gs.maxPlayers, COUNT(p.id) AS playerCount
+            FROM GameSessions gs
+            LEFT JOIN Players p ON p.gameSessions_id = gs.id
+            WHERE gs.id = @id
+            GROUP BY gs.id, gs.name, gs.status, gs.maxPlayers";
 
         await using var connection = await db.OpenConnectionAsync(ct);
         await using var command = connection.CreateCommand();
@@ -46,15 +57,17 @@ public class GameSessionRepository(MySqlDataSource db) : IGameSessionsRepository
         return new GameSessionDto(
             Id: reader.GetString("id"),
             Name: reader.GetString("name"),
-            Status: Enum.Parse<GameSessionStatus>(reader.GetString("status"))
+            Status: Enum.Parse<GameSessionStatus>(reader.GetString("status")),
+            MaxPlayers: reader.GetInt32("maxPlayers"),
+            PlayerCount: Convert.ToInt32(reader["playerCount"])
         );
     }
 
-    public async Task<GameSessionDto> CreateGameSessionAsync(string name, CancellationToken ct)
+    public async Task<GameSessionDto> CreateGameSessionAsync(string name, int maxPlayers, CancellationToken ct)
     {
         var sessionId = Guid.NewGuid();
 
-        var sqlQuery = @"INSERT INTO GameSessions (id, name, status) VALUES (@id, @name, 'lobby')";
+        var sqlQuery = @"INSERT INTO GameSessions (id, name, status, maxPlayers) VALUES (@id, @name, 'lobby', @maxPlayers)";
 
         await using var connection = await db.OpenConnectionAsync(ct);
         await using var command = connection.CreateCommand();
@@ -62,13 +75,16 @@ public class GameSessionRepository(MySqlDataSource db) : IGameSessionsRepository
         command.CommandText = sqlQuery;
         command.Parameters.AddWithValue("@id", sessionId.ToString());
         command.Parameters.AddWithValue("@name", name);
+        command.Parameters.AddWithValue("@maxPlayers", maxPlayers);
 
         await command.ExecuteNonQueryAsync(ct);
 
         return new GameSessionDto(
             Id: sessionId.ToString(),
             Name: name,
-            Status: GameSessionStatus.lobby
+            Status: GameSessionStatus.lobby,
+            MaxPlayers: maxPlayers,
+            PlayerCount: 0
         );
     }
 

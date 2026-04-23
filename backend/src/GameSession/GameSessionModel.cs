@@ -13,8 +13,10 @@ public enum GameSessionStatus
 public record GameSessionDto(
     string Id,
     string Name,
-    GameSessionStatus Status
+    GameSessionStatus Status,
+    int MaxPlayers,
+    int PlayerCount
 );
 
-public record CreateGameSessionRequest(string Name);
+public record CreateGameSessionRequest(string Name, int MaxPlayers);
 public record UpdateGameSessionStatusRequest(GameSessionStatus Status);

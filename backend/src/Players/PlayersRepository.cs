@@ -33,12 +33,13 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
                     TurnOrder: reader.GetInt32("turnOrder"),
                     NumGold: reader.GetInt32("numGold"),
                     IsDead: reader.GetBoolean("isDead"),
+                    IsHost: reader.GetBoolean("isHost"),
                     GameSessionId: reader.GetString("gameSessions_id"),
                     MissionId: reader.GetInt32("missions_id")
                 )
             );
         }
-    return players;
+        return players;
     }
 
     public async Task<PlayerDto?> GetPlayerByIdAsync(int playerId, CancellationToken ct)
@@ -61,6 +62,7 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
                 TurnOrder: reader.GetInt32("turnOrder"),
                 NumGold: reader.GetInt32("numGold"),
                 IsDead: reader.GetBoolean("isDead"),
+                IsHost: reader.GetBoolean("isHost"),
                 GameSessionId: reader.GetString("gameSessions_id"),
                 MissionId: reader.GetInt32("missions_id")
             );
@@ -71,10 +73,10 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         }
     }
 
-    public async Task<PlayerDto> AddPlayerToGameAsync(string gameSessionId, CreatePlayerDto player, CancellationToken ct)
+    public async Task<PlayerDto> AddPlayerToGameAsync(string gameSessionId, CreatePlayerDto player, bool isHost, CancellationToken ct)
     {
-        var sqlQuery = @"INSERT INTO Players (name, colour, turnOrder, numGold, isDead, gameSessions_id, missions_id)
-                         VALUES (@name, @colour, @turnOrder, @numGold, @isDead, @gameSessionId, @missionId);
+        var sqlQuery = @"INSERT INTO Players (name, colour, turnOrder, numGold, isDead, isHost, gameSessions_id, missions_id)
+                         VALUES (@name, @colour, @turnOrder, @numGold, @isDead, @isHost, @gameSessionId, @missionId);
                          SELECT LAST_INSERT_ID();";
 
         await using var connection = await db.OpenConnectionAsync(ct);
@@ -86,8 +88,9 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
         command.Parameters.AddWithValue("@turnOrder", player.TurnOrder);
         command.Parameters.AddWithValue("@numGold", 0);
         command.Parameters.AddWithValue("@isDead", false);
+        command.Parameters.AddWithValue("@isHost", isHost);
         command.Parameters.AddWithValue("@gameSessionId", gameSessionId);
-        command.Parameters.AddWithValue("@missionId", player.MissionId); 
+        command.Parameters.AddWithValue("@missionId", player.MissionId);
 
         var insertedId = Convert.ToInt32(await command.ExecuteScalarAsync(ct));
         return new PlayerDto(
@@ -95,8 +98,9 @@ public class PlayersRepository(MySqlDataSource db) : IPlayersRepository
             Name: player.Name,
             Colour: player.Colour,
             TurnOrder: player.TurnOrder,
-            NumGold: 0, // New players start with 0 gold
-            IsDead: false, // New players start alive
+            NumGold: 0,
+            IsDead: false,
+            IsHost: isHost,
             GameSessionId: gameSessionId,
             MissionId: player.MissionId
         );

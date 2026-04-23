@@ -51,7 +51,8 @@ public static class DbQuery
             CREATE TABLE IF NOT EXISTS GameSessions (
                 id VARCHAR(255) PRIMARY KEY NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                status ENUM('lobby', 'started', 'completed') NOT NULL DEFAULT 'lobby'
+                status ENUM('lobby', 'started', 'completed') NOT NULL DEFAULT 'lobby',
+                maxPlayers INT NOT NULL DEFAULT 6
             );
 
             CREATE TABLE IF NOT EXISTS Missions (
@@ -68,6 +69,7 @@ public static class DbQuery
                 turnOrder INT NOT NULL,
                 numGold INT NOT NULL DEFAULT 0,
                 isDead BOOLEAN NOT NULL DEFAULT FALSE,
+                isHost BOOLEAN NOT NULL DEFAULT FALSE,
                 gameSessions_id VARCHAR(255) NOT NULL,
                 missions_id INT NOT NULL,
                 FOREIGN KEY (gameSessions_id) REFERENCES GameSessions(id),
