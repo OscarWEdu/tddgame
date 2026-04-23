@@ -65,7 +65,7 @@ catch (Exception ex)
     Console.WriteLine("DbQuery error: " + ex.Message);
 }
 
-await app.RunStartupUtils();
+//await app.RunStartupUtils();
 
 Console.WriteLine("Server started");
 app.Run();
