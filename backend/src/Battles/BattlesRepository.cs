@@ -182,14 +182,9 @@ public class BattlesRepository(MySqlDataSource db) : IBattlesRepository
   {
     var sqlQuery = @"
             SELECT COUNT(*)
-            FROM Territories
-            WHERE id = @attackerTerritoryId
-              AND (
-                    NorthAdjacentId = @defenderTerritoryId
-                 OR SouthAdjacentId = @defenderTerritoryId
-                 OR EastAdjacentId = @defenderTerritoryId
-                 OR WestAdjacentId = @defenderTerritoryId
-              )
+            FROM TerritoryAdjacencies
+            WHERE territoryId = @attackerTerritoryId
+              AND adjacentTerritoryId = @defenderTerritoryId
         ";
 
     await using var connection = await db.OpenConnectionAsync(ct);
