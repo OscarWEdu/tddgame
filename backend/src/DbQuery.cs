@@ -16,30 +16,41 @@ public static class DbQuery
 
     static DbQuery()
     {
-        var configPath = Path.Combine(
-            AppContext.BaseDirectory, "..", "..", "..", "db-config.json"
-        );
-        var configJson = File.ReadAllText(configPath);
-        var config = JSON.Parse(configJson);
+        var host = Environment.GetEnvironmentVariable("host");
+        string port, database, username, password;
+        bool createTables, seedData;
+
+        if (host != null)
+        {
+            port = Environment.GetEnvironmentVariable("port") ?? "3306";
+            database = Environment.GetEnvironmentVariable("database") ?? "";
+            username = Environment.GetEnvironmentVariable("username") ?? "";
+            password = Environment.GetEnvironmentVariable("password") ?? "";
+            createTables = true;
+            seedData = true;
+        }
+        else
+        {
+            var configPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "db-config.json");
+            var config = JSON.Parse(File.ReadAllText(configPath));
+            host = config.host;
+            port = config.port?.ToString() ?? "3306";
+            database = config.database;
+            username = config.username;
+            password = config.password;
+            createTables = config.createTablesIfNotExist == true;
+            seedData = config.seedDataIfEmpty == true;
+        }
 
         connectionString =
-            $"Server={config.host};Port={config.port};Database={config.database};" +
-            $"User={config.username};Password={config.password};";
+            $"Server={host};Port={port};Database={database};" +
+            $"User={username};Password={password};SslMode=Preferred;";
 
         var db = new MySqlConnection(connectionString);
         db.Open();
 
-        // Create tables if they don't exist
-        if (config.createTablesIfNotExist == true)
-        {
-            CreateTablesIfNotExist(db);
-        }
-
-        // Seed data if tables are empty
-        if (config.seedDataIfEmpty == true)
-        {
-            SeedDataIfEmpty(db);
-        }
+        if (createTables) CreateTablesIfNotExist(db);
+        if (seedData) SeedDataIfEmpty(db);
 
         db.Close();
     }
