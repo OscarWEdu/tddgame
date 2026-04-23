@@ -46,21 +46,21 @@ public static class MissionEndpoints
         .WithDescription("Create a new mission.");
 
     missionGroup.MapGet(
-        "/{missionId}",
-        async Task<Results<Ok<int>, NotFound<string>>> (
-            string missionId,
-            int currentMission,
+        "/{playerId}",
+        async Task<Results<Ok<MissionDto>, NotFound<string>>> (
+            int playerId,
+
             IMissionsRepository repo,
             CancellationToken ct) =>
         {
-          var nextMission = await repo.GetMissionByPlayerIdAsync(missionId, currentMission, ct);
+          var nextMission = await repo.GetMissionByPlayerIdAsync(playerId, ct);
 
           if (nextMission is null)
           {
             return TypedResults.NotFound("Mission not found.");
           }
 
-          return TypedResults.Ok(nextMission.Value);
+          return TypedResults.Ok(nextMission);
         })
         .WithSummary("Get mission by player id")
         .WithDescription("Fetch mission using mission id and current mission.");

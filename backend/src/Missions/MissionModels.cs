@@ -6,12 +6,15 @@ namespace TddGame;
 public record MissionDto(
     int Id,
     string Name,
-    string Description
+    string Description,
+    string WinCondition
 );
 
 public record CreateMissionDto(
     string Name,
-    string Description);
+    string Description,
+    string WinCondition);
+
 
 public record MissionsDto(
     string Name,
