@@ -97,4 +97,10 @@ export default function RiskMap({ territories = []}: RiskMapProps) {
 
   const hoveredTerritory = hoveredId ? territoryBySvgId.get(hoveredId) : null;
 
+    return (
+      <div>
+        
+      </div>
+
+    );
 }
