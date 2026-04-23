@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { usePatchApiGameSessionIdStatus } from "../api/generated/game-sessions/game-sessions";
-
+import type { GameSessionDto } from "../api/generated/models/gameSessionDto";
+import { GameSessionStatus } from "@/api/generated/models";
+import { useGetApiGameSessionId, usePatchApiGameSessionIdStatus } from "../api/generated/game-sessions/game-sessions";
+import { useEffect } from "react";
 
 LobbyPage.route = {
   path: "/lobby/:sessionId",
@@ -14,17 +16,38 @@ export default function LobbyPage() {
 
   const { mutateAsync } = usePatchApiGameSessionIdStatus()
 
-  const handleStart = async () => {
-    if (!sessionId) return;
+  //Fetches session status every x/1000 sec
+  const { data, isLoading, error } = useGetApiGameSessionId(sessionId!, {
+    query: {
+      refetchInterval: 2000
+    }
+  });
+  
+  //Navigates to the game page if the session has started
+  useEffect(() => {
+  // If the query hasn't returned anything yet, do nothing
+  if (!data || !data.data) return;
 
+  const session = data.data;
+
+  // If the backend returned a string, ignore it
+  if (typeof session === "string") return;
+
+  // Now session is guaranteed to be GameSessionDto
+  if (session.status === GameSessionStatus.started) {
+    navigate(`/game/${sessionId!}`);
+  }
+}, [data, navigate, sessionId]);
+
+  //Function to navigate to the game and handle all the setup
+  const handleStart = async () => {
     try {
       await mutateAsync({
-        id: sessionId,
+        id: sessionId!,
         data: {
-          status: "started" // <-- must match UpdateGameSessionStatusRequest
+          status: GameSessionStatus.started // <-- must match UpdateGameSessionStatusRequest
         }
       });
-
       navigate(`/game/${sessionId}`);
     } catch (err) {
       console.error("Failed to update session status", err);
