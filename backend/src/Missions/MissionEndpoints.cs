@@ -46,7 +46,7 @@ public static class MissionEndpoints
         .WithDescription("Create a new mission.");
 
     missionGroup.MapGet(
-        "/{missionId}/{currentMission}",
+        "/{missionId}",
         async Task<Results<Ok<int>, NotFound<string>>> (
             string missionId,
             int currentMission,
