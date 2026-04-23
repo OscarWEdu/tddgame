@@ -51,3 +51,4 @@ Backend.Tests/bin/*
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+.features-gen
