@@ -3,7 +3,20 @@ import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { useGetApiTerritories } from "@/api/generated/territories/territories";
+import type { PlayerDto } from "@/api/generated/models/playerDto";
+import type { PlayerTerritoryDto } from "@/api/generated/models/playerTerritoryDto";
 import RiskMap, { nameToSvgId } from "@/components/RiskMap";
+
+
+const playerColours: Record<string, string> = {
+  Black: "#1f2937",
+  Blue: "#2563eb",
+  Green: "#16a34a",
+  Pink: "#db2777",
+  Red: "#b91c1c",
+  Yellow: "#eab308",
+};
+
 
 export default function GamePage() {
   const { sessionId } = useParams<{ sessionId: string }>();
