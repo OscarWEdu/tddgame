@@ -1,19 +1,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
-import routes from "./routes";
+import routes from "./routes.tsx";
 import { AuthProvider } from "./utils/AuthProvider";
 
-// Create a router using settings/content from 'routes.tsx'
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    children: routes as RouteObject[],
-    HydrateFallback: App,
+    children: routes,
   },
 ]);
 

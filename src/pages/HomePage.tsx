@@ -32,10 +32,6 @@ import type { GameSessionDto } from "../api/generated/models/gameSessionDto";
 import { GameSessionStatus } from "../api/generated/models/gameSessionStatus";
 import { usePostApiPlayers } from "../api/generated/players/players";
 
-HomePage.route = {
-  path: "/",
-};
-
 const defaultColours = ["Black", "Blue", "Green", "Pink", "Red", "Yellow"];
 const minPlayers = 2;
 const maxPlayers = 6;
@@ -106,7 +102,7 @@ export default function HomePage() {
     setCreateOpen(false);
     setGameName("");
     setPlayerCount(minPlayers);
-    navigate(`/game/${sessionId}`);
+    navigate(`/lobby/${sessionId}`);
   };
 
   return (
@@ -230,7 +226,7 @@ export default function HomePage() {
             <Button variant="ghost" onClick={() => setJoinSession(null)}>
               Cancel
             </Button>
-            <Button onClick={() => navigate(`/game/${joinSession?.id}`)}>
+            <Button onClick={() => navigate(`/lobby/${joinSession?.id}`)}>
               Join
             </Button>
           </DialogFooter>

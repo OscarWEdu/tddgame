@@ -131,7 +131,6 @@ public static class DbQuery
                 FOREIGN KEY (defenderTerritoryId) REFERENCES PlayerTerritories(id)
             );
 
-            -- Table modified (battle id included)
             CREATE TABLE IF NOT EXISTS TypingChallenges (
                 id INT PRIMARY KEY NOT NULL,
                 speed INT NOT NULL DEFAULT 0,
@@ -141,7 +140,6 @@ public static class DbQuery
                 FOREIGN KEY (battles_id) REFERENCES Battles(id)
             );
 
-            -- Updated and expanded as needed
             CREATE TABLE IF NOT EXISTS Results (
                 id INT PRIMARY KEY NOT NULL,
                 battles_id INT NOT NULL UNIQUE,

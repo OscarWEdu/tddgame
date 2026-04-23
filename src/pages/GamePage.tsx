@@ -5,10 +5,6 @@ import { toast } from "sonner";
 import { useGetApiTerritories } from "@/api/generated/territories/territories";
 import RiskMap, { nameToSvgId } from "@/components/RiskMap";
 
-GamePage.route = {
-  path: "/game/:sessionId",
-};
-
 export default function GamePage() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const { data, isLoading, isError } = useGetApiTerritories();
