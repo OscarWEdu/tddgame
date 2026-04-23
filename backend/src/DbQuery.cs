@@ -220,16 +220,75 @@ public static class DbQuery
             command.CommandText = PlayerData;
             command.ExecuteNonQuery();
         }
-        // Seed Continents
+        // Seed Continents (6 classic Risk continents, ids match Territories.continentId below)
         command.CommandText = "SELECT COUNT(*) FROM Continents";
         if (Convert.ToInt32(command.ExecuteScalar()) == 0)
         {
             var ContinentData = @"
-                INSERT INTO Continents (name, bonusConst) VALUES
-                ('Eurtarctica', 3),
-                ('Ameristralia', 2);
+                INSERT INTO Continents (id, name, bonusConst) VALUES
+                (1, 'North America', 5),
+                (2, 'South America', 2),
+                (3, 'Europe', 5),
+                (4, 'Africa', 3),
+                (5, 'Asia', 7),
+                (6, 'Australia', 2);
             ";
             command.CommandText = ContinentData;
+            command.ExecuteNonQuery();
+        }
+
+        // Seed Territories (42 classic Risk territories; names match the SVG path ids
+        // when slugified, so the frontend RiskMap can match by name. Adjacency fields
+        // are placeholders (0) until the schema gains a real adjacency list.)
+        command.CommandText = "SELECT COUNT(*) FROM Territories";
+        if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+        {
+            var TerritoryData = @"
+                INSERT INTO Territories (name, NorthAdjacentId, SouthAdjacentId, EastAdjacentId, WestAdjacentId, continentId) VALUES
+                ('Alaska', 0, 0, 0, 0, 1),
+                ('Alberta', 0, 0, 0, 0, 1),
+                ('Central America', 0, 0, 0, 0, 1),
+                ('Eastern United States', 0, 0, 0, 0, 1),
+                ('Greenland', 0, 0, 0, 0, 1),
+                ('Northwest Territory', 0, 0, 0, 0, 1),
+                ('Ontario', 0, 0, 0, 0, 1),
+                ('Quebec', 0, 0, 0, 0, 1),
+                ('Western United States', 0, 0, 0, 0, 1),
+                ('Argentina', 0, 0, 0, 0, 2),
+                ('Brazil', 0, 0, 0, 0, 2),
+                ('Venezuela', 0, 0, 0, 0, 2),
+                ('Peru', 0, 0, 0, 0, 2),
+                ('Great Britain', 0, 0, 0, 0, 3),
+                ('Iceland', 0, 0, 0, 0, 3),
+                ('Northern Europe', 0, 0, 0, 0, 3),
+                ('Scandinavia', 0, 0, 0, 0, 3),
+                ('Southern Europe', 0, 0, 0, 0, 3),
+                ('Ukraine', 0, 0, 0, 0, 3),
+                ('Western Europe', 0, 0, 0, 0, 3),
+                ('Congo', 0, 0, 0, 0, 4),
+                ('East Africa', 0, 0, 0, 0, 4),
+                ('Egypt', 0, 0, 0, 0, 4),
+                ('Madagascar', 0, 0, 0, 0, 4),
+                ('North Africa', 0, 0, 0, 0, 4),
+                ('South Africa', 0, 0, 0, 0, 4),
+                ('Afghanistan', 0, 0, 0, 0, 5),
+                ('China', 0, 0, 0, 0, 5),
+                ('India', 0, 0, 0, 0, 5),
+                ('Irkutsk', 0, 0, 0, 0, 5),
+                ('Japan', 0, 0, 0, 0, 5),
+                ('Kamchatka', 0, 0, 0, 0, 5),
+                ('Middle East', 0, 0, 0, 0, 5),
+                ('Mongolia', 0, 0, 0, 0, 5),
+                ('Siam', 0, 0, 0, 0, 5),
+                ('Siberia', 0, 0, 0, 0, 5),
+                ('Ural', 0, 0, 0, 0, 5),
+                ('Yakutsk', 0, 0, 0, 0, 5),
+                ('Eastern Australia', 0, 0, 0, 0, 6),
+                ('New Guinea', 0, 0, 0, 0, 6),
+                ('Indonesia', 0, 0, 0, 0, 6),
+                ('Western Australia', 0, 0, 0, 0, 6);
+            ";
+            command.CommandText = TerritoryData;
             command.ExecuteNonQuery();
         }
 
