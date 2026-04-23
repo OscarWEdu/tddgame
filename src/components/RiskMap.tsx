@@ -73,4 +73,28 @@ export default function RiskMap({ territories = []}: RiskMapProps) {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !svgMarkup) return;
+    const paths = container.querySelectorAll<SVGPathElement>(
+      `.${territoryClass}`,
+    );
+    const cleanups: Array<() => void> = [];
+    paths.forEach((path) => {
+      const onEnter = () => setHoveredId(path.id);
+      const onLeave = () =>
+        setHoveredId((current) => (current === path.id ? null : current));
+      path.addEventListener("mouseenter", onEnter);
+      path.addEventListener("mouseleave", onLeave);
+      cleanups.push(() => {
+        path.removeEventListener("mouseenter", onEnter);
+        path.removeEventListener("mouseleave", onLeave);
+      });
+    });
+    return () => cleanups.forEach((fn) => fn());
+  }, [svgMarkup]);
+
+  const hoveredTerritory = hoveredId ? territoryBySvgId.get(hoveredId) : null;
+
 }
