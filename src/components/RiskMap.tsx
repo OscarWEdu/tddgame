@@ -106,7 +106,7 @@ export default function RiskMap({ territories = []}: RiskMapProps) {
           .risk-map .${territoryClass} { transition: stroke 120ms ease; cursor: pointer;
           }
 
-          .risk-map .${territoryClass}: hover {
+          .risk-map .${territoryClass}:hover {
           stroke: #facc15 !important;
           stroke-width: 3 !important;
           stroke-opacity: 1 !important;
