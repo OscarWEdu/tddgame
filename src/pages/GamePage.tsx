@@ -36,11 +36,9 @@ export default function GamePage() {
         <p className="mt-2 text-slate-600">Session id: {sessionId}</p>
 
         <div className="flex gap-6">
-          {/* Game Map */}
           <div className="flex-1 rounded border bg-white p-2">
             <RiskMap territories={territories} />
           </div>
-          {/* Game Decisions */}
           <div className="flex w-80 flex-col gap-2 rounded border bg-white p-4">
             <p className="font-semibold">Game Status</p>
             {isLoading && <p className="text-sm text-slate-500">Loading territories…</p>}
