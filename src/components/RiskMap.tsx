@@ -40,3 +40,8 @@ function buildInteractiveSvg(rawSvg: string): string {
 
   return new XMLSerializer().serializeToString(doc.documentElement);
 }
+
+type RiskMapProps = {
+    territories: TerritoryDto[];
+}
+
