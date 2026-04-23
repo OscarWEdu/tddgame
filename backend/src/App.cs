@@ -21,7 +21,7 @@ builder.Services.AddScoped<IBattlesRepository, BattlesRepository>();
 builder.Services.AddScoped<IPlayerTerritoryRepository, PlayerTerritoryRepository>();
 builder.Services.AddScoped<ITypingChallengesRepository, TypingChallengesRepository>();
 builder.Services.AddScoped<IResultsRepository, ResultRepository>();
-
+builder.Services.AddScoped<IMissionsRepository, MissionRepository>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -56,7 +56,7 @@ app.MapBattlesEndpoints();
 app.MapPlayerTerritoryEndpoints();
 app.MapTypingChallengesEndpoints();
 app.MapResultEndpoints();
-
+app.MapMissionEndpoints();
 try
 {
     DbQuery.Initialize();
