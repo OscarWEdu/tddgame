@@ -8,7 +8,7 @@ const territoryClass = "territory";
 const selectedClass = "selected";
 const adjacentClass = "adjacent";
 
-function nameToSvgId(name: string) {
+export function nameToSvgId(name: string) {
     return name.toLowerCase().replace(/\s+/g, "_");
 }
 
