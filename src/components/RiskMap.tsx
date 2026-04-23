@@ -5,6 +5,8 @@ import type { TerritoryDto } from '@/api/generated/models';
 const svgURL = "/risk-map.svg";
 const  interactiveLayerID = "map-interactive-layer";
 const territoryClass = "territory";
+const selectedClass = "selected";
+const adjacentClass = "adjacent";
 
 function nameToSvgId(name: string) {
     return name.toLowerCase().replace(/\s+/g, "_");
@@ -43,9 +45,15 @@ function buildInteractiveSvg(rawSvg: string): string {
 
 type RiskMapProps = {
     territories: TerritoryDto[];
-}
+    selectedSvgId?: string | null;
+    onSelectChange?: (svgId: string | null) => void;
+};
 
-export default function RiskMap({ territories = []}: RiskMapProps) {
+export default function RiskMap({
+  territories = [],
+  selectedSvgId = null,
+  onSelectChange,
+}: RiskMapProps)  {
 
     const [showText, setShowText] = useState(true);
   const [svgMarkup, setSvgMarkup] = useState<string | null>(null);
@@ -57,6 +65,13 @@ export default function RiskMap({ territories = []}: RiskMapProps) {
     territories.forEach((t) => map.set(nameToSvgId(t.name), t));
     return map;
   }, [territories]);
+
+  const territoryById = useMemo(() => {
+    const map = new Map<number, TerritoryDto>();
+    territories.forEach((t) => map.set(t.id, t));
+    return map;
+  }, [territories]);
+
     
   useEffect(() => {
     let cancelled = false;
