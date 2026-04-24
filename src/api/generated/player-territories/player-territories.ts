@@ -243,6 +243,95 @@ export const usePostApiPlayerterritories = <TError = unknown,
       return useMutation(getPostApiPlayerterritoriesMutationOptions(options), queryClient);
     }
     /**
+ * Distributes every territory randomly and evenly between the players in the session (round-robin over a Fisher-Yates shuffle). No-op if any player in the session already owns a territory.
+ * @summary Assign initial territories
+ */
+export type postApiPlayerterritoriesAssignInitialGameSessionIdResponse200 = {
+  data: PlayerTerritoryDto[]
+  status: 200
+}
+
+export type postApiPlayerterritoriesAssignInitialGameSessionIdResponseSuccess = (postApiPlayerterritoriesAssignInitialGameSessionIdResponse200) & {
+  headers: Headers;
+};
+;
+
+export type postApiPlayerterritoriesAssignInitialGameSessionIdResponse = (postApiPlayerterritoriesAssignInitialGameSessionIdResponseSuccess)
+
+export const getPostApiPlayerterritoriesAssignInitialGameSessionIdUrl = (gameSessionId: string,) => {
+
+
+
+
+  return `/api/playerterritories/assign-initial/${gameSessionId}`
+}
+
+export const postApiPlayerterritoriesAssignInitialGameSessionId = async (gameSessionId: string, options?: RequestInit): Promise<postApiPlayerterritoriesAssignInitialGameSessionIdResponse> => {
+
+  const res = await fetch(getPostApiPlayerterritoriesAssignInitialGameSessionIdUrl(gameSessionId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: postApiPlayerterritoriesAssignInitialGameSessionIdResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as postApiPlayerterritoriesAssignInitialGameSessionIdResponse
+}
+
+
+
+
+export const getPostApiPlayerterritoriesAssignInitialGameSessionIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiPlayerterritoriesAssignInitialGameSessionId>>, TError,{gameSessionId: string}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiPlayerterritoriesAssignInitialGameSessionId>>, TError,{gameSessionId: string}, TContext> => {
+
+const mutationKey = ['postApiPlayerterritoriesAssignInitialGameSessionId'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiPlayerterritoriesAssignInitialGameSessionId>>, {gameSessionId: string}> = (props) => {
+          const {gameSessionId} = props ?? {};
+
+          return  postApiPlayerterritoriesAssignInitialGameSessionId(gameSessionId,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiPlayerterritoriesAssignInitialGameSessionIdMutationResult = NonNullable<Awaited<ReturnType<typeof postApiPlayerterritoriesAssignInitialGameSessionId>>>
+
+    export type PostApiPlayerterritoriesAssignInitialGameSessionIdMutationError = unknown
+
+    /**
+ * @summary Assign initial territories
+ */
+export const usePostApiPlayerterritoriesAssignInitialGameSessionId = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiPlayerterritoriesAssignInitialGameSessionId>>, TError,{gameSessionId: string}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiPlayerterritoriesAssignInitialGameSessionId>>,
+        TError,
+        {gameSessionId: string},
+        TContext
+      > => {
+      return useMutation(getPostApiPlayerterritoriesAssignInitialGameSessionIdMutationOptions(options), queryClient);
+    }
+    /**
  * Return all owned playerTerritories by player.
  * @summary Get all owned playerTerritories by player
  */

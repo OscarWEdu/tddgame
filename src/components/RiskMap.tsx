@@ -1,30 +1,46 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import type { TerritoryDto } from '@/api/generated/models';
+import type { TerritoryDto } from "@/api/generated/models";
 
 const svgURL = "/risk-map.svg";
-const  interactiveLayerID = "map-interactive-layer";
+const interactiveLayerID = "map_interactive";
 const territoryClass = "territory";
 const selectedClass = "selected";
 const adjacentClass = "adjacent";
 
 export function nameToSvgId(name: string) {
-    return name.toLowerCase().replace(/\s+/g, "_");
+  return name.toLowerCase().replace(/\s+/g, "_");
 }
 
 function prettifyId(id: string) {
-    return id.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+  return id
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function buildInteractiveSvg(rawSvg: string): string {
   const doc = new DOMParser().parseFromString(rawSvg, "image/svg+xml");
 
-  doc.querySelectorAll("[filter]").forEach((element) => {
-    const ref = element.getAttribute("filter");
+  // Grab the text-labels group (identified by the glow filter ref) BEFORE we
+  // strip filter attributes — we need the reference to know where to insert
+  // the interactive layer.
+  const textGroup = doc.querySelector<SVGGElement>(
+    'g[filter="url(#filter_glow)"]',
+  );
+  const continentsGroup = doc.getElementById("continents");
+
+  doc.querySelectorAll("[filter]").forEach((el) => {
+    const ref = el.getAttribute("filter");
     if (ref === "url(#filter_texture)" || ref === "url(#filter_glow)") {
-      element.removeAttribute("filter");
+      el.removeAttribute("filter");
     }
   });
+
+  // Let mouse events fall through text/continent labels to the territory paths
+  // beneath them.
+  textGroup?.setAttribute("pointer-events", "none");
+  continentsGroup?.setAttribute("pointer-events", "none");
 
   const mapInDefs = doc.querySelector<SVGGElement>("defs > g#map");
   if (mapInDefs) {
@@ -37,29 +53,43 @@ function buildInteractiveSvg(rawSvg: string): string {
       path.setAttribute("pointer-events", "all");
       path.classList.add(territoryClass);
     });
-    doc.querySelector("svg > g[transform]")?.appendChild(layer);
+
+    // Insert the interactive layer right before the text group so the labels
+    // paint on top of any ownership/hover/selected outlines.
+    if (textGroup?.parentNode) {
+      textGroup.parentNode.insertBefore(layer, textGroup);
+    } else {
+      doc.querySelector("svg > g[transform]")?.appendChild(layer);
+    }
   }
 
   return new XMLSerializer().serializeToString(doc.documentElement);
 }
 
+type OwnershipInfo = {
+  fill: string;
+};
+
 type RiskMapProps = {
-    territories: TerritoryDto[];
-    selectedSvgId?: string | null;
-    onSelectChange?: (svgId: string | null) => void;
+  territories?: TerritoryDto[];
+  selectedSvgId?: string | null;
+  onSelectChange?: (svgId: string | null) => void;
+  ownershipBySvgId?: Map<string, OwnershipInfo>;
 };
 
 export default function RiskMap({
   territories = [],
   selectedSvgId = null,
   onSelectChange,
-}: RiskMapProps)  {
-
-    const [showText, setShowText] = useState(true);
+  ownershipBySvgId,
+}: RiskMapProps) {
+  const [showText, setShowText] = useState(true);
   const [svgMarkup, setSvgMarkup] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Click handler runs in a static effect closure but needs the latest selection
+  // to compute the toggle. Mirror the prop into a ref.
   const selectedRef = useRef(selectedSvgId);
   useEffect(() => {
     selectedRef.current = selectedSvgId;
@@ -77,7 +107,7 @@ export default function RiskMap({
     return map;
   }, [territories]);
 
-   const adjacentSvgIds = useMemo(() => {
+  const adjacentSvgIds = useMemo(() => {
     if (!selectedSvgId) return new Set<string>();
     const selected = territoryBySvgId.get(selectedSvgId);
     if (!selected) return new Set<string>();
@@ -88,7 +118,7 @@ export default function RiskMap({
     });
     return ids;
   }, [selectedSvgId, territoryBySvgId, territoryById]);
-    
+
   useEffect(() => {
     let cancelled = false;
     fetch(svgURL)
@@ -104,6 +134,15 @@ export default function RiskMap({
       cancelled = true;
     };
   }, []);
+
+  // Inject the SVG imperatively so React never re-touches the inner DOM on
+  // re-render. dangerouslySetInnerHTML can wipe inline stroke attributes we
+  // set later in other effects.
+  useEffect(() => {
+    if (containerRef.current && svgMarkup) {
+      containerRef.current.innerHTML = svgMarkup;
+    }
+  }, [svgMarkup]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -176,10 +215,28 @@ export default function RiskMap({
     });
   }, [adjacentSvgIds, svgMarkup]);
 
+  // Fill each owned territory with the owner's color. Reset every path's fill
+  // first so paths that lost ownership clear properly. Hover/selected/adjacent
+  // CSS rules only touch stroke, so they coexist with the fill.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container.querySelectorAll<SVGPathElement>(`.${territoryClass}`).forEach(
+      (p) => p.setAttribute("fill", "transparent"),
+    );
+    if (!ownershipBySvgId) return;
+    ownershipBySvgId.forEach((info, svgId) => {
+      const path = container.querySelector<SVGPathElement>(
+        `.${territoryClass}#${CSS.escape(svgId)}`,
+      );
+      path?.setAttribute("fill", info.fill);
+    });
+  }, [ownershipBySvgId, svgMarkup]);
+
   const hoveredTerritory = hoveredId ? territoryBySvgId.get(hoveredId) : null;
 
-    return (
-      <div className="relative w-full">
+  return (
+    <div className="relative w-full">
       <style>{`
         .risk-map svg { width: 100%; height: auto; display: block; }
         .risk-map.no-text svg text { display: none; }
@@ -212,14 +269,13 @@ export default function RiskMap({
             onChange={(e) => setShowText(e.target.checked)}
             className="h-4 w-4 cursor-pointer"
           />
-          Show country names
+          Visa landstexter
         </label>
       </div>
 
       <div
         ref={containerRef}
         className={`risk-map ${showText ? "" : "no-text"}`}
-        dangerouslySetInnerHTML={svgMarkup ? { __html: svgMarkup } : undefined}
       />
       {hoveredId && (
         <div className="absolute top-12 left-2 rounded bg-black/70 px-3 py-2 text-sm text-white pointer-events-none">
@@ -231,11 +287,10 @@ export default function RiskMap({
               ID {hoveredTerritory.id} · Continent {hoveredTerritory.continentId}
             </div>
           ) : (
-            <div className="text-xs text-amber-300">No DB-match</div>
+            <div className="text-xs text-amber-300">Ingen DB-matchning</div>
           )}
         </div>
       )}
     </div>
-
-    );
+  );
 }

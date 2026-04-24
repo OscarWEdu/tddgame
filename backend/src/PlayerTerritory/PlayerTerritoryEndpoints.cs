@@ -19,6 +19,15 @@ public static class PlayerTerritoryEndpoints
             }
         ).WithSummary("Get all playerTerritories").WithDescription("Return all playerTerritories.");
 
+        playerTerritoryEndpointsGroup.MapPost(
+            "/assign-initial/{gameSessionId}",
+            async Task<Ok<IEnumerable<PlayerTerritoryDto>>> (IPlayerTerritoryRepository repo, string gameSessionId, CancellationToken ct) =>
+            {
+                var assignments = await repo.AssignInitialTerritoriesAsync(gameSessionId, ct);
+                return TypedResults.Ok(assignments);
+            }
+        ).WithSummary("Assign initial territories").WithDescription("Distributes every territory randomly and evenly between the players in the session (round-robin over a Fisher-Yates shuffle). No-op if any player in the session already owns a territory.");
+
         //Get all owned PlayerTerritories by playerId
         playerTerritoryEndpointsGroup.MapGet(
             "/player/{playerId}",
