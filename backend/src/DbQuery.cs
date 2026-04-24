@@ -42,12 +42,6 @@ public static class DbQuery
             seedData = config.seedDataIfEmpty == true;
         }
 
-        Console.WriteLine($"query host: {host}");
-        Console.WriteLine($"query port: {port}");
-        Console.WriteLine($"query database: {database}");
-        Console.WriteLine($"query username: {username}");
-        Console.WriteLine($"query password: {password}");
-
         connectionString =
             $"Server={host};Port={port};Database={database};" +
             $"User={username};Password={password};";

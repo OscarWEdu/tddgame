@@ -10,12 +10,6 @@ builder.Configuration.AddEnvironmentVariables();
 var c = builder.Configuration;
 var connStr = $"Server={c["host"]};Port={c["port"]};Database={c["database"]};User={c["username"]};Password={c["password"]};";
 
-Console.WriteLine($"host: {c["host"]}");
-Console.WriteLine($"port: {c["port"]}");
-Console.WriteLine($"database: {c["database"]}");
-Console.WriteLine($"username: {c["username"]}");
-Console.WriteLine($"password: {c["password"]}");
-
 builder.Services.AddSingleton(new MySqlDataSource(connStr));
 
 builder.Services.AddScoped<IGameSessionsRepository, GameSessionRepository>();
@@ -31,7 +25,7 @@ builder.Services.AddScoped<IMissionsRepository, MissionRepository>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "https://tddgame-ygyv.onrender.com")
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
