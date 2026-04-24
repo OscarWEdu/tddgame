@@ -17,6 +17,7 @@ COPY backend/Backend.csproj ./backend/
 RUN  dotnet restore backend/Backend.csproj
 
 COPY backend/ ./backend/
+COPY --from=frontend-builder /src/dist ./backend/wwwroot/
 
 RUN dotnet publish backend/Backend.csproj  -c Release -o /app/publish --no-restore
 
