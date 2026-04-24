@@ -42,15 +42,30 @@ public static class DbQuery
             seedData = config.seedDataIfEmpty == true;
         }
 
+        Console.WriteLine($"query host: {host}");
+        Console.WriteLine($"query port: {port}");
+        Console.WriteLine($"query database: {database}");
+        Console.WriteLine($"query username: {username}");
+        Console.WriteLine($"query password: {password}");
+
         connectionString =
             $"Server={host};Port={port};Database={database};" +
-            $"User={username};Password={password};SslMode=Preferred;";
+            $"User={username};Password={password};";
 
         var db = new MySqlConnection(connectionString);
         db.Open();
 
-        if (createTables) CreateTablesIfNotExist(db);
-        if (seedData) SeedDataIfEmpty(db);
+        // Create tables if they don't exist
+        if (createTables == true)
+        {
+            CreateTablesIfNotExist(db);
+        }
+
+        // Seed data if tables are empty
+        if (seedData == true)
+        {
+            SeedDataIfEmpty(db);
+        }
 
         db.Close();
     }
@@ -240,7 +255,7 @@ public static class DbQuery
             command.CommandText = PlayerData;
             command.ExecuteNonQuery();
         }
-         // Seed Continents (6 classic Risk continents, ids match Territories.continentId below)
+        // Seed Continents (6 classic Risk continents, ids match Territories.continentId below)
         command.CommandText = "SELECT COUNT(*) FROM Continents";
         if (Convert.ToInt32(command.ExecuteScalar()) == 0)
         {
