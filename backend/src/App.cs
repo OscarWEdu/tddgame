@@ -42,6 +42,8 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 
 app.UseCors();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
@@ -57,6 +59,7 @@ app.MapPlayerTerritoryEndpoints();
 app.MapTypingChallengesEndpoints();
 app.MapResultEndpoints();
 app.MapMissionEndpoints();
+app.MapFallbackToFile("index.html");
 try
 {
     DbQuery.Initialize();
