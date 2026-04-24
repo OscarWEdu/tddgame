@@ -44,7 +44,8 @@ export default function GamePage() {
       const results = await Promise.all(
         players.map((p) =>
           fetch(`/api/playerterritories/player/${p.id}`).then((r) => {
-            if (!r.ok) throw new Error(`Failed to fetch territories for player ${p.id}`);
+            if (!r.ok)
+              throw new Error(`Failed to fetch territories for player ${p.id}`);
             return r.json() as Promise<PlayerTerritoryDto[]>;
           }),
         ),
@@ -70,7 +71,7 @@ export default function GamePage() {
 
   const selectedTerritory =
     selectedSvgId !== null
-      ? territories.find((t) => nameToSvgId(t.name) === selectedSvgId) ?? null
+      ? (territories.find((t) => nameToSvgId(t.name) === selectedSvgId) ?? null)
       : null;
 
   useEffect(() => {
@@ -111,7 +112,7 @@ export default function GamePage() {
   }, [ownership, players, territories]);
 
   const selectedOwner = selectedSvgId
-    ? ownershipBySvgId.get(selectedSvgId)?.player ?? null
+    ? (ownershipBySvgId.get(selectedSvgId)?.player ?? null)
     : null;
 
   return (
@@ -136,16 +137,14 @@ export default function GamePage() {
           <div className="flex w-80 flex-col gap-3 rounded border bg-white p-4">
             <p className="font-semibold">Game Status</p>
             {isLoading && (
-              <p className="text-sm text-slate-500">Laddar territorier…</p>
+              <p className="text-sm text-slate-500">Loading territories…</p>
             )}
             {isError && (
-              <p className="text-sm text-red-600">
-                Kunde inte hämta territorier
-              </p>
+              <p className="text-sm text-red-600">Could not load territories</p>
             )}
             {!isLoading && !isError && (
               <p className="text-sm text-slate-500">
-                {territories.length} territorier · {ownership.length} ägda
+                {territories.length} territories · {ownership.length} owned
               </p>
             )}
 
@@ -160,8 +159,7 @@ export default function GamePage() {
                     const owned = ownership.filter(
                       (pt) => pt.playerId === p.id,
                     ).length;
-                    const fill =
-                      playerColours[p.colour] ?? backupFill;
+                    const fill = playerColours[p.colour] ?? backupFill;
                     return (
                       <div
                         key={p.id}
@@ -173,7 +171,7 @@ export default function GamePage() {
                         />
                         <span className="flex-1 text-slate-700">{p.name}</span>
                         <span className="text-xs text-slate-500">
-                          {owned} land
+                          {owned} country
                         </span>
                       </div>
                     );
@@ -187,7 +185,7 @@ export default function GamePage() {
             {selectedTerritory ? (
               <div className="space-y-1">
                 <p className="text-xs uppercase tracking-wide text-slate-500">
-                  Markerat territorium
+                  Marked territory
                 </p>
                 <p className="text-lg font-semibold text-slate-900">
                   {selectedTerritory.name}
@@ -202,11 +200,11 @@ export default function GamePage() {
                     <dd>{selectedTerritory.continentId}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-slate-500">Ägare</dt>
+                    <dt className="text-slate-500">Owner</dt>
                     <dd>{selectedOwner?.name ?? "—"}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-slate-500">Grannar</dt>
+                    <dt className="text-slate-500">Neighbors</dt>
                     <dd>{selectedTerritory.adjacentTerritoryIds.length} st</dd>
                   </div>
                 </dl>
@@ -215,12 +213,12 @@ export default function GamePage() {
                   onClick={() => setSelectedSvgId(null)}
                   className="mt-2 w-full rounded border border-slate-300 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100"
                 >
-                  Avmarkera
+                  Unmark
                 </button>
               </div>
             ) : (
               <p className="text-sm italic text-slate-400">
-                Klicka på ett territorium för att se information
+                Click on a territory to see information
               </p>
             )}
           </div>

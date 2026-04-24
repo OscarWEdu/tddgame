@@ -221,9 +221,9 @@ export default function RiskMap({
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    container.querySelectorAll<SVGPathElement>(`.${territoryClass}`).forEach(
-      (p) => p.setAttribute("fill", "transparent"),
-    );
+    container
+      .querySelectorAll<SVGPathElement>(`.${territoryClass}`)
+      .forEach((p) => p.setAttribute("fill", "transparent"));
     if (!ownershipBySvgId) return;
     ownershipBySvgId.forEach((info, svgId) => {
       const path = container.querySelector<SVGPathElement>(
@@ -269,7 +269,7 @@ export default function RiskMap({
             onChange={(e) => setShowText(e.target.checked)}
             className="h-4 w-4 cursor-pointer"
           />
-          Visa landstexter
+          Show country names
         </label>
       </div>
 
@@ -284,7 +284,8 @@ export default function RiskMap({
           </div>
           {hoveredTerritory ? (
             <div className="text-xs text-white/70">
-              ID {hoveredTerritory.id} · Continent {hoveredTerritory.continentId}
+              ID {hoveredTerritory.id} · Continent{" "}
+              {hoveredTerritory.continentId}
             </div>
           ) : (
             <div className="text-xs text-amber-300">Ingen DB-matchning</div>
