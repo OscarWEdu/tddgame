@@ -5,4 +5,4 @@ Feature: Navigate to lobby
         When I click the "Create Game" button
         When I type "name" into the game name field
         And I click the "Create Game" button
-        Then I should be taken to the lobby page
+        Then I should be taken to the "lobby" page
